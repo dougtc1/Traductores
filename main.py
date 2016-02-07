@@ -38,7 +38,17 @@ while (True):
 	else:
 		globalList.tokList.append(Token(tok.type, tok.lineno,\
 		 find_column(content, tok)))
-	#tok.lexpos = 0
 
 # IMPRESION DE LOS TOKENS
 globalList.printTok()
+
+######### ETAPA 2 ################
+i=0
+for item1 in globalList.tokList:
+	print("iteracion numero: ",i)
+	print ("item1.name ---> ",item1.name)
+	print ("item1.row ---> ",item1.row)
+	print ("item1.column ---> ",item1.column)
+	print ("item1.arg ---> ",item1.arg)
+	print("\n")
+	i+=1
