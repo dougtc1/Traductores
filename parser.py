@@ -84,27 +84,33 @@ def p_b_exp(p):
 ###############################################################################
 ########################## OPERACIONES RELACIONALES ###########################
 def p_exp_menor(p):
-    'E : E TkMayor T'
+    '''E : E TkMayor T
+         | E TkMayor B'''
     p[0] = p[1] > p[3]
 
 def p_exp_mayorigual(p):
-    'E : E TkMayorigual T'
+    '''E : E TkMayorigual T
+         | E TkMayorigual B'''
     p[0] = p[1] >= p[3]
 
 def p_exp_menor(p):
-    'E : E TkMenor T'
+    '''E : E TkMenor T
+         | E TkMenor B'''
     p[0] = p[1] < p[3]
 
 def p_exp_menorigual(p):
-    'E : E TkMenorigual T'
+    '''E : E TkMenorigual T
+         | E TkMenorigual B'''
     p[0] = p[1] <= p[3]
 
 def p_exp_igual(p):
-    'E : E TkIgual T'
+    '''E : E TkIgual T
+         | E TkIgual B'''
     p[0] = p[1] = p[3]
 
 def p_exp_noigual(p):
-    'E : E TkNoigual T'
+    '''E : E TkNoigual T
+         | E TkNoigual B'''
     p[0] = p[1] != p[3]
 
 
