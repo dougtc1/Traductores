@@ -43,6 +43,17 @@ while (True):
 globalList.printTok()
 
 ######### ETAPA 2 ################
+
+from parser import *
+
+
+print("Llamada parser \n")
+for i in globalList.tokList:
+	parser.parse(i.name)
+
+print("Post-parser \n")
+
+"""
 i=0
 for item1 in globalList.tokList:
 	print("iteracion numero: ",i)
@@ -52,3 +63,4 @@ for item1 in globalList.tokList:
 	print ("item1.arg ---> ",item1.arg)
 	print("\n")
 	i+=1
+"""

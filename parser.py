@@ -3,16 +3,14 @@
 import ply.yacc as yacc
 
 # Get the token map from the lexer.  This is required.
-from lexBot import tokens
+from lexBOT import tokens
 
 precedence = (
-    ('nonassoc', 'TkMayor', 'TkMenor'),
-    ('nonassoc', 'TkMayorigual', 'TkMenorigual'),
+    ('left', 'TkMayor', 'TkMenor', 'TkMayorigual', 'TkMenorigual', 'TkIgual','TkNoigual'),
     ('left', 'TkSuma', 'TkResta'),
-    ('left', 'TkMult', 'TkDiv'),
+    ('left', 'TkMult', 'TkDiv', 'TkMod'),
     ('left', 'TkConjuncion', 'TkDisyuncion'),
-    ('right', 'TkMenos'),
-    ('right', 'TkNegacion')
+    ('right', 'TkMenos', 'TkNegacion')
 )
 
 ######################## OPERACIONES ARITMETICAS ##############################
@@ -83,7 +81,7 @@ def p_b_exp(p):
     p[0] = p[2]
 ###############################################################################
 ########################## OPERACIONES RELACIONALES ###########################
-def p_exp_menor(p):
+def p_exp_mayor(p):
     'E : E TkMayor T'
     p[0] = p[1] > p[3]
 
