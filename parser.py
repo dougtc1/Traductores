@@ -19,7 +19,7 @@ precedence = (
 def p_exp_suma(p):
     'E : E TkSuma T'
     p[0] = p[1] + p[3]
-
+ 
 def p_exp_resta(p):
     'E : E TkResta T'
     p[0] = p[1] - p[3]
@@ -81,6 +81,7 @@ def p_b_bool(p):
 def p_b_exp(p):
     'B  : TkParabre E TkParcierra'
     p[0] = p[2]
+
 ###############################################################################
 ########################## OPERACIONES RELACIONALES ###########################
 def p_exp_menor(p):
@@ -106,13 +107,19 @@ def p_exp_menorigual(p):
 def p_exp_igual(p):
     '''E : E TkIgual T
          | E TkIgual B'''
-    p[0] = p[1] = p[3]
+    p[0] = (p[1] = p[3])
 
 def p_exp_noigual(p):
     '''E : E TkNoigual T
          | E TkNoigual B'''
-    p[0] = p[1] != p[3]
+    p[0] = (p[1] != p[3])
 
+###############################################################################
+################################ INSTRUCCIONES ################################
+
+def p_exp_activate(p):
+    'E : TkActivate ID'
+    p[]
 
 # Error rule for syntax errors
 def p_error(p):
