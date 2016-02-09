@@ -53,7 +53,7 @@ reserved = {
 	"execute": 		"TkExecute",
 	"end": 			"TkEnd",
 	"store": 		"TkStore",
-	"recieve": 		"TkReceive",
+	"receive": 		"TkReceive",
 	"on": 			"TkOn",
 	"activate": 	"TkActivate",
 	"activation": 	"TkActivation",
