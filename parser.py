@@ -130,7 +130,7 @@ class Expresion:
 
 class Bin_Expresion(Expresion):
     def __init__(self,exp_izq,operador,exp_der):
-        self.type = "Bin_Expresion"
+        self.tipo = "Bin_Expresion"
         self.exp_izq = exp_izq
         self.exp_der = exp_der
         self.operador = operador
@@ -191,3 +191,12 @@ def p_statement_assign(p):
          | E TkStore F'''
     names[p[1]] = t[3]
 """
+
+# Gramatica libre de contexto
+
+def p_E_start(p):
+    '''Start : TkCreate Dec TkExecute InstC_list TkEnd
+             | TkExecute InstC_list TkEnd'''
+
+def p_E_Dec(p):
+    '''Dec : Type
