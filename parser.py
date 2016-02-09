@@ -50,6 +50,8 @@ def p_f_exp(p):
     'F : TkParabre E TkParcierra'
     p[0] = p[2]
 
+# Creo que no necesitamos el %prec porque tenemos un token especifico para el op unario
+
 def p_exp_menos(p):
     'E : TkResta E %prec TkMenos'
     p[0] = -p[2]
@@ -118,3 +120,76 @@ def p_error(p):
 
 # Build the parser
 parser = yacc.yacc()
+
+#############################################33
+
+# Estructura ejemplo arbol 
+
+class Expresion:
+    pass
+
+class Bin_Expresion(Expresion):
+    def __init__(self,exp_izq,operador,exp_der):
+        self.type = "Bin_Expresion"
+        self.exp_izq = exp_izq
+        self.exp_der = exp_der
+        self.operador = operador
+
+class Numero(Expresion):
+    def __init__(self,valor):
+        self.tipo = "numero"
+        self.valor = valor
+
+class Booleano(Expresion):
+    def __init__(self,valor):
+        self.tipo = "booleano"
+        self.valor = valor
+
+class Relacional(Expresion):
+    def __init__(self,valor):
+        self.tipo = "relacional"
+        self.valor = valor
+
+def p_E_grupo(p):
+    'E : LPAREN E RPAREN'
+    p[0] = p[2]
+
+def p_E_numero(p):
+    '''E : TkNum
+         | E TkSuma E
+         | E TkResta E
+         | E TkMult E
+         | E TkDiv E
+         | E TkMod E
+         | TkMenos E'''
+    p[0] = Numero(p[1])
+
+def p_E_booleano(p):
+    '''E : TkBool
+         | E TkIgual E
+         | E TkNoigual E
+         | E TkConjuncion E
+         | E TkDisyuncion E
+         | TkNegacion E'''
+    p[0] = Booleano(p[1])
+
+def p_E_relacional(p):
+    '''E : E TkIgual E
+         | E TkNoigual E
+         | E TkMenorigual E
+         | E TkMayorigual E
+         | E TkMenor E
+         | E TkMayor E'''
+    p[0] = Relacional(p[1])
+
+
+# Betancourt, esta seria nuestra declaracion para la instruccion TkStore?
+"""
+name = {}
+
+def p_statement_assign(p):
+    '''E : E TkStore E
+         | E TkStore T
+         | E TkStore F'''
+    names[p[1]] = t[3]
+"""
