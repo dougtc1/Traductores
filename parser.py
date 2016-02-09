@@ -150,9 +150,7 @@ class Relacional(Expresion):
         self.tipo = "relacional"
         self.valor = valor
 
-def p_E_grupo(p):
-    'E : LPAREN E RPAREN'
-    p[0] = p[2]
+# Verifica si te gusta mas que las reglas esten desglosadas o juntas
 
 def p_E_numero(p):
     '''E : TkNum
