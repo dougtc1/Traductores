@@ -1,23 +1,11 @@
-class nodo:
-	def __init__ (self,nodo=None,hijoIzq=None,hijoDer=None,tipo=None,padre=None):
-		self.nodo=nodo
-		self.hijoIzq=hijoIzq
-		self.hijoDer=hijoDer
-		self.tipo=tipo
-		self.padre=padre
+class Nodo:
+	def __init__(self, contenido=None, padre=None):
+		self.contenido = contenido
+		self.padre     = padre
+		self.hijos     = []
 
+	def __str__(self):
+		return str(self.contenido)
 
-class tipolBooleano(nodo):
-	def __init__ (self,nodo,hijoIzq,hijoDer,tipo="booleano",padre,resultado):
-		nodo.__init__(self,nodo,hijoIzq,hijoDer,tipo,padre)
-		self.resultado = resultado
-
-class tipolAritmetico(nodo):
-	def __init__ (self,nodo,hijoIzq,hijoDer,tipo="aritmetico",padre,resultado):
-		nodo.__init__(self,nodo,hijoIzq,hijoDer,tipo,padre)
-		self.resultado = resultado
-
-class tipolRelacional(nodo):
-	def __init__ (self,nodo,hijoIzq,hijoDer,tipo="relacional",padre,resultado):
-		nodo.__init__(self,nodo,hijoIzq,hijoDer,tipo,padre)
-		self.resultado = resultado
+	def addNode(self, contenido):
+		self.hijos.append(Nodo(contenido, self))

@@ -13,107 +13,6 @@ precedence = (
     ('right', 'TkMenos', 'TkNegacion')
 )
 
-######################## OPERACIONES ARITMETICAS ##############################
-def p_exp_suma(p):
-    'E : E TkSuma T'
-    p[0] = p[1] + p[3]
- 
-def p_exp_resta(p):
-    'E : E TkResta T'
-    p[0] = p[1] - p[3]
-
-def p_exp_mod(p):
-    'E : E TkMod T'
-    p[0] = p[1] % p[3]    
-
-def p_exp_t(p):
-    'E : T'
-    p[0] = p[1]
-
-def p_t_mult(p):
-    'T : T TkMult F'
-    p[0] = p[1] * p[3]
-
-def p_t_div(p):
-    'T : T TkDiv F'
-    p[0] = p[1] / p[3]
-
-def p_t_f(p):
-    'T : F'
-    p[0] = p[1]
-
-def p_f_num(p):
-    'F : TkNum'
-    p[0] = p[1]
-
-def p_f_exp(p):
-    'F : TkParabre E TkParcierra'
-    p[0] = p[2]
-
-# Creo que no necesitamos el %prec porque tenemos un token especifico para el op unario
-
-def p_exp_menos(p):
-    'E : TkResta E %prec TkMenos'
-    p[0] = -p[2]
-
-###############################################################################
-########################### OPERACIONES BOOLEANAS #############################
-def p_exp_conj(p):
-    'E : E TkConjuncion B'
-    p[0] = p[1] and p[3]
-
-def p_exp_disy(p):
-    'E : E TkDisyuncion B'
-    p[0] = p[1] or p[3]
-
-def p_exp_neg(p):
-    'E : TkNegacion E'
-    p[0] = not p[2]
-
-def p_exp_b(p):
-    'E : B'
-    p[0] = p[1]
-
-def p_b_bool(p):
-    'B : TkBool'
-    p[0] = p[1]
-
-def p_b_exp(p):
-    'B  : TkParabre E TkParcierra'
-    p[0] = p[2]
-
-###############################################################################
-########################## OPERACIONES RELACIONALES ###########################
-def p_exp_mayor(p):
-    '''E : E TkMayor T
-         | E TkMayor B'''
-    p[0] = p[1] > p[3]
-
-def p_exp_mayorigual(p):
-    '''E : E TkMayorigual T
-         | E TkMayorigual B'''
-    p[0] = p[1] >= p[3]
-
-def p_exp_menor(p):
-    '''E : E TkMenor T
-         | E TkMenor B'''
-    p[0] = p[1] < p[3]
-
-def p_exp_menorigual(p):
-    '''E : E TkMenorigual T
-         | E TkMenorigual B'''
-    p[0] = p[1] <= p[3]
-
-def p_exp_igual(p):
-    '''E : E TkIgual T
-         | E TkIgual B'''
-    p[0] = (p[1] = p[3])
-
-def p_exp_noigual(p):
-    '''E : E TkNoigual T
-         | E TkNoigual B'''
-    p[0] = (p[1] != p[3])
-
 ###############################################################################
 ################################ INSTRUCCIONES ################################
 
@@ -199,15 +98,17 @@ def p_statement_assign(p):
     names[p[1]] = t[3]
 """
 
-# Gramatica libre de contexto
+# Gramatica libre de contexto #################################################
+def p_lambda(p):
+    'lambda :'
+    pass
 
 def p_E_Start(p):
     '''Start : TkCreate Dec TkExecute InstC TkEnd
-             | TkExecute InstC_list TkEnd'''
+             | TkExecute InstC TkEnd'''
 
 def p_E_Dec(p):
-    '''Dec : Type TkBot ID_list TkEnd
-           | Type TkBot ID_list Comportamiento TkEnd'''
+    'Dec : Type TkBot ID_list Comportamiento TkEnd'
 
 def p_E_Type(p):
     '''Type : TkInt
@@ -220,13 +121,14 @@ def p_E_ID_list(p):
 
 def p_E_Comportamiento(p):
     '''Comportamiento : TkOn Condicion TkDospuntos InstRobot_list TkEnd
-                      | TkPass''' #Creo que hay que agregar una instruccion vacia (TkPass) para que esto tenga sentido
+                      | Comportamiento Comportamiento
+                      | lambda'''
 
 def p_E_Condicion(p):
     '''Condicion : TkActivation
                  | TkDeactivation
                  | TkBool
-                 | default''' #Debe ser Tkdefault o esto es algo cuyo comportamiento implementamos despues?
+                 | TkDefault''' #Debe ser Tkdefault o esto es algo cuyo comportamiento implementamos despues?
 
 def p_E_InstC(p):
     '''InstC : TkActivate ID_list
@@ -239,23 +141,61 @@ def p_E_InstC(p):
              | InstC InstC'''
 
 def p_E_InstRobot_list(p):
-    '''InstRobot_list : TkStore E TkPunto InstRobot_list
-                      | TkStore TkMe E TkPunto InstRobot_list
-                      | TkCollect TkPunto InstRobot_list
-                      | TkCollect TkAs ID_list TkPunto InstRobot_list
-                      | TkDrop E TkPunto InstRobot_list
-                      | TkDrop TkMe TkPunto InstRobot_list
-                      | TkUp TkPunto InstRobot_list
-                      | TkDown TkPunto InstRobot_list 
-                      | TkLeft TkPunto InstRobot_list
-                      | TkRight TkPunto InstRobot_list
-                      | TkUp E TkPunto InstRobot_list
-                      | TkDown E TkPunto InstRobot_list
-                      | TkLeft E TkPunto InstRobot_list
-                      | TkRight E TkPunto InstRobot_list
-                      | TkRead TkPunto InstRobot_list
-                      | TkRead TkAs ID_list TkPunto InstRobot_list
-                      | TkSend TkPunto InstRobot_list
-                      | TkReceive TkPunto InstRobot_list'''
+    '''InstRobot_list : InstRobot_list InstRobot_list
+                      | TkStore Expr TkPunto 
+                      | TkCollect TkPunto 
+                      | TkCollect TkAs ID_list TkPunto 
+                      | TkDrop E TkPunto 
+                      | Dir TkPunto
+                      | Dir Expr TkPunto
+                      | TkRead TkPunto 
+                      | TkRead TkAs ID_list TkPunto 
+                      | TkSend TkPunto 
+                      | TkReceive TkPunto'''
 
+def p_E_Dir(p):
+    '''Dir : TkUp
+           | TkDown
+           | TkLeft
+           | TkRight'''
+
+def p_E_Expr(p):
+    '''Expr : AritBinexpr
+            | AritUnexpr
+            | BoolBinexpr
+            | BoolUnexpr
+            | TkParabre Expr TkParcierra
+            | TkNum
+            | TkBool
+            | TkMe'''
+
+def p_E_AritBinexpr(p):
+    '''Binexpr : Expr TkSuma Expr
+               | Expr TkResta Expr
+               | Expr TkMult Expr
+               | Expr TkDiv Expr
+               | Expr TkMod Expr
+               | Expr TkMayor Expr
+               | Expr TkMayorigual Expr
+               | Expr TkMenor Expr
+               | Expr TkMenorigual Expr
+               | Expr TkIgual Expr
+               | Expr TkNoigual Expr'''
+
+def p_E_BoolBinexpr(p):
+    '''BoolBinexpr : Expr TkConjuncion Expr
+                   | Expr TkDisyuncion Expr
+                   | Expr TkMayor Expr
+                   | Expr TkMayorigual Expr
+                   | Expr TkMenor Expr
+                   | Expr TkMenorigual Expr
+                   | Expr TkIgual Expr
+                   | Expr TkNoigual Expr'''
+
+def p_E_AritUnexpr(p):
+    'Unexpr : TkResta Expr %prec TkMenos'
+
+def p_E_BoolUnexpr(p):
+    'BoolUnexpr : TkNegacion Expr'
+    
 # Parece que faltan 5 palabras que estan en la lista tokens de lexBOT.py y no estan en las palabras reservadas/simbolos reconocidos
