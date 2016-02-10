@@ -48,3 +48,9 @@ class IteracionIndef(Inst):
         self.condicion = condicion
         self.instruccion = instruccion
 
+class Comportamiento(Inst):
+    def __init__(self, condicion, instruccion):
+        self.condicion = condicion
+        self.instruccion = instruccion
+
+
