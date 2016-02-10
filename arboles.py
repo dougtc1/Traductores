@@ -7,10 +7,26 @@ class ArbolBin(Expr):
         self.left = left
         self.right = right
         self.op = op
+        
+class ArbolUn(Expr):
+    def __init__(self,tipo=None,operando,operador):
+        self.type = tipo
+        self.operando = operando
+        self.operador = operador
 
 class Numero(Expr):
     def __init__(self,value):
         self.type = "Numero"
+        self.value = value
+
+class Bool(Expr):
+    def __init__(self,value):
+        self.type = "Bool"
+        self.value = value
+
+class Ident(Expr):
+    def __init__(self,value):
+        self.type = "Identificador"
         self.value = value
 
 class ArbolInstr(Instr):
@@ -21,20 +37,5 @@ class ArbolInstr(Instr):
             self.children = [ ]
         self.tipoInstruccion = tipoInstruccion
 
-"""
-def p_expression_binop(p):
-    '''expression : expression PLUS expression
-                  | expression MINUS expression
-                  | expression TIMES expression
-                  | expression DIVIDE expression'''
-
-    p[0] = BinOp(p[1],p[2],p[3])
-
-def p_expression_group(p):
-    'expression : LPAREN expression RPAREN'
-    p[0] = p[2]
-
-def p_expression_number(p):
-    'expression : NUMBER'
-    p[0] = Number(p[1])
-    """
+class CondicionalIf(Inst):
+    def __init__(self, )

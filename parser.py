@@ -175,15 +175,18 @@ def p_instruccion_Direccion(p):
                  | TkDown
                  | TkLeft
                  | TkRight'''
+    p[0] = ArbolInst(p[1])
 
 def p_expresion_Expr(p):
     '''Expr : ExprAritmetica
             | ExprBooleana
             | ExprRelacional'''
+    p[0] = ArbolInst(p[1])
 
 def p_expresion_RangoRel(p):
     '''RangoRel : ExprAritmetica
                 | ExprBooleana'''
+    p[0] = ArbolInst(p[1])
 
 def p_expresion_ExprAritmetica(p):
     '''ExprAritmetica : E TkSuma E
@@ -192,42 +195,60 @@ def p_expresion_ExprAritmetica(p):
                       | E TkDiv E
                       | E TkMod E
                       | E'''
+    if (len(p) == 4):
+        p[0] = ArbolBin("Aritmetica", p[1], p[3], p[2])
+    else:
+        p[0] = p[1]
 
 def p_expresion_AritParentizada(p):
-    'E : (ExprAritmetica)'
+    'E : TkParabre ExprAritmetica TkParcierra'
+    p[0] = p[2]
 
 def p_expresion_AritVariable(p):
     'E : TkIdent'
+    p[0] = Ident(p[1])
 
 def p_expresion_Numerica(p):
     'E : TkNum'
+    p[0] = Numero(p[1])
 
 def p_expresion_Negativa(p):
     'E : TkResta E %prec TkMenos'
-
+    p[0] = Numero(-p[1])
+    
 def p_expresion_EtoArit(p):
     'E : ExprAritmetica'
+    p[0] = p[1]
 
 def p_expresion_ExprBooleana(p):
     '''ExprBooleana : B TkConjuncion B
                     | B TkDisyuncion B
                     | ExprRelacional
                     | B'''
+    if (len(p) == 4):
+        p[0] = ArbolBin("Booleano", p[1], p[3], p[2])
+    else:
+        p[0] = p[1]
 
 def p_expresion_BoolParentizada(p):
-    'B : (ExprBooleana)'
+    'B : TkParabre ExprBooleana TkParcierra'
+    p[0] = p[2]
 
 def p_expresion_BoolVariable(p):
     'B : TkIdent'
+    p[0] = Ident(p[1])
 
 def p_expresion_Booleana(p):
     'B : TkBool'
+    p[0] = Bool(p[1])
 
 def p_expresion_Negada(p):
     'B : TkNegacion B'
+    p[0] = ArbolUn("Booleana", p[2], p[1])
 
 def p_expresion_BtoBool(p):
     'B : ExprBooleana'
+    p[0] = p[1]
 
 def p_expresion_Relacional(p):
     '''ExprRelacional : RangoRel TkMayor RangoRel
@@ -235,6 +256,7 @@ def p_expresion_Relacional(p):
                       | RangoRel TkMenor RangoRel
                       | RangoRel TkMenorigual RangoRel
                       | RangoRel TkIgual RangoRel
-                      | RangoRel TkNoigual RangoRel'''   ## DOUGLAS ME ILUMINE NOJODAAAAAAAAA ##################
+                      | RangoRel TkNoigual RangoRel'''   
+    p[0] = ArbolBin("Relacional", p[1], p[3], p[2])
 
 # Parece que faltan 5 palabras que estan en la lista tokens de lexBOT.py y no estan en las palabras reservadas/simbolos reconocidos
