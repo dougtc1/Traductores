@@ -56,34 +56,6 @@ class Relacional(Expresion):
         self.tipo = "relacional"
         self.valor = valor
 
-def p_E_numero(p):
-    '''E : TkNum
-         | E TkSuma E
-         | E TkResta E
-         | E TkMult E
-         | E TkDiv E
-         | E TkMod E
-         | TkMenos E'''
-    p[0] = Numero(p[0])
-
-def p_E_booleano(p):
-    '''E : TkBool
-         | E TkIgual E
-         | E TkNoigual E
-         | E TkConjuncion E
-         | E TkDisyuncion E
-         | TkNegacion E'''
-    p[0] = Booleano(p[0])
-
-def p_E_relacional(p):
-    '''E : E TkIgual E
-         | E TkNoigual E
-         | E TkMenorigual E
-         | E TkMayorigual E
-         | E TkMenor E
-         | E TkMayor E'''
-    p[0] = Relacional(p[0])
-
 """
 ###
 ### Betancourt, estas funcionalidades las tenemos que hacer pero para otra entrega, cierto?
@@ -99,6 +71,9 @@ def p_statement_assign(p):
 """
 
 # Gramatica libre de contexto #################################################
+
+ASA = ArbolInst()
+
 def p_lambda(p):
     'lambda :'
     pass
@@ -106,31 +81,50 @@ def p_lambda(p):
 def p_estructura_Start(p):
     '''Start : TkCreate Dec TkExecute InstC TkEnd
              | TkExecute InstC TkEnd'''
-    p[0] = Nodo("S", None, [Nodo(p[1]), Nodo(p[2]), Nodo(p[3]), Nodo(p[4]), ])
+    if (len(p) == 6):
+        p[0] = ASA([p[1], p[2], p[3], p[4], p[5]])
+    else:
+        p[0] = ASA([p[1], p[2], p[3]])
 
 def p_estructura_Declaraciones(p):
     ''''Declaraciones : Declaraciones Declaraciones
                       | Type TkBot ID_list Comportamiento TkEnd'''
+    if (len(p) == 2):
+        p[0] = ArbolInst([p[1], p[2]], "SECUENCIACION")
+    else:
+        p[0] = ArbolInst([p[1], p[2], p[3], p[4], p[5]])
 
 def p_expresion_Type(p):
     '''Type : TkInt
             | TkBool
             | TkChar'''
+    p[0] = ArbolInst([p[1]])
 
 def p_expresion_ID_list(p):
     '''ID_list : ID_list TkComa ID_list
                | TkIdent'''
+    if (len(p) == 4):
+        p[0] = ArbolInst([p[1], p[2], p[3]])
+    else:
+        p[0] = ArbolInst([p[1]])
 
 def p_instruccion_Comportamiento(p):
     '''Comportamiento : Comportamiento Comportamiento
                       | TkOn Condicion TkDospuntos InstRobot TkEnd
                       | lambda'''
+    if (len(p) == 3):
+        p[0] = ArbolInst([p[1], p[2]])
+    elif (len(p) == 6):
+        p[0] ArbolInst([p[1], p[2], p[3], p[4],p[5]])
+    else:
+        pass
 
 def p_instruccion_Condicion(p):
     '''Condicion : TkActivation
                  | TkDeactivation
                  | TkBool
                  | TkDefault'''
+
 
 def p_instruccion_InstC(p):
     '''InstC : TkActivate ID_list
@@ -196,6 +190,7 @@ def p_expresion_EtoArit(p):
 def p_expresion_ExprBooleana(p):
     '''ExprBooleana : B TkConjuncion B
                     | B TkDisyuncion B
+                    | ExprRelacional
                     | B'''
 
 def p_expresion_BoolParentizada(p):
