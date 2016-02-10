@@ -89,7 +89,7 @@ def p_estructura_Start(p):
 def p_estructura_Declaraciones(p):
     ''''Declaraciones : Declaraciones Declaraciones
                       | Type TkBot ID_list Comportamiento TkEnd'''
-    if (len(p) == 2):
+    if (len(p) == 3):
         p[0] = ArbolInst([p[1], p[2]], "SECUENCIACION")
     else:
         p[0] = ArbolInst([p[1], p[2], p[3], p[4], p[5]])
@@ -98,7 +98,7 @@ def p_expresion_Type(p):
     '''Type : TkInt
             | TkBool
             | TkChar'''
-    p[0] = ArbolInst([p[1]])
+    p[0] = ArbolInst(p[1])
 
 def p_expresion_ID_list(p):
     '''ID_list : ID_list TkComa ID_list
@@ -106,7 +106,7 @@ def p_expresion_ID_list(p):
     if (len(p) == 4):
         p[0] = ArbolInst([p[1], p[2], p[3]])
     else:
-        p[0] = ArbolInst([p[1]])
+        p[0] = ArbolInst(p[1])
 
 def p_instruccion_Comportamiento(p):
     '''Comportamiento : Comportamiento Comportamiento
@@ -122,9 +122,16 @@ def p_instruccion_Comportamiento(p):
 def p_instruccion_Condicion(p):
     '''Condicion : TkActivation
                  | TkDeactivation
-                 | TkBool
+                 | ExprBooleana
                  | TkDefault'''
-
+    if (p[1] == 'TkActivation'):
+        p[0] = ArbolInst(p[1], "ACTIVACION")
+    elif (p[1] == 'TkDeactivation'):
+        p[0] = ArbolInst(p[1], "DESACTIVACION")
+    elif (p[1] == 'TkDefault'):
+        p[0] = ArbolInst(p[1], "DEFAULT")
+    else:
+        p[0] = ArbolInst(p[1], "EXPRESION BOOLEANA")
 
 def p_instruccion_InstC(p):
     '''InstC : TkActivate ID_list
@@ -135,6 +142,14 @@ def p_instruccion_InstC(p):
              | TkWhile ExprBooleana TkDospuntos InstC TkEnd
              | Start
              | InstC InstC'''
+    if (len(p) == 2):
+        p[0] = ArbolInst(p[1])
+    elif (len(p) == 3):
+        p[0] = ArbolInst([p[1], p[2]])
+    elif (len(p) == 6):
+        p[0] = ArbolInst([p[1], p[2], p[3], p[4], p[5]])
+    elif (len(p) == 8):
+        p[0] = ArbolInst([p[1], p[2], p[3], p[4], p[5], p[6], p[7]])
 
 def p_instruccion_InstRobot(p):
     '''InstRobot : InstRobot InstRobot
@@ -148,6 +163,12 @@ def p_instruccion_InstRobot(p):
                  | TkRead TkAs ID_list TkPunto 
                  | TkSend TkPunto 
                  | TkReceive TkPunto'''
+    if (len(p) == 3):
+        p[0] = ArbolInst([p[1], p[2]])
+    elif (len(p) == 4):
+        p[0] = ArbolInst([p[1], p[2], p[3]])
+    elif (len(p) == 5):
+        p[0] = ArbolInst([p[1], p[2], p[3], p[4]])
 
 def p_instruccion_Direccion(p):
     '''Direccion : TkUp
