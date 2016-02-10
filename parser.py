@@ -124,32 +124,35 @@ def p_instruccion_Condicion(p):
                  | TkDeactivation
                  | ExprBooleana
                  | TkDefault'''
-    if (p[1] == 'TkActivation'):
-        p[0] = ArbolInst(p[1], "ACTIVACION")
-    elif (p[1] == 'TkDeactivation'):
-        p[0] = ArbolInst(p[1], "DESACTIVACION")
-    elif (p[1] == 'TkDefault'):
-        p[0] = ArbolInst(p[1], "DEFAULT")
-    else:
-        p[0] = ArbolInst(p[1], "EXPRESION BOOLEANA")
+    p[0] = ArbolInst(p[1])
+
 
 def p_instruccion_InstC(p):
-    '''InstC : TkActivate ID_list
-             | TkDeactivate ID_list
-             | TkAdvance ID_list
-             | TkIf ExprBooleana TkDospuntos InstC TkEnd
-             | TkIf ExprBooleana TkDospuntos InstC TkElse InstC TkEnd
-             | TkWhile ExprBooleana TkDospuntos InstC TkEnd
+    '''InstC : TkActivate ID_list TkPunto
+             | TkDeactivate ID_list TkPunto
+             | TkAdvance ID_list TkPunto
+             | InstrIf
+             | InstrWhile
              | Start
              | InstC InstC'''
     if (len(p) == 2):
         p[0] = ArbolInst(p[1])
     elif (len(p) == 3):
         p[0] = ArbolInst([p[1], p[2]])
-    elif (len(p) == 6):
-        p[0] = ArbolInst([p[1], p[2], p[3], p[4], p[5]])
-    elif (len(p) == 8):
-        p[0] = ArbolInst([p[1], p[2], p[3], p[4], p[5], p[6], p[7]])
+    elif (len(p) == 4):
+        p[0] = ArbolInst([p[1], p[2], p[3]])
+
+def p_instruccion_InstrIf(p):
+    '''InstrIf : TkIf ExprBooleana TkDospuntos InstC TkEnd 
+               | TkIf ExprBooleana TkDospuntos InstC TkElse TkDospuntos InstC end'''
+    if (len(p) == 6):
+        p[0] = CondicionalIf(p[2], p[4])
+    else:
+        p[0] = CondicionalIf(p[2], p[4], p[7])
+
+def p_instruccion_InstrWhile(p):
+    'InstrWhile : TkWhile ExprBooleana TkDospuntos InstC TkEnd'
+    p[0] = IteracionIndef(p[2], p[4])
 
 def p_instruccion_InstRobot(p):
     '''InstRobot : InstRobot InstRobot

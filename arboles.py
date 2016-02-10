@@ -38,4 +38,13 @@ class ArbolInstr(Instr):
         self.tipoInstruccion = tipoInstruccion
 
 class CondicionalIf(Inst):
-    def __init__(self, )
+    def __init__(self, condicion, instruccion1, instruccion2=None):
+        self.condicion = condicion
+        self.instruccion1 = instruccion1
+        self.instruccion2 = instruccion2
+
+class IteracionIndef(Inst):
+    def __init__(self, condicion, instruccion):
+        self.condicion = condicion
+        self.instruccion = instruccion
+
