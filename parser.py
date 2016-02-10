@@ -124,32 +124,36 @@ def p_instruccion_Condicion(p):
                  | TkDeactivation
                  | ExprBooleana
                  | TkDefault'''
-    if (p[1] == 'TkActivation'):
-        p[0] = ArbolInst(p[1], "ACTIVACION")
-    elif (p[1] == 'TkDeactivation'):
-        p[0] = ArbolInst(p[1], "DESACTIVACION")
-    elif (p[1] == 'TkDefault'):
-        p[0] = ArbolInst(p[1], "DEFAULT")
-    else:
-        p[0] = ArbolInst(p[1], "EXPRESION BOOLEANA")
+
+    p[0] = ArbolInst(p[1])
 
 def p_instruccion_InstC(p):
-    '''InstC : TkActivate ID_list
-             | TkDeactivate ID_list
-             | TkAdvance ID_list
+    '''InstC : TkActivate ID_list TkPunto
+             | TkDeactivate ID_list TkPunto
+             | TkAdvance ID_list TkPunto
              | TkIf ExprBooleana TkDospuntos InstC TkEnd
              | TkIf ExprBooleana TkDospuntos InstC TkElse InstC TkEnd
              | TkWhile ExprBooleana TkDospuntos InstC TkEnd
-             | Start
-             | InstC InstC'''
-    if (len(p) == 2):
+             | InstC InstC
+             | InstC
+             | Start'''
+    
+    if (p[1] == 'TkActivate'):
+        p[0] = ArbolInst(p[1], p[2], p[3], "ACTIVACION")
+    elif (p[1] == 'TkDeactivate'):
+        p[0] = ArbolInst(p[1], p[2], p[3], "DESACTIVACION")
+    elif (p[1] == 'TkAdvance'):
+        p[0] = ArbolInst(p[1], p[2], p[3], "AVANCE")
+    elif (p[1] == 'TkIf' and p[5] != 'TkElse'):
+        p[0] = ArbolInst(p[1], p[2], p[3], p[4], p[5], "CONDICIONAL")
+    elif (p[1] == 'TkIf' and p[5] == 'TkElse'):
+        p[0] = ArbolInst(p[1], p[2], p[3], p[4], p[5], p[6], p[7], "CONDICIONAL")
+    elif (p[1] == 'TkWhile'):
+        p[0] = ArbolInst(p[1], p[2], p[3], p[4], p[5], "REPETICION_INDET")
+    elif (len(p) == 2): # No hay peo porque en los otros casos que el len es igual a 2 son casos que ya deberian de haber entrado
+        p[0] = ArbolInst(p[1], p[2], "SECUENCIACION")
+    else:
         p[0] = ArbolInst(p[1])
-    elif (len(p) == 3):
-        p[0] = ArbolInst([p[1], p[2]])
-    elif (len(p) == 6):
-        p[0] = ArbolInst([p[1], p[2], p[3], p[4], p[5]])
-    elif (len(p) == 8):
-        p[0] = ArbolInst([p[1], p[2], p[3], p[4], p[5], p[6], p[7]])
 
 def p_instruccion_InstRobot(p):
     '''InstRobot : InstRobot InstRobot
@@ -157,8 +161,8 @@ def p_instruccion_InstRobot(p):
                  | TkCollect TkPunto 
                  | TkCollect TkAs ID_list TkPunto 
                  | TkDrop ExprAritmetica TkPunto 
-                 | Dir TkPunto
-                 | Dir ExprAritmetica TkPunto
+                 | Direccion TkPunto
+                 | Direccion ExprAritmetica TkPunto
                  | TkRead TkPunto 
                  | TkRead TkAs ID_list TkPunto 
                  | TkSend TkPunto 
