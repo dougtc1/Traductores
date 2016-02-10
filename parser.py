@@ -68,7 +68,7 @@ def p_expresion_ID_list(p):
         p[0] = ArbolInst([p[1], p[2], p[3]])
     else:
         p[0] = ArbolInst(p[1])
-"""
+
 def p_instruccion_Comportamiento(p):
     '''Comportamiento : Comportamiento Comportamiento
                       | TkOn Condicion TkDospuntos InstRobot TkEnd
@@ -79,7 +79,7 @@ def p_instruccion_Comportamiento(p):
         p[0] = Comportamiento(p[2], p[4]) # ESTO ES NUEVO, funciona como el del while
     else:
         pass
-"""
+
 def p_instruccion_Condicion(p):
     '''Condicion : TkActivation
                  | TkDeactivation
@@ -109,15 +109,15 @@ def p_instruccion_InstC(p):
 
 
 def p_instruccion_InstrIf(p):
-    '''InstrIf : TkIf ExprBooleana TkDospuntos InstC TkEnd 
-               | TkIf ExprBooleana TkDospuntos InstC TkElse TkDospuntos InstC end'''
+    '''InstrIf : TkIf Expr TkDospuntos InstC TkEnd 
+               | TkIf Expr TkDospuntos InstC TkElse TkDospuntos InstC end'''
     if (len(p) == 6):
         p[0] = CondicionalIf(p[2], p[4], "CONDICIONAL")
     else:
         p[0] = CondicionalIf(p[2], p[4], p[7], "CONDICIONAL")
 
 def p_instruccion_InstrWhile(p):
-    'InstrWhile : TkWhile ExprBooleana TkDospuntos InstC TkEnd'
+    'InstrWhile : TkWhile Expr TkDospuntos InstC TkEnd'
     p[0] = IteracionIndef(p[2], p[4], "REPETICION_INDET")
 
 def p_instruccion_InstRobot(p):
@@ -125,9 +125,9 @@ def p_instruccion_InstRobot(p):
                  | TkStore Expr TkPunto 
                  | TkCollect TkPunto 
                  | TkCollect TkAs ID_list TkPunto 
-                 | TkDrop ExprAritmetica TkPunto 
+                 | TkDrop Expr TkPunto 
                  | Direccion TkPunto
-                 | Direccion ExprAritmetica TkPunto
+                 | Direccion Expr TkPunto
                  | TkRead TkPunto 
                  | TkRead TkAs ID_list TkPunto 
                  | TkSend TkPunto 
@@ -165,6 +165,8 @@ def p_expresion_Expr(p):
              | Expr TkMayorigual Expr
              | Expr TkMenorigual Expr
              | TkParabre Expr TkParcierra
+             | TkResta Expr %prec TkMenos
+             | TkNegacion Expr
              | TkNum
              | TkIdent
              | TkBool'''
@@ -197,22 +199,16 @@ def p_expresion_Expr(p):
         p[0] = ArbolBin("Relacional",p[0], p[1], p[3])
     elif (p[1] == "(" and p[3] == ")"):
         p[0] = p[2]
+    elif (p[1] == "-" and len(p) == 3):
+        p[0] = -p[2]
+    elif (p[1] == "~" and len(p) == 3):
+        p[0] = ArbolUn("Booleana", p[2], p[1])
     elif (len(p) == 2 and int(p[1])):
         p[0] = Numero(p[1])
     elif (len(p) == 2 and re.search(([a-zA-Z][a-zA-Z0-9_]*),p[1])):
         p[0] = Ident(p[1])
     elif (p[1] == 'True' or p[1] == 'False'):
         p[0] = Bool(p[1])
-
-
-
-def p_expresion_Negativa(p):
-    'E : TkResta E %prec TkMenos'
-    p[0] = Numero(-p[1])
-
-def p_expresion_Negada(p):
-    'E : TkNegacion E'
-    p[0] = ArbolUn("Booleana", p[2], p[1])
 
 
 ##################################################################################################
