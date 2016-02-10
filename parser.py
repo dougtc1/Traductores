@@ -17,20 +17,6 @@ precedence = (
 
 ###############################################################################
 ################################ INSTRUCCIONES ################################
-"""
-###
-### Betancourt, estas funcionalidades las tenemos que hacer pero para otra entrega, cierto?
-###
-
-name = {}
-
-def p_statement_assign(p):
-    '''E : E TkStore E
-         | E TkStore T
-         | E TkStore F'''
-    names[p[1]] = t[3]
-"""
-
 # Gramatica libre de contexto #################################################
 
 ASA = ArbolInst()
@@ -76,7 +62,7 @@ def p_instruccion_Comportamiento(p):
     if (len(p) == 3):
         p[0] = ArbolInst([p[1], p[2]])
     elif (len(p) == 6):
-        p[0] = Comportamiento(p[2], p[4]) # ESTO ES NUEVO, funciona como el del while
+        p[0] = ArbolInst([p[1], p[2], p[3], p[4], p[5]]) # ESTO ES NUEVO, funciona como el del while
     else:
         pass
 
@@ -97,12 +83,12 @@ def p_instruccion_InstC(p):
              | InstC InstC'''
 
     if (p[1] == 'TkActivate'):
-        p[0] = ArbolInst(p[1], p[2], p[3], "ACTIVACION")
+        p[0] = Activate([p[1], p[2], p[3]], p[2])
     elif (p[1] == 'TkDeactivate'):
-        p[0] = ArbolInst(p[1], p[2], p[3], "DESACTIVACION")
+        p[0] = Deactivate([p[1], p[2], p[3]], p[2])
     elif (p[1] == 'TkAdvance'):
-        p[0] = ArbolInst(p[1], p[2], p[3], "AVANCE")
-    elif (len(p) == 3): # No hay peo porque en los otros casos que el len es igual a 2 son casos que ya deberian de haber entrado
+        p[0] = Advance([p[1], p[2], p[3]], p[2])
+    elif (len(p) == 3): 
         p[0] = ArbolInst(p[1], p[2], "SECUENCIACION")
     else:
         p[0] = ArbolInst(p[1])
@@ -112,13 +98,13 @@ def p_instruccion_InstrIf(p):
     '''InstrIf : TkIf Expr TkDospuntos InstC TkEnd 
                | TkIf Expr TkDospuntos InstC TkElse TkDospuntos InstC end'''
     if (len(p) == 6):
-        p[0] = CondicionalIf(p[2], p[4], "CONDICIONAL")
+        p[0] = CondicionalIf([p[1], p[2], p[3], p[4], p[5]], p[2], p[4])
     else:
-        p[0] = CondicionalIf(p[2], p[4], p[7], "CONDICIONAL")
+        p[0] = CondicionalIf([p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8]], p[2], p[4], p[7])
 
 def p_instruccion_InstrWhile(p):
     'InstrWhile : TkWhile Expr TkDospuntos InstC TkEnd'
-    p[0] = IteracionIndef(p[2], p[4], "REPETICION_INDET")
+    p[0] = IteracionIndef([p[1], p[2], p[3], p[4], p[5]], p[2], p[4])
 
 def p_instruccion_InstRobot(p):
     '''InstRobot : InstRobot InstRobot
@@ -170,7 +156,6 @@ def p_expresion_Expr(p):
              | TkNum
              | TkIdent
              | TkBool'''
-
     if (p[2] == "+"):
         p[0] = ArbolBin("Aritmetica",p[0], p[1], p[3])
     elif (p[2] == "-"):

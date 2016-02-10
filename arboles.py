@@ -37,20 +37,30 @@ class ArbolInstr(Instr):
             self.children = [ ]
         self.tipoInstruccion = tipoInstruccion
 
-class CondicionalIf(Inst):
-    def __init__(self, condicion, instruccion1, instruccion2=None):
+class CondicionalIf(ArbolInstr):
+    def __init__(self, children, condicion, instruccion1, instruccion2=None):
+        ArbolInstr.__init__(self, children, "CONDICIONAL")
         self.condicion = condicion
         self.instruccion1 = instruccion1
         self.instruccion2 = instruccion2
 
-class IteracionIndef(Inst):
-    def __init__(self, condicion, instruccion):
+class IteracionIndef(ArbolInstr):
+    def __init__(self, children, condicion, instruccion):
+        ArbolInstr.__init__(self, children, "ITERACION_INDEF")
         self.condicion = condicion
         self.instruccion = instruccion
 
-class Comportamiento(Inst):
-    def __init__(self, condicion, instruccion):
-        self.condicion = condicion
-        self.instruccion = instruccion
+class Activate(ArbolInstr):
+    def __init__(self, children, id_list):
+        ArbolInstr.__init__(self, children, "ACTIVACION")
+        self.id_list = id_list
 
+class Deactivate(ArbolInstr):
+    def __init__(self, children, id_list):
+        ArbolInstr.__init__(self, children, "DESACTIVACION")
+        self.id_list = id_list
 
+class Advance(ArbolInstr):
+    def __init__(self, children, id_list):
+        ArbolInstr.__init__(self, children, "AVANCE")
+        self.id_list = id_list
