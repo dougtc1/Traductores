@@ -1,0 +1,421 @@
+\documentclass[a4paper, 10pt]{article}
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc} 
+\usepackage{ragged2e}
+\usepackage{tikz}
+\usepackage{forest}
+\usetikzlibrary{arrows}
+\usetikzlibrary{automata, positioning}
+\usepackage{lipsum}
+
+\newcommand\blfootnote[1]{%
+  \begingroup
+  \renewcommand\thefootnote{}\footnote{#1}%
+  \addtocounter{footnote}{-1}%
+  \endgroup
+}
+
+\title{Etapa 2: Análisis Sintáctico}
+\date{Enero - Marzo 2016}
+\author{Benjamin Amos, Douglas Torres}
+
+\begin{document}
+	
+	\maketitle
+	\pagenumbering{gobble}
+	\newpage
+	\pagenumbering{arabic}
+	
+	\section{Detalles de Implementacion}
+		
+		\par	
+		\medskip	
+		Para la implementación de esta
+		primera etapa del desarrollo de un interprete
+		del lenguaje de programación 'BOT', se utilizó
+		el lenguaje de \textit{scripting} orientado a objetos
+		\emph{Python}, el cual cuenta con una herramienta
+		generadora de analizadores lexicográficos y sintácticos
+		llamada \emph{PLY}.
+		
+		\par
+		\medskip
+		La implementación del analizador lexicográfico fue dividida
+		en tres partes. Una para el manejo de la herramienta (el '\emph{lexer}'),
+		otra para el manejo de la estructura de datos, y una última para el 
+		programa principal. Esto son tres archivos, \textbf{lexBot.py}, \textbf{classes.py}
+		y \textbf{main.py} respectivamente.
+		
+		\subsection{lexBot.py}
+		
+			\par
+			\medskip
+			En este archivo se encuentran las reglas lexicográficas respecto a los tokens
+			que se admiten en el lenguaje '\emph{BOT}'. Al inicio se observa una declaración
+			global de un objeto de tipo \textit{TokenList}, el cual es una estructura de datos
+			que será explicada en la sección del archivo \textbf{classes.py}. Se encuentra
+			aquí para registrar el manejo de errores. A su vez se encuentra la declaración global
+			de la variable \textit{content} que contiene el archivo de entrada que será analizado
+			por el lexer en un string. 
+			
+		\subsection{classes.py}
+		
+			\par
+			\medskip
+			Este archivo contiene las estructuras de datos utilizadas para esta etapa, las cuales
+			son \textbf{Token} y \textbf{TokenList}.
+			
+			\subsubsection{Token}
+			
+				\par
+				\medskip
+				La clase \textbf{Token} define un objeto que corresponde a cada token reconocido
+				por el lenguaje y cuyos atributos son un nombre, fila y columna en las que se 
+				encuentra el token en el código recibido por la entrada, y un argumento en el caso
+				de que el token sea de tipo numérico, caracter o identificador (\textit{name}, \textit{row},
+				\textit{column} y \textit{arg} respectivamente).
+			
+			\subsubsection{TokenList}
+			
+				\par
+				\medskip
+				Esta clase contiene dos listas, \textit{TokList} y \textit{ErrList}, una para almacenar
+				todos los tokens encontrados y otra para almacenar errores. Se implementaron métodos sobre
+				esta clase para añadir tokens o errores a sus listas respectivas (\textit{addTok} y \textit{addErr}) 
+				y para imprimir los tokens o errores de cada lista (\textit{printTok} y \textit{printErr}). 
+				Por último, un método para verificar si la lista de errores está vacía (\textit{notErr}). 
+				Esto indica que, si la lista de errores está vacía, la ejecución arrojará una salida correcta.
+			
+		\subsection{main.py}
+			
+			\par
+			\medskip
+			Programa principal en el que ocurre la ejecución del análisis lexicográfico. Se recibe un 
+			archivo de entrada y se almacena su contenido para el análisis. La ejecución consiste en dos
+			recorridos al contenido del archivo, una para la detección de errores y, si no se encontró
+			error alguno, se recorre nuevamente para detectar los tokens, almacenarlos e imprimirlos.
+	
+	\newpage			
+	\section{Sección Teórico-Práctica}
+		
+		\par
+		\medskip
+		En esta sección se presenta el desarrollo y respuestas para las preguntas propuestas para esta 
+		etapa.
+		
+		\bigskip
+		\begin{enumerate}
+			\item Basados en la gramática \textit{G1} dada:
+			\begin{enumerate}
+				\item Para demostrar que la frase $\textit{NUM} + \textit{NUM} + \textit{NUM}$ es ambigua,
+				mostraremos que existen dos árboles de derivación distintos que representan a la frase:
+				\\\
+				\begin{center}
+				\begin{forest}
+					[\textit{E}
+						[\textit{E}
+							[\textit{E}
+								[\textit{NUM}]
+							]
+							[$+$]
+							[\textit{E}
+								[\textit{NUM}]
+							]
+						]						
+						[$+$]
+						[\textit{E}
+							[\textit{NUM}]
+						]
+					]
+				\end{forest}
+				\qquad
+				\begin{forest}
+					[\textit{E}
+						[\textit{E}
+							[\textit{NUM}]
+						]
+						[$+$]
+						[\textit{E}
+							[\textit{E}
+								[\textit{NUM}]
+							]
+							[$+$]
+							[\textit{E}
+								[\textit{NUM}]							
+							]
+						]
+					]
+				\end{forest}
+				\end{center}
+			Notemos entonces que la frase en cuestión es ambigua.\\
+			
+			\item Sean \textit{Izq}$($\textit{G1}$)$ y \textit{Der}$($\textit{G1}$)$ definidas 
+			de la siguiente manera:\\
+			\begin{itemize}
+				\item \textit{Izq}$($\textit{G1}$)$\emph{:} \textit{Expr} $\rightarrow$ \textit{Expr} $+$ \textit{Expr$^{'}$}\\
+				$\hphantom{\quad}\hspace{61pt}|$ \, \textit{Expr$^{'}$}\\ $\hphantom{\quad}\hspace{29pt}$ 
+				\textit{Expr$^{'}$} $\rightarrow$ \textit{NUM} \\
+				\item \textit{Der}$($\textit{G1}$)$\emph{:} \textit{Expr} $\rightarrow$ \textit{Expr$^{'}$} $+$ \textit{Expr}\\
+				$\hphantom{\quad}\hspace{61pt}|$ \, \textit{Expr$^{'}$}\\ $\hphantom{\quad}\hspace{29pt}$ 
+				\textit{Expr$^{'}$} $\rightarrow$ \textit{NUM}\\
+			\end{itemize}
+			
+			\item En efecto, si importa la forma en la que se asocian las expresiones en esta gramática. Veamos con
+			un ejemplo por qué es relevante. Supongamos que el alfabeto acepta los operadores $-$ y $\div$. Sea la expresión
+			$\textit{NUM} - \textit{NUM} \div \textit{NUM}$. Construyamos los árboles de derivación respectivos a 
+			\textit{Izq}$($\textit{G1}$)$ y \textit{Der}$($\textit{G1}$)$ respectivamente:\\
+			\begin{center}
+			\begin{forest}
+					[\textit{E}
+						[\textit{E}
+							[\textit{E}
+								[\textit{NUM}]
+							]
+							[$-$]
+							[\textit{E}
+								[\textit{NUM}]
+							]
+						]						
+						[$\div$]
+						[\textit{E}
+							[\textit{NUM}]
+						]
+					]
+				\end{forest}		
+				\qquad	
+				\begin{forest}
+					[\textit{E}
+						[\textit{E}
+							[\textit{NUM}]
+						]
+						[$-$]
+						[\textit{E}
+							[\textit{E}
+								[\textit{NUM}]
+							]
+							[$\div$]
+							[\textit{E}
+								[\textit{NUM}]							
+							]
+						]
+					]
+				\end{forest}
+			\end{center}
+			Notemos que \textit{Izq}$($\textit{G1}$)$ generaría a la expresión $(\textit{NUM} - \textit{NUM}) \div \textit{NUM}$,
+			mientras que \textit{Der}$($\textit{G1}$)$ genera a $\textit{NUM} - (\textit{NUM} \div \textit{NUM})$
+			
+			\end{enumerate}		
+			
+		\item Basados en la gramática \textit{G2}, tenemos que:
+		\begin{enumerate}
+			\item Se entiende que la gramática \textit{G2} tiene los mismos problemas de ambigüedad que \textit{G1} ya que, 
+			\textit{Expr} $\equiv$ \textit{Instr}, $+$ $\equiv$ $;$ y \textit{NUM} $\equiv$ \textit{IS}. Luego, existen dos o más 
+			arboles de derivación diferentes para una frase que reconoce la gramática. Las únicas frases no ambiguas de la gramática
+			\textit{G2} son la frase \textit{IS} y la frase \textit{IS} ; \textit{IS} ya que sólo hay un árbol para construirlas.
+				
+		\item Dado que la gramática en este caso reconoce secuencias de instrucciones y no operaciones de expresiones,
+		se puede afirmar que no importa el sentido en el que se asocien las expresiones. Para esto, supongamos que existen dos
+		gramáticas \textit{Izq}$($\textit{G2}$)$ y \textit{Der}$($\textit{G2}$)$ tales que:\\
+		\begin{itemize}
+				\item \textit{Izq}$($\textit{G2}$)$\emph{:} \textit{Instr} $\rightarrow$ \textit{Instr} $;$ \textit{Inst$^{'}$}\\
+				$\hphantom{\quad}\hspace{61pt}|$ \, \textit{Instr$^{'}$}\\ $\hphantom{\quad}\hspace{29pt}$ 
+				\textit{Instr$^{'}$} $\rightarrow$ \textit{IS} \\
+				\item \textit{Der}$($\textit{G2}$)$\emph{:} \textit{Instr} $\rightarrow$ \textit{Instr$^{'}$} $;$ \textit{Instr}\\
+				$\hphantom{\quad}\hspace{61pt}|$ \, \textit{Expr$^{'}$}\\ $\hphantom{\quad}\hspace{29pt}$ 
+				\textit{Instr$^{'}$} $\rightarrow$ \textit{IS}\\
+			\end{itemize}
+		Dado que los árboles de derivación que se presentan son lo mismos que los de \textit{G1}, notemos que las expresiones que
+		se generarían son $(\textit{IS}\, ; \textit{IS})\, ; \textit{IS}$ y $\textit{IS}\, ; (\textit{IS}\,	 ; \textit{IS})$. Siendo
+		éstas instrucciones, no importa el orden en el que se realicen.
+	
+		\item Veamos una derivación más a la izquierda para la frase $\textit{IS}\, ; \textit{IS}\, ; \textit{IS}$:
+		\begin{center}
+			\textit{Instr} $\Rightarrow$ \textit{Instr} ; \textit{Instr} $\Rightarrow$ \textit{Instr} ; \textit{Instr} ; \textit{Instr} 
+			$\Rightarrow$ \textit{Instr} ; \textit{Instr} ; \textit{IS} $\Rightarrow$ \textit{Instr} ; \textit{IS} ; \textit{IS} 
+			$\Rightarrow$ \textit{IS} ; \textit{IS} ; \textit{IS}\\
+		\end{center}
+		Veamos una derivación más a la derecha para la misma frase:\\
+		\begin{center}
+			\textit{Instr} $\Rightarrow$ \textit{Instr} ; \textit{Instr} $\Rightarrow$ \textit{Instr} ; \textit{Instr} ; \textit{Instr} 
+			$\Rightarrow$ \textit{IS} ; \textit{Instr} ; \textit{Instr} $\Rightarrow$ \textit{IS} ; \textit{IS} ; \textit{Instr} 
+			$\Rightarrow$ \textit{IS} ; \textit{IS} ; \textit{IS}\\
+		\end{center}
+		
+		Para ilustrarlo, se muestran dos árboles de derivación diferentes que generan la misma frase:\\
+		\begin{center}
+			\begin{forest}
+				[Instr
+					[Instr
+						[Instr
+							[\textit{IS}]
+						]
+						[$;$]
+						[Instr
+							[\textit{IS}]
+						]
+					]						
+					[$;$]
+					[Instr
+						[\textit{IS}]
+					]
+				]
+			\end{forest}
+			\qquad
+			\begin{forest}
+				[\textit{Instr}
+					[\textit{Instr}
+						[\textit{IS}]
+					]
+					[$;$]
+					[\textit{Instr}
+						[\textit{Instr}
+							[\textit{IS}]
+						]
+						[$;$]
+						[\textit{Instr}
+							[\textit{IS}]							
+						]
+					]
+				]
+			\end{forest}
+			\end{center}
+		\end{enumerate}
+		
+	\item Basados en la gramatica \textit{G3}:
+	\begin{enumerate}
+	\item
+	Mostraremos mediante dos árboles de derivación que la frase \textit{IF Bool} : \textit{IS} ; \textit{IS} es ambigua:
+	\begin{center}
+			\begin{forest}
+				[\textit{Instr}
+					[\textit{IF}]
+					[\textit{Bool}]
+					[\textbf{:}]
+					[\textit{Instr}
+						[\textit{Instr}
+							[\textit{IS}]						
+						]
+						[$;$]
+						[\textit{Instr}
+							[\textit{IS}]
+						]					
+					]					
+				]
+			\end{forest}
+			\qquad
+			\begin{forest}
+				[\textit{Instr}
+					[\textit{Instr}
+						[\textit{IF}]
+						[\textit{Bool}]
+						[\textbf{:}]
+						[\textit{Instr}
+							[\textit{IS}]						
+						]
+					]
+					[$;$]
+					[\textit{Instr}
+						[\textit{IS}]
+					]				
+				]
+			\end{forest}
+		\end{center}				
+	\item Una frase \textit{g} de \textit{G3} sin ocurrencias de ; que sea ambigua puede ser:\\
+	\begin{center}
+		\textit{IF Bool $:$ IF Bool $:$ IF Bool $:$ IS ELSE $:$ IS}\\
+	\end{center}	
+			
+	\item Para mostrar que es ambigua, mostraremos dos árboles de derivación distintos:\\
+	\begin{center}
+			\begin{forest}
+				[\textit{Instr}
+					[\textit{IF}]
+					[\textit{Bool}]
+					[$:$]
+					[\textit{Instr}
+						[\textit{Instr}
+							[\textit{IF}]
+							[\textit{Bool}]
+							[$:$]
+							[\textit{Instr}
+								[\textit{IF}]
+								[\textit{Bool}]
+								[$:$]
+								[\textit{Instr}
+									[\textit{IS}]								
+								]						
+							]						
+						]					
+					]
+					[\textit{ELSE}]
+					[$:$]
+					[\textit{Instr}
+						[\textit{IS}]					
+					]				
+				]
+			\end{forest}
+			\qquad
+			\begin{forest}
+				[\textit{Instr}
+					[\textit{IF}]
+					[\textit{Bool}]
+					[$:$]
+					[\textit{Instr}
+						[\textit{IF}]
+						[\textit{Bool}]
+						[$:$]
+						[\textit{Instr}
+							[\textit{IF}]
+							[\textit{Bool}]
+							[$:$]
+							[\textit{Instr}
+								[\textit{IS}]							
+							]			
+						]
+						[\textit{ELSE}]
+						[$:$]
+						[\textit{Instr}
+							[\textit{IS}]						
+						]
+					]				
+				]
+			\end{forest}
+		\end{center}
+	
+	\item Utilizando llaves, podríamos escribir:
+	\begin{itemize}
+		\item Dos interpretaciones de la frase \textit{f} con \{ y \}:
+		\begin{itemize}
+		\item \textit{IF Bool} $\{$ \textit{IS} ; \textit{IS} $\}$
+		\item \textit{IF Bool} $\{$ \textit{IS} $\}$ ; \textit{IS}
+		\end{itemize}
+		\newpage
+		\item Dos interpretaciones de la frase \textit{g} con \{ y \}:
+		\begin{itemize}
+		\item \textit{IF Bool $\{$ IF Bool $\{$ IF Bool $\{$ IS $\}$ $\}$ $\}$ ELSE $\{$ IS $\}$}
+		\item \textit{IF Bool $\{$ IF Bool $\{$ IF Bool $\{$ IS $\}$ ELSE $\{$ IS $\}$ $\}$ $\}$}
+		\end{itemize}
+		
+	\end{itemize}
+	
+	\item Utilizando el terminador \textit{end}, podemos escribir:
+	\begin{itemize}
+		\item Dos interpretaciones de la frase \textit{f} con \{ y \}:
+		\begin{itemize}
+		\item \textit{IF Bool} $:$ \textit{IS} ; \textit{IS} \textit{end}
+		\item \textit{IF Bool} $:$ \textit{IS} \textit{end} ; \textit{IS}
+		\end{itemize}
+
+		\item Dos interpretaciones de la frase \textit{g} con \{ y \}:
+		\begin{itemize}
+		\item \textit{IF Bool $:$ IF Bool $:$ IF Bool $:$ IS \textit{end} \textit{end} \textit{end} ELSE $:$ IS \textit{end}}
+		\item \textit{IF Bool $:$ IF Bool $:$ IF Bool $:$ IS \textit{end} ELSE $:$ IS \textit{end} \textit{end} \textit{end}}
+		\end{itemize}
+		
+	\end{itemize}
+	
+	\end{enumerate}
+	\end{enumerate}				 		
+	
+			
+\end{document}
