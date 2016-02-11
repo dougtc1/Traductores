@@ -50,4 +50,4 @@ from parser import *
 
 parser = yacc.yacc()
 
-ASA.recorrer_preorden()
+ASA.printPreorden()

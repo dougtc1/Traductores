@@ -2,14 +2,14 @@ class Expr: pass
 class Instr: pass
 
 class ArbolBin(Expr):
-    def __init__(self, tipo=None, left, op, right):
+    def __init__(self, left, op, right, tipo=None):
         self.type = tipo
         self.left = left
         self.right = right
         self.op = op
         
 class ArbolUn(Expr):
-    def __init__(self,tipo=None,operando,operador):
+    def __init__(self,operando,operador,tipo=None):
         self.type = tipo
         self.operando = operando
         self.operador = operador
@@ -29,8 +29,8 @@ class Ident(Expr):
         self.type = "Identificador"
         self.value = value
 
-class ArbolInstr(Instr):
-    def __init__(self, token, children=None, tipoInstruccion=None):
+class ArbolInstr(Expr):
+    def __init__(self, token=None, children=None, tipoInstruccion=None):
         self.token = token
         if children:
             self.children = children
@@ -48,6 +48,7 @@ class ArbolInstr(Instr):
 
             if (child.children):
                 child.printPreorden()
+
 
 class CondicionalIf(ArbolInstr):
     def __init__(self, token, children, condicion, instruccion1, instruccion2=None):
@@ -67,12 +68,30 @@ class Activate(ArbolInstr):
         ArbolInstr.__init__(self, token, children, "ACTIVACION")
         self.id_list = id_list
 
+    def imprimir(self):
+        ArbolInstr.imprimir(self)
+        print(self.tipoInstruccion)
+        for i in self.children:
+            print('\t' "-var: ", i)
+
 class Deactivate(ArbolInstr):
     def __init__(self, token, children, id_list):
         ArbolInstr.__init__(self, token, children, "DESACTIVACION")
         self.id_list = id_list
 
+    def imprimir(self):
+        ArbolInstr.imprimir(self)
+        print(self.tipoInstruccion)
+        for i in self.children:
+            print('\t' "-var: ", i)
+
 class Advance(ArbolInstr):
     def __init__(self, token, children, id_list):
         ArbolInstr.__init__(self, token, children, "AVANCE")
         self.id_list = id_list
+
+    def imprimir(self):
+        ArbolInstr.imprimir(self)
+        print(self.tipoInstruccion)
+        for i in self.children:
+            print('\t' "-var: ", i)

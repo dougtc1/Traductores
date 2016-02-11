@@ -21,8 +21,9 @@ ASA = ArbolInstr()
 
 
 def p_estructura_Start(p):
-    '''Start : TkCreate Dec TkExecute InstC TkEnd
+    '''Start : TkCreate Declaraciones TkExecute InstC TkEnd
              | TkExecute InstC TkEnd'''
+    print("p", p)
     if (len(p) == 6):
         p[0] = ASA(p[1], [p[2], p[3], p[4], p[5]])
     else:
@@ -65,7 +66,7 @@ def p_instruccion_Comportamiento(p):
 def p_instruccion_Condicion(p):
     '''Condicion : TkActivation
                  | TkDeactivation
-                 | ExprBooleana
+                 | TkBool
                  | TkDefault'''
     p[0] = ArbolInstr(p[1])
 
@@ -91,7 +92,7 @@ def p_instruccion_InstC(p):
 
 def p_instruccion_InstrIf(p):
     '''InstrIf : TkIf Expr TkDospuntos InstC TkEnd 
-               | TkIf Expr TkDospuntos InstC TkElse TkDospuntos InstC end'''
+               | TkIf Expr TkDospuntos InstC TkElse TkDospuntos InstC TkEnd'''
     if (len(p) == 6):
         p[0] = CondicionalIf(p[1], [p[2], p[3], p[4], p[5]], p[2], p[4])
     else:
@@ -191,7 +192,11 @@ def p_expresion_Expr(p):
         p[0] = Bool(p[1])
 
 def p_lambda(p):
-    'lambda :'
+    'lambda : '
     pass
+
+def p_error(p):
+    print("Error de sintaxis en la entrada") 
+
 ##################################################################################################
 
