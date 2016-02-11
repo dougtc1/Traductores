@@ -176,7 +176,8 @@ def p_expresion_Expr(p):
              | TkNum
              | TkIdent
              | TkChar
-             | TkBool'''
+             | TkTrue
+             | TkFalse'''
     if (p[2] == "+"):
         p[0] = ArbolBin("Aritmetica",p[0], p[1], p[3])
     elif (p[2] == "-"):
@@ -215,12 +216,6 @@ def p_expresion_Expr(p):
         p[0] = Ident(p[0])
     elif (p[1] == 'True' or p[1] == 'False'):
         p[0] = Bool(p[0])
-    else:
-        p[0] = Ident(p[0])
-
-def p_bool(p):
-    '''TkBool : TkTrue
-              | TkFalse'''
 
 def p_error(p):
    print("Error de sintaxis en la entrada") 
