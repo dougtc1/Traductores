@@ -10,9 +10,9 @@ class ArbolBin(Expr):
         
 class ArbolUn(Expr):
     def __init__(self,operando,operador,tipo=None):
-        self.type = tipo
         self.operando = operando
         self.operador = operador
+        self.type = tipo
 
 class Numero(Expr):
     def __init__(self,value):

@@ -1,16 +1,15 @@
-create
+create 
 	int bot bar
 		on activation:
 			store 3.
 		end
 	end
 
-int bot contador
-	on default:
-		store 35.
+	int bot contador
+		on default:
+			store 35.
+		end
 	end
-end
-
 execute
 	activate contador.
 	$- Asignar al contador
