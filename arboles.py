@@ -2,17 +2,17 @@ class Expr: pass
 class Instr: pass
 
 class ArbolBin(Expr):
-    def __init__(self,tipo=None,left,op,right):
-        self.type = tipo
+    def __init__(self,left,op,right,tipo=None):
         self.left = left
         self.right = right
         self.op = op
-        
-class ArbolUn(Expr):
-    def __init__(self,tipo=None,operando,operador):
         self.type = tipo
+
+class ArbolUn(Expr):
+    def __init__(self,operando,operador,tipo=None):
         self.operando = operando
         self.operador = operador
+        self.type = tipo
 
 class Numero(Expr):
     def __init__(self,value):
@@ -31,11 +31,20 @@ class Ident(Expr):
 
 class ArbolInstr(Instr):
     def __init__(self,children=None, tipoInstruccion=None):
-        if children:
+        if (children):
             self.children = children
         else:
             self.children = [ ]
         self.tipoInstruccion = tipoInstruccion
+
+    def recorrer_preorden(self):
+        if (self.children == None):
+            for hijo in self.children:
+                hijo.recorrer_preorden()
+        else:
+            print ("Voy a imprimir")
+            self.imprimir()
+            print("Ya imprimi")
 
 class CondicionalIf(ArbolInstr):
     def __init__(self, children, condicion, instruccion1, instruccion2=None):
@@ -55,12 +64,28 @@ class Activate(ArbolInstr):
         ArbolInstr.__init__(self, children, "ACTIVACION")
         self.id_list = id_list
 
+    def imprimir(self):
+        ArbolInstr.imprimir(self)
+        print(self.tipoInstruccion)
+        for i in self.children:
+            print('\t' "-var: ", i)
+
 class Deactivate(ArbolInstr):
     def __init__(self, children, id_list):
         ArbolInstr.__init__(self, children, "DESACTIVACION")
         self.id_list = id_list
 
+    def imprimir(self):
+        print(self.tipoInstruccion)
+        for i in self.children:
+            print('\t' "-var: ", i)
+
 class Advance(ArbolInstr):
     def __init__(self, children, id_list):
         ArbolInstr.__init__(self, children, "AVANCE")
         self.id_list = id_list
+
+    def imprimir(self):
+        print(self.tipoInstruccion)
+        for i in self.children:
+            print('\t' "-var: ", i)

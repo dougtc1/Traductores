@@ -1,9 +1,9 @@
 # Yacc example
 
 import ply.yacc as yacc
-from arboles import Nodo
 # Get the token map from the lexer.  This is required.
 from lexBOT import tokens
+from arboles import *
 
 import re
 
@@ -19,14 +19,14 @@ precedence = (
 ################################ INSTRUCCIONES ################################
 # Gramatica libre de contexto #################################################
 
-ASA = ArbolInst()
+ASA = ArbolInstr()
 
 def p_lambda(p):
     'lambda :'
     pass
 
 def p_estructura_Start(p):
-    '''Start : TkCreate Dec TkExecute InstC TkEnd
+    '''Start : TkCreate Declaraciones TkExecute InstC TkEnd
              | TkExecute InstC TkEnd'''
     if (len(p) == 6):
         p[0] = ASA([p[1], p[2], p[3], p[4], p[5]])
@@ -34,44 +34,44 @@ def p_estructura_Start(p):
         p[0] = ASA([p[1], p[2], p[3]])
 
 def p_estructura_Declaraciones(p):
-    ''''Declaraciones : Declaraciones Declaraciones
-                      | Type TkBot ID_list Comportamiento TkEnd'''
+    '''Declaraciones : Declaraciones Declaraciones
+                     | Type TkBot ID_list Comportamiento TkEnd'''
     if (len(p) == 3):
-        p[0] = ArbolInst([p[1], p[2]])
+        p[0] = ArbolInstr([p[1], p[2]])
     else:
-        p[0] = ArbolInst([p[1], p[2], p[3], p[4], p[5]])
+        p[0] = ArbolInstr([p[1], p[2], p[3], p[4], p[5]])
 
 def p_expresion_Type(p):
     '''Type : TkInt
             | TkBool
             | TkChar'''
-    p[0] = ArbolInst(p[1])
+    p[0] = ArbolInstr(p[1])
 
 def p_expresion_ID_list(p):
     '''ID_list : ID_list TkComa ID_list
                | TkIdent'''
     if (len(p) == 4):
-        p[0] = ArbolInst([p[1], p[2], p[3]])
+        p[0] = ArbolInstr([p[1], p[2], p[3]])
     else:
-        p[0] = ArbolInst(p[1])
+        p[0] = ArbolInstr(p[1])
 
 def p_instruccion_Comportamiento(p):
     '''Comportamiento : Comportamiento Comportamiento
                       | TkOn Condicion TkDospuntos InstRobot TkEnd
                       | lambda'''
     if (len(p) == 3):
-        p[0] = ArbolInst([p[1], p[2]])
+        p[0] = ArbolInstr([p[1], p[2]])
     elif (len(p) == 6):
-        p[0] = ArbolInst([p[1], p[2], p[3], p[4], p[5]]) # ESTO ES NUEVO, funciona como el del while
+        p[0] = ArbolInstr([p[1], p[2], p[3], p[4], p[5]]) # ESTO ES NUEVO, funciona como el del while
     else:
         pass
 
 def p_instruccion_Condicion(p):
     '''Condicion : TkActivation
                  | TkDeactivation
-                 | ExprBooleana
+                 | TkBool
                  | TkDefault'''
-    p[0] = ArbolInst(p[1])
+    p[0] = ArbolInstr(p[1])
 
 def p_instruccion_InstC(p):
     '''InstC : TkActivate ID_list TkPunto
@@ -89,14 +89,14 @@ def p_instruccion_InstC(p):
     elif (p[1] == 'TkAdvance'):
         p[0] = Advance([p[1], p[2], p[3]], p[2])
     elif (len(p) == 3): 
-        p[0] = ArbolInst(p[1], p[2], "SECUENCIACION")
+        p[0] = ArbolInstr(p[1], p[2], "SECUENCIACION")
     else:
-        p[0] = ArbolInst(p[1])
+        p[0] = ArbolInstr(p[1])
 
 
 def p_instruccion_InstrIf(p):
     '''InstrIf : TkIf Expr TkDospuntos InstC TkEnd 
-               | TkIf Expr TkDospuntos InstC TkElse TkDospuntos InstC end'''
+               | TkIf Expr TkDospuntos InstC TkElse TkDospuntos InstC TkEnd'''
     if (len(p) == 6):
         p[0] = CondicionalIf([p[1], p[2], p[3], p[4], p[5]], p[2], p[4])
     else:
@@ -119,18 +119,18 @@ def p_instruccion_InstRobot(p):
                  | TkSend TkPunto 
                  | TkReceive TkPunto'''
     if (len(p) == 3):
-        p[0] = ArbolInst([p[1], p[2]])
+        p[0] = ArbolInstr([p[1], p[2]])
     elif (len(p) == 4):
-        p[0] = ArbolInst([p[1], p[2], p[3]])
+        p[0] = ArbolInstr([p[1], p[2], p[3]])
     elif (len(p) == 5):
-        p[0] = ArbolInst([p[1], p[2], p[3], p[4]])
+        p[0] = ArbolInstr([p[1], p[2], p[3], p[4]])
 
 def p_instruccion_Direccion(p):
     '''Direccion : TkUp
                  | TkDown
                  | TkLeft
                  | TkRight'''
-    p[0] = ArbolInst(p[1])
+    p[0] = ArbolInstr(p[1])
 
 # Correccion Monascal 
 
@@ -190,99 +190,11 @@ def p_expresion_Expr(p):
         p[0] = ArbolUn("Booleana", p[2], p[1])
     elif (len(p) == 2 and int(p[1])):
         p[0] = Numero(p[1])
-    elif (len(p) == 2 and re.search(([a-zA-Z][a-zA-Z0-9_]*),p[1])):
+    elif (len(p) == 2 and re.search(("[a-zA-Z][a-zA-Z0-9_]*"),p[1])):
         p[0] = Ident(p[1])
     elif (p[1] == 'True' or p[1] == 'False'):
         p[0] = Bool(p[1])
 
 
-##################################################################################################
-
-# En Stand-By
-
-"""
-def p_expresion_Expr(p):
-    '''Expr : ExprAritmetica
-            | ExprBooleana
-            | ExprRelacional'''
-    p[0] = ArbolInst(p[1])
-
-def p_expresion_RangoRel(p):
-    '''RangoRel : ExprAritmetica
-                | ExprBooleana'''
-    p[0] = ArbolInst(p[1])
-
-def p_expresion_ExprAritmetica(p):
-    '''ExprAritmetica : E TkSuma E
-                      | E TkResta E
-                      | E TkMult E
-                      | E TkDiv E
-                      | E TkMod E
-                      | E'''
-    if (len(p) == 4):
-        p[0] = ArbolBin("Aritmetica", p[1], p[3], p[2])
-    else:
-        p[0] = p[1]
-
-def p_expresion_AritParentizada(p):
-    'E : TkParabre ExprAritmetica TkParcierra'
-    p[0] = p[2]
-
-def p_expresion_AritVariable(p):
-    'E : TkIdent'
-    p[0] = Ident(p[1])
-
-def p_expresion_Numerica(p):
-    'E : TkNum'
-    p[0] = Numero(p[1])
-
-def p_expresion_Negativa(p):
-    'E : TkResta E %prec TkMenos'
-    p[0] = Numero(-p[1])
-    
-def p_expresion_EtoArit(p):
-    'E : ExprAritmetica'
-    p[0] = p[1]
-
-def p_expresion_ExprBooleana(p):
-    '''ExprBooleana : B TkConjuncion B
-                    | B TkDisyuncion B
-                    | ExprRelacional
-                    | B'''
-    if (len(p) == 4):
-        p[0] = ArbolBin("Booleano", p[1], p[3], p[2])
-    else:
-        p[0] = p[1]
-
-def p_expresion_BoolParentizada(p):
-    'B : TkParabre ExprBooleana TkParcierra'
-    p[0] = p[2]
-
-def p_expresion_BoolVariable(p):
-    'B : TkIdent'
-    p[0] = Ident(p[1])
-
-def p_expresion_Booleana(p):
-    'B : TkBool'
-    p[0] = Bool(p[1])
-
-def p_expresion_Negada(p):
-    'B : TkNegacion B'
-    p[0] = ArbolUn("Booleana", p[2], p[1])
-
-def p_expresion_BtoBool(p):
-    'B : ExprBooleana'
-    p[0] = p[1]
-
-def p_expresion_Relacional(p):
-    '''ExprRelacional : RangoRel TkMayor RangoRel
-                      | RangoRel TkMayorigual RangoRel
-                      | RangoRel TkMenor RangoRel
-                      | RangoRel TkMenorigual RangoRel
-                      | RangoRel TkIgual RangoRel
-                      | RangoRel TkNoigual RangoRel'''   
-    p[0] = ArbolBin("Relacional", p[1], p[3], p[2])
-
-# Parece que faltan 5 palabras que estan en la lista tokens de lexBOT.py y no estan en las palabras reservadas/simbolos reconocidos
-
-"""
+def p_error(p):
+    print("Error de sintaxis en la entrada")
