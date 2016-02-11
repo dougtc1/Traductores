@@ -2,7 +2,7 @@ class Expr: pass
 class Instr: pass
 
 class ArbolBin(Expr):
-    def __init__(self,tipo=None,left,op,right):
+    def __init__(self, tipo=None, left, op, right):
         self.type = tipo
         self.left = left
         self.right = right
@@ -30,37 +30,49 @@ class Ident(Expr):
         self.value = value
 
 class ArbolInstr(Instr):
-    def __init__(self,children=None, tipoInstruccion=None):
+    def __init__(self, token, children=None, tipoInstruccion=None):
+        self.token = token
         if children:
             self.children = children
         else:
             self.children = [ ]
         self.tipoInstruccion = tipoInstruccion
 
+    def printPreorden(self):
+        for child in self.children:
+            if (len(child.children) == 0):
+                if (type(child) == 'ArbolInstr'):
+                    print(child.token)
+                else:
+                    print(child.value)
+
+            if (child.children):
+                child.printPreorden()
+
 class CondicionalIf(ArbolInstr):
-    def __init__(self, children, condicion, instruccion1, instruccion2=None):
-        ArbolInstr.__init__(self, children, "CONDICIONAL")
+    def __init__(self, token, children, condicion, instruccion1, instruccion2=None):
+        ArbolInstr.__init__(self, token, children, "CONDICIONAL")
         self.condicion = condicion
         self.instruccion1 = instruccion1
         self.instruccion2 = instruccion2
 
 class IteracionIndef(ArbolInstr):
-    def __init__(self, children, condicion, instruccion):
-        ArbolInstr.__init__(self, children, "ITERACION_INDEF")
+    def __init__(self, token, children, condicion, instruccion):
+        ArbolInstr.__init__(self, token, children, "ITERACION_INDEF")
         self.condicion = condicion
         self.instruccion = instruccion
 
 class Activate(ArbolInstr):
-    def __init__(self, children, id_list):
-        ArbolInstr.__init__(self, children, "ACTIVACION")
+    def __init__(self, token, children, id_list):
+        ArbolInstr.__init__(self, token, children, "ACTIVACION")
         self.id_list = id_list
 
 class Deactivate(ArbolInstr):
-    def __init__(self, children, id_list):
-        ArbolInstr.__init__(self, children, "DESACTIVACION")
+    def __init__(self, token, children, id_list):
+        ArbolInstr.__init__(self, token, children, "DESACTIVACION")
         self.id_list = id_list
 
 class Advance(ArbolInstr):
-    def __init__(self, children, id_list):
-        ArbolInstr.__init__(self, children, "AVANCE")
+    def __init__(self, token, children, id_list):
+        ArbolInstr.__init__(self, token, children, "AVANCE")
         self.id_list = id_list
