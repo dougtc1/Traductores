@@ -39,8 +39,9 @@ while (True):
 		globalList.tokList.append(Token(tok.type, tok.lineno,\
 		 find_column(content, tok)))
 
+#Comentado para no ver crap en el terminal
 # IMPRESION DE LOS TOKENS
-globalList.printTok()
+#globalList.printTok()
 
 ######### ETAPA 2 ################
 
@@ -50,4 +51,6 @@ from parser import *
 
 parser = yacc.yacc()
 
-ASA.printPreorden()
+parser.parse(content)
+
+#ASA.printPreorden()
