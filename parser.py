@@ -27,14 +27,14 @@ def p_estructura_Start(p):
              | TkExecute InstC_lista TkEnd'''
     print("EN START")
     print(len(p))
-    print("p[2] - Declaraciones_lista", p[2].token)
+    print("p[2] - Declaraciones_lista", p[2].children[1].children[0].children[0].children[0])
     print("\n")
     if (len(p) == 6):
-        #ASA.token = p[0]
-        #ASA.children = [p[1], p[2], p[3], p[4], p[5]]
-        p[0] = ASA("Start", [p[1], p[2], p[3], p[4], p[5]])
+        ASA = ArbolInstr("Start", [p[1], p[2], p[3], p[4], p[5]])
+        p[0] = ASA
     else:
-        p[0] = ASA("Start", [p[1], p[2], p[3]])
+        ASA = ArbolInstr("Start", [p[1], p[2], p[3]])
+        p[0] = ASA
 
 
 def p_estructura_Declaraciones_lista(p):
