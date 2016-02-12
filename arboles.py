@@ -29,7 +29,7 @@ class Ident(Expr):
         self.type = "Identificador"
         self.value = value
 
-class ArbolInstr(Expr):
+class ArbolInstr(Instr):
     def __init__(self, token=None, children=None, tipoInstruccion=None):
         self.token = token
         if children:
@@ -38,7 +38,17 @@ class ArbolInstr(Expr):
             self.children = [ ]
         self.tipoInstruccion = tipoInstruccion
 
+    def add_token(self, token):
+        self.token = token
+
+    def add_children(self, children):
+        self.children = children
+
+    def add_tipoInstruccion(self, tipoInstruccion):
+        self.tipoInstruccion = tipoInstruccion
+
     def printPreorden(self):
+        print(self.token)
         for child in self.children:
             if (len(child.children) == 0):
                 if (type(child) == 'ArbolInstr'):
