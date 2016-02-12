@@ -3,7 +3,8 @@
 import ply.yacc as yacc
 import re
 from arboles import *
-from lexBOT import tokens
+from lexBOT import *
+global ASA
 
 precedence = (
     ('left', 'TkMayor', 'TkMenor', 'TkMayorigual', 'TkMenorigual', 'TkIgual','TkNoigual'),
@@ -18,22 +19,22 @@ precedence = (
 ###############################################################################
 
 # Gramatica libre de contexto 
-
 ASA = ArbolInstr()
-
-
 def p_estructura_Start(p):
     '''Start : TkCreate Declaraciones_lista TkExecute InstC_lista TkEnd
              | TkExecute InstC_lista TkEnd'''
     print("EN START")
-    print(len(p))
     print("p[2] - Declaraciones_lista", p[2].children[1].children[0].children[0].children[0])
     print("\n")
     if (len(p) == 6):
-        ASA = ArbolInstr("Start", [p[1], p[2], p[3], p[4], p[5]])
+        #ASA = ArbolInstr("Start", [p[1], p[2], p[3], p[4], p[5]])
+        ASA.add_token("Start")
+        ASA.add_children([p[1], p[2], p[3], p[4], p[5]])
         p[0] = ASA
     else:
-        ASA = ArbolInstr("Start", [p[1], p[2], p[3]])
+        #ASA = ArbolInstr("Start", [p[1], p[2], p[3]])
+        ASA.add_token("Start")
+        ASA.add_children([p[1], p[2], p[3]])
         p[0] = ASA
 
 
@@ -306,4 +307,4 @@ def p_expresion_Expr(p):
 def p_error(p):
    print("Error de sintaxis en la entrada") 
 
-##################################################################################################
+###############################################################################
