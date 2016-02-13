@@ -47,18 +47,39 @@ class ArbolInstr(Instr):
     def add_tipoInstruccion(self, tipoInstruccion):
         self.tipoInstruccion = tipoInstruccion
 
+    def imprimir(self):
+        print("token", self.token)
+        print("tipoInstruccion", self.tipoInstruccion)
+
     def printPreorden(self):
+        """print("en printPreorden")
         print(self.token)
-        for child in self.children:
-            if (len(child.children) == 0):
-                if (type(child) == 'ArbolInstr'):
-                    print(child.token)
+        if (self.children == None):
+            for hijo in self.children:
+                hijo.printPreorden()
+        else:
+            print ("Voy a imprimir")
+            self.imprimir()
+            print("Ya imprimi")
+        print("self.children", self.children)"""
+        if (isinstance(child, Activate)):
+            child.imprimir()
+        elif(isinstance(child, Deactivate)):
+            child.imprimir()
+        elif(isinstance(child, Activate)):
+            child.imprimir()
+        else:
+            print(type(child))
+
+        if (self.children):
+            for child in self.children:
+                #if (len(child.children) == 0):
+                #print("tipo", type(child))
+                if (isinstance(child, ArbolInstr)):
+                    child.printPreorden()
                 else:
-                    print(child.value)
-
-            if (child.children):
-                child.printPreorden()
-
+                    #print(child.value)
+                    print("child", child)
 
 class CondicionalIf(ArbolInstr):
     def __init__(self, token, children, condicion, instruccion1, instruccion2=None):

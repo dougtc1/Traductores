@@ -59,9 +59,9 @@ def p_estructura_Declaraciones(p):
     print("p[2]",p[2])
     print("\n")
     if (len(p) == 6):
-        p[0] = ArbolInstr("Declaraciones", [p[1], p[2], p[3], p[4], p[5]])
+        p[0] = ArbolInstr("Declaraciones", [p[1], p[2], p[3], p[4]])
     else:
-        p[0] = ArbolInstr("Declaraciones", [p[1], p[2]])
+        p[0] = ArbolInstr("Declaraciones", [p[1],p[2],p[3]])
 
 def p_expresion_Type(p):
     '''Type : TkInt
@@ -81,7 +81,7 @@ def p_expresion_ID_list(p):
     print("p[1]",p[1])
     print("\n")
     if (len(p) == 4):
-        p[0] = ArbolInstr("ID_list", [p[1], p[2], p[3]])
+        p[0] = ArbolInstr("ID_list", [p[1], p[3]])
     else:
         p[0] = Ident(p[1])
 
@@ -107,8 +107,9 @@ def p_instruccion_Comportamiento(p):
     print("p[4]", p[4])
     print("p[5]", p[5])
     print("\n")
+# Parece innecesario
     if (len(p) == 6):
-        p[0] = ArbolInstr("Comportamiento", [p[1], p[2], p[3], p[4], p[5]])
+        p[0] = ArbolInstr("Comportamiento", [p[1], p[2], p[4]])
 
 def p_instruccion_Condicion(p):
     '''Condicion : TkActivation
@@ -145,11 +146,11 @@ def p_instruccion_InstC(p):
     print("p[1]",p[1])
     print("\n")
     if (p[1] == 'TkActivate'):
-        p[0] = Activate("InstrC",[p[1], p[2], p[3]])
+        p[0] = Activate("InstrC",[p[1], p[2]])
     elif (p[1] == 'TkDeactivate'):
-        p[0] = Deactivate("InstrC", [p[1], p[2], p[2]])
+        p[0] = Deactivate("InstrC", [p[1], p[2]])
     elif (p[1] == 'TkAdvance'):
-        p[0] = Advance("InstrC", [p[1], p[2], p[3]])
+        p[0] = Advance("InstrC", [p[1], p[2]])
     else:
         p[0] = ArbolInstr("InstrC", [p[1]])
 
@@ -165,9 +166,9 @@ def p_instruccion_InstrIf(p):
     print("p[5]",p[5])
     print("\n")
     if (len(p) == 6):
-        p[0] = CondicionalIf("InstrIf", [p[1], p[2], p[3], p[4], p[5]], p[2], p[4], p[4])
+        p[0] = CondicionalIf("InstrIf", [p[1], p[2], p[4]], p[2], p[4])
     else:
-        p[0] = CondicionalIf("InstrIf", [p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8]], p[2], p[4], p[4])
+        p[0] = CondicionalIf("InstrIf", [p[1], p[2], p[4], p[5], p[7]], p[2], p[4], p[4])
 
 def p_instruccion_InstrWhile(p):
     'InstrWhile : TkWhile Expr TkDospuntos InstC TkEnd'
@@ -179,7 +180,7 @@ def p_instruccion_InstrWhile(p):
     print("p[4]",p[4])
     print("p[5]",p[5])
     print("\n")
-    p[0] = IteracionIndef("InstrWhile", [p[1], p[2], p[3], p[4], p[5]])
+    p[0] = IteracionIndef("InstrWhile", [p[1], p[2], p[4]])
 
 def p_instruccion_InstRobot_lista(p):
     '''InstRobot_lista : InstRobot InstRobot_lista
@@ -209,11 +210,11 @@ def p_instruccion_InstRobot(p):
     print("p[1]",p[1])
     print("\n")
     if (len(p) == 3):
-        p[0] = ArbolInstr("InstRobot",[p[1], p[2]])
+        p[0] = ArbolInstr("InstRobot",[p[1]])
     elif (len(p) == 4):
-        p[0] = ArbolInstr("InstRobot",[p[1], p[2], p[3]])
+        p[0] = ArbolInstr("InstRobot",[p[1], p[2]])
     elif (len(p) == 5):
-        p[0] = ArbolInstr("InstRobot", [p[1], p[2], p[3], p[4]])
+        p[0] = ArbolInstr("InstRobot", [p[1], p[2], p[3]])
 
 def p_instruccion_Direccion(p):
     '''Direccion : TkUp

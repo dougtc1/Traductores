@@ -53,4 +53,4 @@ parser = yacc.yacc()
 
 parser.parse(content)
 
-#ASA.printPreorden()
+ASA.printPreorden()
