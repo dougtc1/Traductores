@@ -53,4 +53,11 @@ parser = yacc.yacc()
 
 parser.parse(content)
 
+print("ARRIBA PRINTS PARA DEBBUG")
+print('\n')
+print("##########################")
+print('\n')
+print("ABAJO PRINTS SALIDA")
+print('\n')
+
 ASA.printPreorden()

@@ -130,6 +130,7 @@ def p_instruccion_InstC_lista(p):
     print("p[1]",p[1])
     print("\n")
     if (len(p) == 3):
+        print("SECUENCIACION")
         p[0] = ArbolInstr("InstC_lista",[p[1],p[2]])
     else:
         p[0] = ArbolInstr("InstC_lista",[p[1]])
@@ -145,12 +146,17 @@ def p_instruccion_InstC(p):
     print("p[0]",p[0])
     print("p[1]",p[1])
     print("\n")
-    if (p[1] == 'TkActivate'):
-        p[0] = Activate("InstrC",[p[1], p[2]])
-    elif (p[1] == 'TkDeactivate'):
-        p[0] = Deactivate("InstrC", [p[1], p[2]])
-    elif (p[1] == 'TkAdvance'):
-        p[0] = Advance("InstrC", [p[1], p[2]])
+    if (p[1] == 'activate'):
+        print("ASIGNANDO A ARBOL Activate #######################################################################################")
+        print(p[2])
+        p[0] = Activate("InstrC", None, [p[2]])
+    elif (p[1] == 'deactivate'):
+        print("ASIGNANDO A ARBOL Deactivate #####################################################################################")
+        p[0] = Deactivate("InstrC", None, [p[2]])
+    elif (p[1] == 'advance'):
+        print("ASIGNANDO A ARBOL Advance ########################################################################################")
+        print(p[2])
+        p[0] = Advance("InstrC", None, [p[2]])
     else:
         p[0] = ArbolInstr("InstrC", [p[1]])
 
@@ -264,31 +270,31 @@ def p_expresion_Expr(p):
     if (len(p) > 3):
         
         if (p[2] == '+'):
-            p[0] = ArbolBin("Aritmetica",p[1], p[3], p[2])
+            p[0] = ArbolBin("Aritmetica", p[1],"'Suma'", p[3])
         elif (p[2] == "-"):
-            p[0] = ArbolBin("Aritmetica",p[1], p[3], p[2])
+            p[0] = ArbolBin("Aritmetica", p[1], "'Resta'", p[3])
         elif (p[2] == "*"):
-            p[0] = ArbolBin("Aritmetica",p[1], p[3], p[2])
+            p[0] = ArbolBin("Aritmetica", p[1], "'Multiplicacion'",p[3])
         elif (p[2] == "/"):
-            p[0] = ArbolBin("Aritmetica",p[1], p[3], p[2])
+            p[0] = ArbolBin("Aritmetica", p[1], "'Division'",p[3])
         elif (p[2] == "%"):
-            p[0] = ArbolBin("Aritmetica",p[1], p[3], p[2])
+            p[0] = ArbolBin("Aritmetica", p[1], "'Modulo'", p[3])
         elif (p[2] == "/\\"):
-            p[0] = ArbolBin("Booleano",p[1], p[3], p[2])
+            p[0] = ArbolBin("Booleano", p[1], "'Conjuncion'", p[3])
         elif (p[2] == "\\/"):
-            p[0] = ArbolBin("Booleano",p[1], p[3], p[2])
+            p[0] = ArbolBin("Booleano", p[1], "'Disyuncion'", p[3])
         elif (p[2] == "="):
-            p[0] = ArbolBin("Relacional",p[1], p[3], p[2])
+            p[0] = ArbolBin("Relacional", p[1], "'Igualdad'", p[3])
         elif (p[2] == "/\="):
-            p[0] = ArbolBin("Relacional",p[1], p[3], p[2])
+            p[0] = ArbolBin("Relacional", p[1], "'Desigualdad'", p[3])
         elif (p[2] == ">"):
-            p[0] = ArbolBin("Relacional",p[1], p[3], p[2])
+            p[0] = ArbolBin("Relacional", p[1], "'Mayor que'", p[3])
         elif (p[2] == "<"):
-            p[0] = ArbolBin("Relacional",p[1], p[3], p[2])
+            p[0] = ArbolBin("Relacional", p[1], "'Menor que'", p[3])
         elif (p[2] == ">="):
-            p[0] = ArbolBin("Relacional",p[1], p[3], p[2])
+            p[0] = ArbolBin("Relacional", p[1], "'Mayor igual que'", p[3])
         elif (p[2] == "<="):
-            p[0] = ArbolBin("Relacional",p[1], p[3], p[2])
+            p[0] = ArbolBin("Relacional", p[1], "'Menor igual que'", p[3])
         elif (p[1] == "(" and p[3] == ")"):
             p[0] = p[2]
     
@@ -298,9 +304,9 @@ def p_expresion_Expr(p):
             p[0] = -p[2]
         elif (p[1] == "~" and len(p) == 3):
             p[0] = ArbolUn("Booleana", p[2], p[1])
-        elif (len(p) == 2 and type(p[1]) == 'int'):
+        elif (len(p) == 2 and isinstance(p[1],int)):
             p[0] = Numero(p[1])
-        elif (len(p) == 2 and type(p[1]) == 'str'):
+        elif (len(p) == 2 and isinstance(p[1],str)):
             p[0] = Ident(p[1])
         elif (p[1] == 'True' or p[1] == 'False'):
             p[0] = Bool(p[1])
