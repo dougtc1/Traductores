@@ -7,7 +7,7 @@ class Instr: pass
 
 class ArbolBin(Expr):
     def __init__(self, tipo, left, op, right):
-        self.type = tipo
+        self.tipo = tipo
         self.left = left
         self.op = op
         self.right = right
@@ -19,23 +19,25 @@ class ArbolBin(Expr):
         return self.right.get_valor()
 
 class ArbolUn(Expr):
-    def __init__(self,operando,operador,tipo=None):
-        self.operando = operando
+    def __init__(self,tipo, operador,operando):
+        self.tipo = tipo
         self.operador = operador
-        self.type = tipo
+        self.operando = operando
+
+    def imprimir(self):
+        return (self.operador + self.operando)
 
 class Numero(Expr):
     def __init__(self,value):
-        self.type = "Numero"
+        self.tipo = "Numero"
         self.value = value
 
     def get_valor(self):
         return self.value
 
-
 class Bool(Expr):
     def __init__(self,value):
-        self.type = "Bool"
+        self.tipo = "Bool"
         self.value = value
 
     def get_valor(self):
@@ -43,7 +45,7 @@ class Bool(Expr):
 
 class Ident(Expr):
     def __init__(self,value):
-        self.type = "Identificador"
+        self.tipo = "Identificador"
         self.value = value
 
     def get_valor(self):
@@ -95,8 +97,6 @@ class ArbolInstr(Instr):
         """
         if (self.children):
             for child in self.children:
-                #if (len(child.children) == 0):
-                #print("tipo", type(child))
                 if (isinstance(child, Activate)):
                     print (textwrap.fill(child.tipoInstruccion, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
                     cantidadTabs = auxCantidadTabs
@@ -107,7 +107,8 @@ class ArbolInstr(Instr):
                         print (textwrap.fill(i, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
                     cantidadTabs -= 1
                     auxCantidadTabs = cantidadTabs
-                elif(isinstance(child, Deactivate)):
+
+                elif (isinstance(child, Deactivate)):
                     print (textwrap.fill(child.tipoInstruccion, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
                     cantidadTabs = auxCantidadTabs
                     cantidadTabs += 1
@@ -117,7 +118,8 @@ class ArbolInstr(Instr):
                         print (textwrap.fill(i, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
                     cantidadTabs -= 1
                     auxCantidadTabs = cantidadTabs
-                elif(isinstance(child, Advance)):
+
+                elif (isinstance(child, Advance)):
                     print (textwrap.fill(child.tipoInstruccion, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
                     cantidadTabs = auxCantidadTabs
                     cantidadTabs += 1
@@ -127,10 +129,19 @@ class ArbolInstr(Instr):
                         print (textwrap.fill(i, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
                     cantidadTabs -= 1
                     auxCantidadTabs = cantidadTabs
+
                 elif(isinstance(child, CondicionalIf)):
                     child.imprimir()
                 elif(isinstance(child, IteracionIndef)):
                     child.imprimir()
+                elif(isinstance(child, Ident)):
+                    return child.get_valor()
+                elif(isinstance(child, Bool)):
+                    return child.get_valor()
+                elif(isinstance(child, Numero)):
+                    return child.get_valor()
+                elif(isinstance(child, ArbolUn)):
+                    return child.imprimir()
                 else:
                     if (isinstance(child, ArbolInstr)):
                         if (child.token == 'InstC_lista' and len(child.children)>1):
@@ -151,19 +162,63 @@ class CondicionalIf(ArbolInstr):
         #ArbolInstr.imprimir(self)
         global cantidadTabs
         global auxCantidadTabs
+
         print (textwrap.fill(self.tipoInstruccion, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
         cantidadTabs=auxCantidadTabs
         cantidadTabs += 1
-        aux = "- guardia: " + self.token
-        print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
-        cantidadTabs += 1
-        aux = "- operacion: " + self.condicion.op
-        print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
-        aux = "- operador izquierdo: " + str(self.condicion.get_valor_left())
-        print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
-        aux = "- operador derecho: " + str(self.condicion.get_valor_right())
-        print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs))
-        cantidadTabs -= 1
+
+        if (isinstance(self.condicion, ArbolBin)):
+
+            aux = "- guardia: " + str(self.condicion.tipo)
+            print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
+            cantidadTabs += 1
+
+            aux = "- operacion: " + str(self.condicion.op)
+            print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
+
+            aux = "- operador izquierdo: " + str(self.condicion.get_valor_left())
+            print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
+
+            aux = "- operador derecho: " + str(self.condicion.get_valor_right())
+            print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs))
+            cantidadTabs -= 1
+
+        elif (isinstance(self.condicion, Bool)):
+            aux = "- guardia: " + str(self.condicion.tipo)
+            print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
+            cantidadTabs += 1
+
+            aux = "- expr: " + str(self.condicion.get_valor())
+            print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
+            cantidadTabs -= 1
+
+        elif (isinstance(self.condicion, ArbolUn)):
+            aux = "- guardia: " + str(self.condicion.tipo)
+            print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
+            cantidadTabs += 1
+
+            aux = "- expr: " + str(self.condicion.operador+str(self.condicion.operando.get_valor()))
+            print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
+            cantidadTabs -= 1
+
+        elif (isinstance(self.condicion, Ident)):
+            aux = "- guardia: " + str(self.condicion.tipo)
+            print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
+            cantidadTabs += 1
+
+            aux = "- expr: " + str(self.condicion.get_valor())
+            print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
+            cantidadTabs -= 1
+
+        elif (isinstance(self.condicion, Numero)):
+            aux = "- guardia: " + str(self.condicion.tipo)
+            print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
+            cantidadTabs += 1
+
+            aux = "- expr: " + str(self.condicion.get_valor())
+            print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
+            cantidadTabs -= 1
+
 
         print(textwrap.fill("- exito: ", initial_indent='\t'*cantidadTabs),end="")
         auxCantidadTabs=cantidadTabs
@@ -214,23 +269,85 @@ class IteracionIndef(ArbolInstr):
 
         global cantidadTabs
         global auxCantidadTabs
+        
         print (textwrap.fill(self.tipoInstruccion, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
         cantidadTabs=auxCantidadTabs
         cantidadTabs += 1
-        aux = "- guardia: " + self.token
+
+        if (isinstance(self.condicion, ArbolBin)):
+
+            aux = "- guardia: " + str(self.condicion.tipo)
+            print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
+            cantidadTabs += 1
+
+            aux = "- operacion: " + str(self.condicion.op)
+            print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
+
+            aux = "- operador izquierdo: " + str(self.condicion.get_valor_left())
+            print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
+
+            aux = "- operador derecho: " + str(self.condicion.get_valor_right())
+            print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs))
+            cantidadTabs -= 1
+
+        elif (isinstance(self.condicion, Bool)):
+            aux = "- guardia: " + str(self.condicion.tipo)
+            print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
+            cantidadTabs += 1
+
+            aux = "- expr: " + str(self.condicion.get_valor())
+            print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
+            cantidadTabs -= 1
+
+        elif (isinstance(self.condicion, ArbolUn)):
+            aux = "- guardia: " + str(self.condicion.tipo)
+            print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
+            cantidadTabs += 1
+
+            aux = "- expr: " + str(self.condicion.operador+str(self.condicion.operando.get_valor()))
+            print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
+            cantidadTabs -= 1
+
+        elif (isinstance(self.condicion, Ident)):
+            aux = "- guardia: " + str(self.condicion.tipo)
+            print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
+            cantidadTabs += 1
+
+            aux = "- expr: " + str(self.condicion.get_valor())
+            print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
+            cantidadTabs -= 1
+
+        elif (isinstance(self.condicion, Numero)):
+            aux = "- guardia: " + str(self.condicion.tipo)
+            print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
+            cantidadTabs += 1
+
+            aux = "- expr: " + str(self.condicion.get_valor())
+            print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
+            cantidadTabs -= 1
+
+
+
+        """
+        aux = "- guardia: " + str(self.token)
         print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
         cantidadTabs += 1
-        aux = "- operacion: " + self.condicion.op
+        
+        aux = "- operacion: " + str(self.condicion.op)
         print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
+        
         aux = "- operador izquierdo: " + str(self.condicion.get_valor_left())
         print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
+        
         aux = "- operador derecho: " + str(self.condicion.get_valor_right())
         print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs))
         cantidadTabs -= 1
-        
+        """
+
         print(textwrap.fill("- exito: ", initial_indent='\t'*cantidadTabs),end="")
         auxCantidadTabs=cantidadTabs
         cantidadTabs = 0
+        
         self.instruccion.printPreorden()
 
 class Activate(ArbolInstr):
@@ -244,11 +361,10 @@ class Activate(ArbolInstr):
         lista=[]
         for x in self.id_list:
             if (isinstance(x, ArbolInstr)):
-                for i in x.children:
-                    lista.append("- var: " + str(i))
+                lista.append(x.printPreorden())
             else:
             #print('\t' "-var: ", i.value)
-                lista.append("- var: " + x.value)
+                lista.append("- var: " + str(x.value))
         return lista
 
 class Deactivate(ArbolInstr):
@@ -262,11 +378,10 @@ class Deactivate(ArbolInstr):
         lista=[]
         for x in self.id_list:
             if (isinstance(x, ArbolInstr)):
-                for i in x.children:
-                    lista.append("- var: " + str(i))
+                lista.append(x.printPreorden())
             else:
                 #print('\t' "-var: ", i.value)
-                lista.append("- var: " + x.value)
+                lista.append("- var: " + str(x.value))
         return lista
 
 class Advance(ArbolInstr):
@@ -281,8 +396,17 @@ class Advance(ArbolInstr):
         for x in self.id_list:
             if (isinstance(x, ArbolInstr)):
                 for i in x.children:
-                    lista.append("- var: " + str(i))
+                    if (isinstance(i, ArbolInstr)):
+                        lista.append("- var: " + str(i.printPreorden()))
+                    elif (isinstance(i, Ident)):
+                        lista.append("- var: " + str(i.get_valor()))
+                    elif (isinstance(i, Bool)):
+                        lista.append("- var: " + str(i.get_valor()))
+                    elif (isinstance(i, Numero)):
+                        lista.append("- var: " + str(i.get_valor()))
+                    else:
+                        lista.append("- var: " + str(i))
             else:
                 #print('\t' "-var: ", i.value)
-                lista.append("- var: " + x.value)
+                lista.append("- var: " + str(x.value))
         return lista

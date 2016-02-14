@@ -20,8 +20,8 @@ execute
 	activate contador.
 	$- Asignar al contador
 	el valor 35, si bar > 2 -$
-	if bar > 2:
-		advance contador.
+	if -1:
+		advance contador,loHicimos.
 	else:
 		advance falle.
 	end

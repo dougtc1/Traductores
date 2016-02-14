@@ -300,15 +300,16 @@ def p_expresion_Expr(p):
     else:
 
         if (p[1] == "-" and len(p) == 3):
-            p[0] = -p[2]
+            p[0] = ArbolUn("Aritmetica", p[1],p[2])
         elif (p[1] == "~" and len(p) == 3):
-            p[0] = ArbolUn("Booleana", p[2], p[1])
+            p[0] = ArbolUn("Booleana", p[1], p[2])
         elif (len(p) == 2 and isinstance(p[1],int)):
             p[0] = Numero(p[1])
-        elif (len(p) == 2 and isinstance(p[1],str)):
-            p[0] = Ident(p[1])
         elif (p[1] == 'True' or p[1] == 'False'):
             p[0] = Bool(p[1])
+        elif (len(p) == 2 and isinstance(p[1],str)):
+            p[0] = Ident(p[1])
+        
 
 def p_error(p):
    print("Error de sintaxis en la entrada") 
