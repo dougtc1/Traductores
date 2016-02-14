@@ -130,8 +130,7 @@ def p_instruccion_InstC_lista(p):
     print("p[1]",p[1])
     print("\n")
     if (len(p) == 3):
-        print("SECUENCIACION")
-        p[0] = ArbolInstr("InstC_lista",[p[1],p[2]])
+        p[0] = ArbolInstr("InstC_lista",[p[1],p[2]],"SECUENCIACION")
     else:
         p[0] = ArbolInstr("InstC_lista",[p[1]])
 
@@ -174,10 +173,10 @@ def p_instruccion_InstrIf(p):
     if (len(p) == 6):
         p[0] = CondicionalIf("InstrIf", [p[1], p[2], p[4]], p[2], p[4])
     else:
-        p[0] = CondicionalIf("InstrIf", [p[1], p[2], p[4], p[5], p[7]], p[2], p[4], p[4])
+        p[0] = CondicionalIf("InstrIf", [p[1], p[2], p[4], p[5], p[7]], p[2], p[4], p[7])
 
 def p_instruccion_InstrWhile(p):
-    'InstrWhile : TkWhile Expr TkDospuntos InstC TkEnd'
+    'InstrWhile : TkWhile Expr TkDospuntos InstC_lista TkEnd'
     print("EN InstrWhile")
     print("p[0]",p[0])
     print("p[1]",p[1])
@@ -186,7 +185,7 @@ def p_instruccion_InstrWhile(p):
     print("p[4]",p[4])
     print("p[5]",p[5])
     print("\n")
-    p[0] = IteracionIndef("InstrWhile", [p[1], p[2], p[4]])
+    p[0] = IteracionIndef("InstrWhile", [p[1], p[2], p[4]], p[2], p[4])
 
 def p_instruccion_InstRobot_lista(p):
     '''InstRobot_lista : InstRobot InstRobot_lista

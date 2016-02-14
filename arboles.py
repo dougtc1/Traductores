@@ -1,3 +1,7 @@
+import textwrap
+
+cantidadTabs = 0
+
 class Expr: pass
 class Instr: pass
 
@@ -69,6 +73,8 @@ class ArbolInstr(Instr):
         pass
 
     def printPreorden(self):
+        global cantidadTabs
+        global auxCantidadTabs
         """print("en printPreorden")
         print(self.token)
         if (self.children == None):
@@ -79,27 +85,60 @@ class ArbolInstr(Instr):
             self.imprimir()
             print("Ya imprimi")
         print("self.children", self.children)"""
+
+        """
+
+        for align, text in zip('<^>', ['left', 'center', 'right']):
+            '{0:{fill}{align}16}'.format(text, fill=align, align=align)
         
+        [[fill]align][sign][#][0][width][,][.precision][type]
+        """
         if (self.children):
             for child in self.children:
                 #if (len(child.children) == 0):
                 #print("tipo", type(child))
                 if (isinstance(child, Activate)):
-                    child.imprimir()
+                    print (textwrap.fill(child.tipoInstruccion, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
+                    cantidadTabs = auxCantidadTabs
+                    cantidadTabs += 1
+                    auxCantidadTabs = cantidadTabs
+                    lista = child.imprimir()
+                    for i in lista:
+                        print (textwrap.fill(i, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
+                    cantidadTabs -= 1
+                    auxCantidadTabs = cantidadTabs
                 elif(isinstance(child, Deactivate)):
-                    child.imprimir()
+                    print (textwrap.fill(child.tipoInstruccion, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
+                    cantidadTabs = auxCantidadTabs
+                    cantidadTabs += 1
+                    auxCantidadTabs = cantidadTabs
+                    lista = child.imprimir()
+                    for i in lista:
+                        print (textwrap.fill(i, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
+                    cantidadTabs -= 1
+                    auxCantidadTabs = cantidadTabs
                 elif(isinstance(child, Advance)):
-                    child.imprimir()
+                    print (textwrap.fill(child.tipoInstruccion, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
+                    cantidadTabs = auxCantidadTabs
+                    cantidadTabs += 1
+                    auxCantidadTabs = cantidadTabs
+                    lista = child.imprimir()
+                    for i in lista:
+                        print (textwrap.fill(i, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
+                    cantidadTabs -= 1
+                    auxCantidadTabs = cantidadTabs
                 elif(isinstance(child, CondicionalIf)):
                     child.imprimir()
                 elif(isinstance(child, IteracionIndef)):
                     child.imprimir()
-                if (isinstance(child, ArbolInstr)):
-                    child.printPreorden()
                 else:
-                    #print(child.value)
-                    #print("child", child)
-                    pass
+                    if (isinstance(child, ArbolInstr)):
+                        if (child.token == 'InstC_lista' and len(child.children)>1):
+                            print (textwrap.fill(child.tipoInstruccion, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
+                            cantidadTabs += 1
+                            auxCantidadTabs = cantidadTabs                  
+                        child.printPreorden()
+
 
 class CondicionalIf(ArbolInstr):
     def __init__(self, token, children, condicion, instruccion1, instruccion2=None):
@@ -109,18 +148,90 @@ class CondicionalIf(ArbolInstr):
         self.instruccion2 = instruccion2
 
     def imprimir(self):
-        ArbolInstr.imprimir(self)
-        print (self.tipoInstruccion)
+        #ArbolInstr.imprimir(self)
+        global cantidadTabs
+        global auxCantidadTabs
+        print (textwrap.fill(self.tipoInstruccion, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
+        cantidadTabs=auxCantidadTabs
+        cantidadTabs += 1
+        aux = "- guardia: " + self.token
+        print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
+        cantidadTabs += 1
+        aux = "- operacion: " + self.condicion.op
+        print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
+        aux = "- operador izquierdo: " + str(self.condicion.get_valor_left())
+        print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
+        aux = "- operador derecho: " + str(self.condicion.get_valor_right())
+        print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs))
+        cantidadTabs -= 1
+
+        print(textwrap.fill("- exito: ", initial_indent='\t'*cantidadTabs),end="")
+        auxCantidadTabs=cantidadTabs
+        cantidadTabs = 0
+        self.instruccion1.printPreorden()
+
+        if (self.instruccion2):
+            print(textwrap.fill("- fracaso: ", initial_indent='\t'*cantidadTabs),end="")
+            auxCantidadTabs=cantidadTabs
+            cantidadTabs = 0
+            self.instruccion2.printPreorden()
+        else:
+            pass
+
+        #lista = []
+
+        """if (len(self.instruccion1.children) >1):
+            print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
+            cantidadTabs -= 1
+            self.instruccion1.printPreorden()
+        else:
+            print("AQUI", self.instruccion1.token)
+            aux = "- exito: " + str(self.instruccion1.children[0].tipoInstruccion)
+            print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
+            cantidadTabs += 1
+            lista = self.instruccion1.children[0].imprimir()
+            for x in lista:
+                print (textwrap.fill(x, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
+        #elif(self):      
+
+        """
+
+
+        # PRINTS BUENOS
+        """print (self.tipoInstruccion)
         print('\t' "- guardia: ", self.token)
         print('\t' '\t' "- operacion: ", self.condicion.op)
         print('\t' '\t' "- operador izquierdo: ", self.condicion.get_valor_left())
         print('\t' '\t' "- operador derecho: ", self.condicion.get_valor_right())
-
+        """
 class IteracionIndef(ArbolInstr):
     def __init__(self, token, children, condicion, instruccion):
         ArbolInstr.__init__(self, token, children, "ITERACION_INDEF")
         self.condicion = condicion
         self.instruccion = instruccion
+
+    def imprimir(self):
+
+        global cantidadTabs
+        global auxCantidadTabs
+        print (textwrap.fill(self.tipoInstruccion, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
+        cantidadTabs=auxCantidadTabs
+        cantidadTabs += 1
+        aux = "- guardia: " + self.token
+        print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
+        cantidadTabs += 1
+        aux = "- operacion: " + self.condicion.op
+        print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
+        aux = "- operador izquierdo: " + str(self.condicion.get_valor_left())
+        print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
+        aux = "- operador derecho: " + str(self.condicion.get_valor_right())
+        print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs))
+        cantidadTabs -= 1
+        
+        print(textwrap.fill("- exito: ", initial_indent='\t'*cantidadTabs),end="")
+        auxCantidadTabs=cantidadTabs
+        cantidadTabs = 0
+        self.instruccion.printPreorden()
 
 class Activate(ArbolInstr):
     def __init__(self, token, children, id_list):
@@ -128,10 +239,17 @@ class Activate(ArbolInstr):
         self.id_list = id_list
 
     def imprimir(self):
-        ArbolInstr.imprimir(self)
-        print(self.tipoInstruccion)
-        for i in self.id_list:
-            print('\t' "-var: ", i.value)
+        #ArbolInstr.imprimir(self)
+        #global cantidadTabs
+        lista=[]
+        for x in self.id_list:
+            if (isinstance(x, ArbolInstr)):
+                for i in x.children:
+                    lista.append("- var: " + str(i))
+            else:
+            #print('\t' "-var: ", i.value)
+                lista.append("- var: " + x.value)
+        return lista
 
 class Deactivate(ArbolInstr):
     def __init__(self, token, children, id_list):
@@ -139,10 +257,17 @@ class Deactivate(ArbolInstr):
         self.id_list = id_list
 
     def imprimir(self):
-        ArbolInstr.imprimir(self)
-        print(self.tipoInstruccion)
-        for i in self.id_list:
-            print('\t' "-var: ", i.value)
+        #ArbolInstr.imprimir(self)
+        #global cantidadTabs
+        lista=[]
+        for x in self.id_list:
+            if (isinstance(x, ArbolInstr)):
+                for i in x.children:
+                    lista.append("- var: " + str(i))
+            else:
+                #print('\t' "-var: ", i.value)
+                lista.append("- var: " + x.value)
+        return lista
 
 class Advance(ArbolInstr):
     def __init__(self, token, children, id_list):
@@ -150,7 +275,14 @@ class Advance(ArbolInstr):
         self.id_list = id_list
 
     def imprimir(self):
-        ArbolInstr.imprimir(self)
-        print(self.tipoInstruccion)
-        for i in self.id_list:
-            print('\t' "-var: ", i.value)
+        #ArbolInstr.imprimir(self)
+        #global cantidadTabs
+        lista=[]
+        for x in self.id_list:
+            if (isinstance(x, ArbolInstr)):
+                for i in x.children:
+                    lista.append("- var: " + str(i))
+            else:
+                #print('\t' "-var: ", i.value)
+                lista.append("- var: " + x.value)
+        return lista

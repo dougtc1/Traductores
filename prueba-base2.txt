@@ -10,20 +10,14 @@ create
 			store 35.
 		end
 	end
-
-	int bot falle
-		on default:
-			store 1.
-		end
-	end
 execute
 	activate contador.
 	$- Asignar al contador
 	el valor 35, si bar > 2 -$
 	if bar > 2:
-		advance contador.
-	else:
-		advance falle.
+		if bar > 2:
+			advance contador.
+		end
 	end
 end
 	
