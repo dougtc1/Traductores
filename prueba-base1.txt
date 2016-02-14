@@ -22,6 +22,7 @@ execute
 	el valor 35, si bar > 2 -$
 	if -1:
 		advance contador,loHicimos.
+		advance contador.
 	else:
 		advance falle.
 	end
