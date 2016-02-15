@@ -25,6 +25,23 @@ execute
 		advance contador.
 	else:
 		advance falle.
+		activate benyi.
+		while (benyi /= bar):
+			activate bar.
+			create
+				char bot yo
+					on mamaguevo:
+						store 3.
+						up.
+						read as fuck.
+					end
+				end
+			execute
+				advance bar.
+			end
+
+		end
+
 	end
 end
 	

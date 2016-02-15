@@ -1,3 +1,13 @@
+#!/usr/bin/python3
+# Universidad Simon Bolivar 
+#
+# Traductores e interpretadores - CI3715
+#
+# Benjamin Amos. Carnet: 12-10240
+# Douglas Torres. Carnet: 11-11027
+#
+# Proyecto 2
+# Archivo que contiene las estructuras de datos de arboles utilizadas.
 import textwrap
 
 cantidadTabs = 0
@@ -80,9 +90,11 @@ class ArbolInstr(Instr):
         global cantidadTabs
         global auxCantidadTabs
         global guardaTabs
-        #print("VENGO DEL EXITO: ", self.tipoInstruccion)
 
         if (self.children):
+
+            
+
 
             if (len(self.children) > 1 and str(self.tipoInstruccion) == 'SECUENCIACION' ):
 
@@ -137,7 +149,12 @@ class ArbolInstr(Instr):
                 elif(isinstance(child, ArbolUn)):
                     return child.imprimir()
                 else:
-                    if (isinstance(child, ArbolInstr)):             
+                    if (isinstance(child, ArbolInstr)):
+                        if (child.tipoInstruccion == "ALCANCE"):
+
+                            print (textwrap.fill(child.tipoInstruccion, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
+                            cantidadTabs    += 1
+                            auxCantidadTabs = cantidadTabs
                         child.printPreorden()
 
 
@@ -190,7 +207,7 @@ class CondicionalIf(ArbolInstr):
             print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
             cantidadTabs += 1
             
-            aux = "- expr: " + str(self.condicion.get_valor())
+            aux = "- var: " + str(self.condicion.get_valor())
             print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
             cantidadTabs -= 1
 
@@ -223,7 +240,7 @@ class CondicionalIf(ArbolInstr):
             print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
             cantidadTabs += 1
 
-            aux = "- expr: " + str(self.condicion.get_valor())
+            aux = "- var: " + str(self.condicion.get_valor())
             print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
             cantidadTabs -= 1
 
@@ -238,7 +255,7 @@ class CondicionalIf(ArbolInstr):
             print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
             cantidadTabs += 1
 
-            aux = "- expr: " + str(self.condicion.get_valor())
+            aux = "- expresion: " + str(self.condicion.get_valor())
             print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
             cantidadTabs -= 1
 
@@ -266,8 +283,6 @@ class CondicionalIf(ArbolInstr):
             auxCantidadTabs = cantidadTabs
             cantidadTabs    = 0
             self.instruccion2.printPreorden()
-        else:
-            pass
 
 class IteracionIndef(ArbolInstr):
     def __init__(self, token, children, condicion, instruccion):
@@ -306,7 +321,7 @@ class IteracionIndef(ArbolInstr):
             print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
             cantidadTabs += 1
 
-            aux = "- expr: " + str(self.condicion.get_valor())
+            aux = "- var: " + str(self.condicion.get_valor())
             print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
             cantidadTabs -= 1
 
@@ -327,19 +342,17 @@ class IteracionIndef(ArbolInstr):
             print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
             cantidadTabs += 1
 
-            aux = "- expr: " + str(self.condicion.get_valor())
+            aux = "- var: " + str(self.condicion.get_valor())
             print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
             cantidadTabs -= 1
 
         elif (isinstance(self.condicion, Numero)):
             aux = "- guardia: " + str(self.condicion.tipo)
             print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
-            cantidadTabs += 1
 
             aux = "- expr: " + str(self.condicion.get_valor())
             print (textwrap.fill(aux, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
             cantidadTabs -= 1
-
 
         print(textwrap.fill("- exito: ", initial_indent='\t'*cantidadTabs),end=" ")
         auxCantidadTabs = cantidadTabs

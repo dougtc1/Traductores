@@ -6,8 +6,8 @@
 # Benjamin Amos. Carnet: 12-10240
 # Douglas Torres. Carnet: 11-11027
 #
-# Proyecto 1
-# Archivo que contiene el programa principal que lee el archivo de entrada.
+# Proyecto 2
+# Archivo que contiene el programa principal.
 
 from lexBOT import *
 
@@ -39,25 +39,15 @@ while (True):
 		globalList.tokList.append(Token(tok.type, tok.lineno,\
 		 find_column(content, tok)))
 
-#Comentado para no ver crap en el terminal
 # IMPRESION DE LOS TOKENS
 #globalList.printTok()
 
 ######### ETAPA 2 ################
 
 from parser import *
+lexer.lineno = 1
 
-# Se construye el parser
-
+# Construccion del parser, del AST e impresion de las instrucciones
 parser = yacc.yacc()
-
 parser.parse(content)
-
-print("ARRIBA PRINTS PARA DEBBUG")
-print('\n')
-print("##########################")
-print('\n')
-print("ABAJO PRINTS SALIDA")
-print('\n')
-
 ASA.printPreorden()

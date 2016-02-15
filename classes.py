@@ -6,7 +6,7 @@
 # Benjamin Amos. Carnet: 12-10240
 # Douglas Torres. Carnet: 11-11027
 #
-# Proyecto 1
+# Proyecto 2
 # Archivo que contiene las estructuras de datos donde se guardan los tokens y errores.
 from lexBOT import *
 
@@ -54,7 +54,7 @@ class TokenList:
 					 str(token.column))
 				else:
 					print(token.name + " " + str(token.row) + " " +\
-					 str(token.column) + ",")
+					 str(token.column) + ",", end=" ")
 			else:
 				# En caso de que el token sea TkIdent o TkCaracter
 				if (token.name == 'TkIdent'):
@@ -63,7 +63,7 @@ class TokenList:
 						 str(token.row) + " " + str(token.column))
 					else:
 						print(token.name + '("' + str(token.arg) + '") ' +\
-						 str(token.row) + " " + str(token.column) + ",")
+						 str(token.row) + " " + str(token.column) + ",", end=" ")
 				else:
 					if (token.name == 'TkCaracter' or token.name == 'TkNum'):
 						if(self.tokList.index(token) == (len(self.tokList) - 1)):
@@ -71,7 +71,7 @@ class TokenList:
 							 str(token.row) + " " + str(token.column))
 						else:
 							print(token.name + '(' + str(token.arg) + ') ' +\
-							 str(token.row) + " " + str(token.column) + ",")
+							 str(token.row) + " " + str(token.column) + ",", end=" ")
 
 	def printErr(self):
 		"""Imprime en pantalla el contenido de la lista de errores"""
