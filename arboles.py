@@ -91,20 +91,13 @@ class ArbolInstr(Instr):
         global auxCantidadTabs
         global guardaTabs
 
-        if (self.children):
-
-            
-
-
+        if (self.children):s
             if (len(self.children) > 1 and str(self.tipoInstruccion) == 'SECUENCIACION' ):
 
                 print (textwrap.fill(self.tipoInstruccion, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
                 cantidadTabs = auxCantidadTabs
                 cantidadTabs += 1
                 auxCantidadTabs = cantidadTabs
-
-            else:
-                pass
 
             for child in self.children:
 

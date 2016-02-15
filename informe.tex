@@ -30,70 +30,54 @@
 		
 		\par	
 		\medskip	
-		Para la implementación de esta
-		primera etapa del desarrollo de un interprete
-		del lenguaje de programación 'BOT', se utilizó
-		el lenguaje de \textit{scripting} orientado a objetos
-		\emph{Python}, el cual cuenta con una herramienta
-		generadora de analizadores lexicográficos y sintácticos
-		llamada \emph{PLY}.
+		Para la implementación de la segunda etapa del proyecto, utilizamos
+		una herramienta, parte de la librería ply, llamada \textit{yacc}, la cual
+		permite el diseño de una gramática para la creación del parser para nuestra
+		lista de tokens, lo cual permitirá el diseño del árbol sintáctico abstracto, como
+		finalidad de esta etapa.
 		
 		\par
 		\medskip
-		La implementación del analizador lexicográfico fue dividida
-		en tres partes. Una para el manejo de la herramienta (el '\emph{lexer}'),
-		otra para el manejo de la estructura de datos, y una última para el 
-		programa principal. Esto son tres archivos, \textbf{lexBot.py}, \textbf{classes.py}
-		y \textbf{main.py} respectivamente.
+		La implementacion del parser fue dividida en dos partes, un archivo para la creación
+		de la gramatica libre de contexto la cual estudiara la sintaxis de un programa
+		escrito en el lenguaje de estudio \textbf{BOT} y generara todas las cadenas posibles
+		permitidas por el mismo, y otro archivo en el cual se almacenan las estructuras de datos
+		utilizadas para la creación del árbol sintáctico abstracto, al igual que los métodos que permiten
+		proporcionar la interfaz pedida.
 		
-		\subsection{lexBot.py}
-		
-			\par
-			\medskip
-			En este archivo se encuentran las reglas lexicográficas respecto a los tokens
-			que se admiten en el lenguaje '\emph{BOT}'. Al inicio se observa una declaración
-			global de un objeto de tipo \textit{TokenList}, el cual es una estructura de datos
-			que será explicada en la sección del archivo \textbf{classes.py}. Se encuentra
-			aquí para registrar el manejo de errores. A su vez se encuentra la declaración global
-			de la variable \textit{content} que contiene el archivo de entrada que será analizado
-			por el lexer en un string. 
-			
-		\subsection{classes.py}
+		\subsection{parser.py}
 		
 			\par
 			\medskip
-			Este archivo contiene las estructuras de datos utilizadas para esta etapa, las cuales
-			son \textbf{Token} y \textbf{TokenList}.
+			En este archivo se encuentran las reglas gramaticales permitidas por el lenguaje \textbf{BOT}.
+			De este modo, se pueden producir las distintas cadenas que acepta el mismo lenguaje. Así mismo, 
+			en las reglas, se encuentra la inicialización y agregación de nodos al árbol sintáctico abstracto.
 			
-			\subsubsection{Token}
-			
-				\par
-				\medskip
-				La clase \textbf{Token} define un objeto que corresponde a cada token reconocido
-				por el lenguaje y cuyos atributos son un nombre, fila y columna en las que se 
-				encuentra el token en el código recibido por la entrada, y un argumento en el caso
-				de que el token sea de tipo numérico, caracter o identificador (\textit{name}, \textit{row},
-				\textit{column} y \textit{arg} respectivamente).
-			
-			\subsubsection{TokenList}
-			
-				\par
-				\medskip
-				Esta clase contiene dos listas, \textit{TokList} y \textit{ErrList}, una para almacenar
-				todos los tokens encontrados y otra para almacenar errores. Se implementaron métodos sobre
-				esta clase para añadir tokens o errores a sus listas respectivas (\textit{addTok} y \textit{addErr}) 
-				y para imprimir los tokens o errores de cada lista (\textit{printTok} y \textit{printErr}). 
-				Por último, un método para verificar si la lista de errores está vacía (\textit{notErr}). 
-				Esto indica que, si la lista de errores está vacía, la ejecución arrojará una salida correcta.
-			
-		\subsection{main.py}
-			
+		\subsection{arboles.py}
+		
 			\par
 			\medskip
-			Programa principal en el que ocurre la ejecución del análisis lexicográfico. Se recibe un 
-			archivo de entrada y se almacena su contenido para el análisis. La ejecución consiste en dos
-			recorridos al contenido del archivo, una para la detección de errores y, si no se encontró
-			error alguno, se recorre nuevamente para detectar los tokens, almacenarlos e imprimirlos.
+			Este archivo contiene las estructuras de datos utilizadas para la creación del árbol sintáctico 
+			abstracto, las cuales se mencionan a continuación:
+			
+			\begin{enumerate}
+				\item \textbf{ArbolInstr}:
+				\begin{itemize}
+					\item \textit{CondicionalIf}
+					\item \textit{IteracionIndef}
+					\item \textit{Activate}
+					\item \textit{Deactivate}
+					\item \textit{Advance}					
+				\end{itemize}							
+				\item \textbf{ArbolBin}
+				\item \textbf{ArbolUn}
+				\item \textbf{Ident}
+				\item \textbf{Bool}
+				\item \textbf{Numero}\\
+			\end{enumerate}
+			
+			Notemos que solo se encuentran creadas estructuras de datos para el manejo de instrucciones de
+			controlador de \textbf{BOT}.
 	
 	\newpage			
 	\section{Sección Teórico-Práctica}
@@ -415,7 +399,8 @@
 	\end{itemize}
 	
 	\end{enumerate}
-	\end{enumerate}				 		
+	\end{enumerate}
+	\blfootnote{Benjamin Amos \#12-10240, Douglas Torres \#11-11027 / Enero - Marzo 2016}				 		
 	
 			
 \end{document}
