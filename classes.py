@@ -83,3 +83,76 @@ class TokenList:
 			return True
 		else:
 			return False
+# Estructura de datos correspondiente a la tabla de simbolos
+# Esta corresponde a una terna que contiene tipo de la variable
+# y su valor. 
+def symbolData:
+	def __init__(self, tipo, valor = None):
+		self.tipo = tipo
+		self.valor = valor
+
+	"""Modifica el valor del simbolo"""
+	def modifValue(self, value):
+		self.valor = value
+
+# Estructura de datos correspondiente a la tabla de simbolos
+# Esta corresponde a el diccionario en el que se contendran las
+# declaraciones  
+def symbolTable:
+	def __init__(self, padre):
+		self.tabla = {}
+		self.padre = padre
+
+	"""Verifica si el simbolo existe en la tabla de simbolos"""
+	def symbolExists(self, symbol):
+		if symbol in self.tabla:
+			return True
+		else:
+			return False
+
+	"""Crea un par en el diccionario con el nombre de la variable
+	como clave y se le asigna solo el tipo"""
+	def createTuple(self, symbol, tipo):
+		self.tabla[symbol] = symbolData(tipo)		
+
+	"""Verifica que una variable no exista en la tabla para agregarla"""
+	def addSymbol(self, var, tipo):
+		if symbolExists(var):
+			print("ERROR EL MIO")
+			sys.exit()
+		else:
+			self.createTuple(var, tipo)
+
+	"""Retorna el objeto que contiene la informacion de una variable 
+	declarada"""
+	def getSymbolData(self, symbol):
+		if symbolExists(symbol):
+			return self.tabla[symbol]
+
+		return None
+
+	"""Verifica que exista la variable en la tabla actual para agregar
+	el valor correspondiente. De no existir, busca en la tabla padre"""
+	def addValue(self, var, valor):
+		if symbolExists(var):
+			self.getSymbolData(var).modifValue(valor)
+		elif(self.padre):
+			self.padre.addValue()
+
+		print("MAMALO EL MIO")
+		sys.exit()
+
+	"""Compara los tipos de un simbolo con otro existente en el diccionario"""
+	def compareTypes(self, symbol, symbolType):
+		if (getSymbolData(symbol).tipo == symbolType):
+			return True
+		else:
+			return False
+
+def tableBuildUp:
+	def __init__(self, tree):
+		self.tree = tree
+
+	def fillTable(self):
+		if tree.
+				
