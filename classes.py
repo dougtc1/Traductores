@@ -149,10 +149,44 @@ def symbolTable:
 		else:
 			return False
 
+# Esto es como un main de la construccion de la tabla. Me parecio
+# demasiado trancado escribir todo lo que esto implica en el main
+# aparte de que me estoy dando cuenta de que construyendo metodos se
+# puede facilitar el trabajo
 def tableBuildUp:
-	def __init__(self, tree):
+	def __init__(self, tree, table):
 		self.tree = tree
+		self.table = table
 
+	"""Hay que probarla pero si sirve es super util. Recibe un nodo
+	del tipo Dec_List y almacena en una lista todos los identificadores
+	declarados"""
+	def getID_list(self, ID_list, list = None):
+		idlist = []
+
+		if (len(ID_list.children) < 1):
+			idlist.append(ID_list.children[0])
+		else:
+			idlist.append(ID_list.children[0])
+			idChildList = ID_list.children[1]
+			self.getID_list(idChildList, idlist)
+
+		return idlist
+
+
+	"""Aqui se llenara la tabla"""
 	def fillTable(self):
-		if tree.
-				
+		# Si es instrucciones..
+		if (isinstance(self.tree, ArbolInstr)):
+			# Vamos a buscar que sea declaraciones
+			for child in self.tree.children:
+				if (child.token == 'Declaraciones'):
+					Type = child.children[0]
+					idlist = child.children[1]
+					for ID in self.getID_list(idlist):
+						self.table.addSymbol(ID, Type)
+					#Si tiene comportamiento especificado
+					if child.children[2]:
+
+					
+

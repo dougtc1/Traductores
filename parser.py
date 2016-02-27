@@ -37,7 +37,7 @@ def p_estructura_Start(p):
         p[0] = ASA
     else:
         ASA.add_token("Start")
-        ASA.add_children([p[1], p[2], p[3]])
+        ASA.add_children([p[2])
         p[0] = ASA
 
 def p_estructura_Declaraciones_lista(p):
@@ -52,9 +52,9 @@ def p_estructura_Declaraciones(p):
     '''Declaraciones : Type TkBot ID_list Comportamiento_lista TkEnd
                      | Type TkBot ID_list TkEnd'''
     if (len(p) == 6):
-        p[0] = ArbolInstr("Declaraciones", [p[1], p[2], p[3], p[4]])
+        p[0] = ArbolInstr("Declaraciones", [p[1], p[3], p[4]])
     else:
-        p[0] = ArbolInstr("Declaraciones", [p[1],p[2],p[3]])
+        p[0] = ArbolInstr("Declaraciones", [p[1], p[3]])
 
 def p_expresion_Type(p):
     '''Type : TkInt
@@ -81,7 +81,7 @@ def p_instruccion_Comportamiento_lista(p):
 def p_instruccion_Comportamiento(p):
     'Comportamiento : TkOn Condicion TkDospuntos InstRobot_lista TkEnd'
     if (len(p) == 6):
-        p[0] = ArbolInstr("Comportamiento", [p[1], p[2], p[4]])
+        p[0] = ArbolInstr("Comportamiento", [p[2], p[4]])
 
 def p_instruccion_Condicion(p):
     '''Condicion : TkActivation
@@ -127,9 +127,9 @@ def p_instruccion_InstrIf(p):
     '''InstrIf : TkIf Expr TkDospuntos InstC_lista TkEnd 
                | TkIf Expr TkDospuntos InstC_lista TkElse TkDospuntos InstC_lista TkEnd'''
     if (len(p) == 6):
-        p[0] = CondicionalIf("InstrIf", [p[1], p[2], p[4]], p[2], p[4])
+        p[0] = CondicionalIf("InstrIf", [p[2], p[4]], p[2], p[4])
     else:
-        p[0] = CondicionalIf("InstrIf", [p[1], p[2], p[4], p[5], p[7]], p[2], p[4], p[7])
+        p[0] = CondicionalIf("InstrIf", [p[2], p[4], p[7]], p[2], p[4], p[7])
 
 def p_instruccion_InstrWhile(p):
     'InstrWhile : TkWhile Expr TkDospuntos InstC_lista TkEnd'
