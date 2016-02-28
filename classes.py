@@ -161,10 +161,11 @@ def tableBuildUp:
 	"""Hay que probarla pero si sirve es super util. Recibe un nodo
 	del tipo Dec_List y almacena en una lista todos los identificadores
 	declarados"""
-	def getID_list(self, ID_list, list = None):
-		idlist = []
+	def getID_list(self, ID_list, lista = []):
+		
+		idlist = lista
 
-		if (len(ID_list.children) < 1):
+		if (len(ID_list.children) == 1):
 			idlist.append(ID_list.children[0])
 		else:
 			idlist.append(ID_list.children[0])
@@ -187,6 +188,8 @@ def tableBuildUp:
 						self.table.addSymbol(ID, Type)
 					#Si tiene comportamiento especificado
 					if child.children[2]:
-
-					
+						for i in child.children[2].children:
+							if (i.token == 'Comportamiento'):
+								if(i.children[0].children[0]):
+									# Esto cambiaria un poco con la funcion de moverse a los hijos
 
