@@ -17,11 +17,12 @@ class Expr: pass
 class Instr: pass
 
 class ArbolBin(Expr):
-    def __init__(self, tipo, left, op, right):
-        self.tipo  = tipo
-        self.left  = left
-        self.op    = op
-        self.right = right
+    def __init__(self, tipo, left, op, right, opsymbol):
+        self.tipo     = tipo
+        self.left     = left
+        self.op       = op
+        self.right    = right
+        self.opsymbol = opsymbol
 
     def get_valor_left(self):
         return self.left.get_valor()
@@ -30,10 +31,11 @@ class ArbolBin(Expr):
         return self.right.get_valor()
 
 class ArbolUn(Expr):
-    def __init__(self,tipo, operador,operando):
+    def __init__(self,tipo, operador,operando, opsymbol):
         self.tipo     = tipo
         self.operador = operador
         self.operando = operando
+        self.opsymbol = opsymbol
 
     def imprimir(self):
         return (self.operador + self.operando)
@@ -91,7 +93,7 @@ class ArbolInstr(Instr):
         global auxCantidadTabs
         global guardaTabs
 
-        if (self.children):s
+        if (self.children):
             if (len(self.children) > 1 and str(self.tipoInstruccion) == 'SECUENCIACION' ):
 
                 print (textwrap.fill(self.tipoInstruccion, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))

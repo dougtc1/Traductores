@@ -193,38 +193,38 @@ def p_expresion_Expr(p):
              | TkMe'''
     if (len(p) > 3):   
         if (p[2] == '+'):
-            p[0] = ArbolBin("ARITMETICA", p[1],"'Suma'", p[3])
+            p[0] = ArbolBin("ARITMETICA", p[1],"'Suma'", p[3], p[2])
         elif (p[2] == "-"):
-            p[0] = ArbolBin("ARITMETICA", p[1], "'Resta'", p[3])
+            p[0] = ArbolBin("ARITMETICA", p[1], "'Resta'", p[3], p[2])
         elif (p[2] == "*"):
-            p[0] = ArbolBin("ARITMETICA", p[1], "'Multiplicacion'",p[3])
+            p[0] = ArbolBin("ARITMETICA", p[1], "'Multiplicacion'",p[3], p[2])
         elif (p[2] == "/"):
-            p[0] = ArbolBin("ARITMETICA", p[1], "'Division'",p[3])
+            p[0] = ArbolBin("ARITMETICA", p[1], "'Division'",p[3], p[2])
         elif (p[2] == "%"):
-            p[0] = ArbolBin("ARITMETICA", p[1], "'Modulo'", p[3])
+            p[0] = ArbolBin("ARITMETICA", p[1], "'Modulo'", p[3], p[2])
         elif (p[2] == "/\\"):
-            p[0] = ArbolBin("BOOLEANA", p[1], "'Conjuncion'", p[3])
+            p[0] = ArbolBin("BOOLEANA", p[1], "'Conjuncion'", p[3], p[2])
         elif (p[2] == "\\/"):
-            p[0] = ArbolBin("BOOLEANA", p[1], "'Disyuncion'", p[3])
+            p[0] = ArbolBin("BOOLEANA", p[1], "'Disyuncion'", p[3], p[2])
         elif (p[2] == "="):
-            p[0] = ArbolBin("RELACIONAL", p[1], "'Igualdad'", p[3])
+            p[0] = ArbolBin("RELACIONAL", p[1], "'Igualdad'", p[3], p[2])
         elif (p[2] == "/="):
-            p[0] = ArbolBin("RELACIONAL", p[1], "'Desigualdad'", p[3])
+            p[0] = ArbolBin("RELACIONAL", p[1], "'Desigualdad'", p[3], p[2])
         elif (p[2] == ">"):
-            p[0] = ArbolBin("RELACIONAL", p[1], "'Mayor que'", p[3])
+            p[0] = ArbolBin("RELACIONAL", p[1], "'Mayor que'", p[3], p[2])
         elif (p[2] == "<"):
-            p[0] = ArbolBin("RELACIONAL", p[1], "'Menor que'", p[3])
+            p[0] = ArbolBin("RELACIONAL", p[1], "'Menor que'", p[3], p[2])
         elif (p[2] == ">="):
-            p[0] = ArbolBin("RELACIONAL", p[1], "'Mayor igual que'", p[3])
+            p[0] = ArbolBin("RELACIONAL", p[1], "'Mayor igual que'", p[3], p[2])
         elif (p[2] == "<="):
-            p[0] = ArbolBin("RELACIONAL", p[1], "'Menor igual que'", p[3])
+            p[0] = ArbolBin("RELACIONAL", p[1], "'Menor igual que'", p[3], p[2])
         elif (p[1] == "(" and p[3] == ")"):
             p[0] = p[2]
     else:
         if (p[1] == "-" and len(p) == 3):
-            p[0] = ArbolUn("ARITMETICA", "Negativo",p[2])
+            p[0] = ArbolUn("ARITMETICA", "Negativo",p[2], p[1])
         elif (p[1] == "~" and len(p) == 3):
-            p[0] = ArbolUn("BOOLEANA", "Negacion", p[2])
+            p[0] = ArbolUn("BOOLEANA", "Negacion", p[2], p[1])
         elif (len(p) == 2 and isinstance(p[1],int)):
             p[0] = Numero(p[1])
         elif (p[1] == 'True' or p[1] == 'False'):
