@@ -50,4 +50,7 @@ lexer.lineno = 1
 # Construccion del parser, del AST e impresion de las instrucciones
 parser = yacc.yacc()
 parser.parse(content)
+symTable = symbolTable()
+construccion = tableBuildUp(ASA)
+construccion.fillTable(symTab)
 ASA.printPreorden()

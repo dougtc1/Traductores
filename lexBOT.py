@@ -14,6 +14,7 @@ import sys
 # CREACION DE LAS LISTAS DE TOKEN Y ERRORES, APERTURA DE ARCHIVO
 global globalList
 global content
+global symTable
 
 with open(sys.argv[1], 'r') as content_file:
 	content = 	content_file.read()
