@@ -176,11 +176,6 @@ def tableBuildUp:
 			idlist = []
 
 		if (len(ID_list.children) < 2):
-	def getID_list(self, ID_list, lista = []):
-		
-		idlist = lista
-
-		if (len(ID_list.children) == 1):
 			idlist.append(ID_list.children[0])
 		else:
 			idlist.append(ID_list.children[0])
@@ -621,8 +616,3 @@ def tableBuildUp:
 						self.checkComp_list(child.children[2])
 				elif (child.token == 'InstC_lista'):
 					self.checkInstC_list(child)
-						for i in child.children[2].children:
-							if (i.token == 'Comportamiento'):
-								if(i.children[0].children[0]):
-									# Esto cambiaria un poco con la funcion de moverse a los hijos
-
