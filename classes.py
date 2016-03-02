@@ -120,16 +120,11 @@ def symbolTable:
 
 	"""Verifica que una variable no exista en la tabla para agregarla"""
 	def addSymbol(self, symbol, tipo):
-		# if (symbolExists(symbol) and self.getSymbolData(symbol).tipo == tipo):
-		# 	print("ERROR. VARIABLE YA DECLARADA")
-		# 	sys.exit()
-		# elif(symbolExists(symbol) and self.getSymbolData(symbol).tipo != tipo):
-		# 	self.getSymbolData(symbol).modifType(tipo)
 		if (self.symbolExists(symbol)):
 			print("ERROR, VARIABLE YA DECLARADA")
+			sys.exit()
 		else:
 			self.createTuple(symbol, tipo)
-		"""HAY QUE REVISARLAAAAA"""
 
 	"""Retorna el objeto que contiene la informacion de una variable 
 	declarada"""
@@ -138,8 +133,9 @@ def symbolTable:
 			return self.tabla[symbol]
 		elif (not symbolExists(symbol) and self.padre):
 			self.padre.getSymbolData(symbol)
-
-		return None
+		else:
+			print("VARIABLE NO DECLARADA, ERROR")
+			sys.exit()
 
 	"""Verifica que exista la variable en la tabla actual para agregar
 	el valor correspondiente. De no existir, busca en la tabla padre"""
@@ -190,7 +186,7 @@ def tableBuildUp:
 
 	def checkExpressionOk(self, table, expr):
 		# SI ARBOLBIN ES DE TIPO ARITMETICO
-		if (expr.tipo == 'ARITMETICA'):
+		if (isinstance(expr, ArbolBin) and expr.tipo == 'ARITMETICA'):
 			# LADO IZQUIERDO Y LADO DERECHO NO SON ARBOLBIN
 			if (not isinstance(expr.left, ArbolBin) and 
 				not isinstance(expr.right, ArbolBin)):
@@ -203,19 +199,32 @@ def tableBuildUp:
 					isinstance(expr.right, Ident)):
 					if (table.getSymbolType(expr.right) == 'int'):
 						return True
+					else:
+						print("ERROR, tipos incompatibles para " + expr.left +\
+						" y " + expr.right)
+						sys.exit()
 				elif(isinstance(expr.left, Ident) and
 					isinstance(expr.right, Numero)):
 					if (table.getSymbolType(expr.left) == 'int'):
 						return True
+					else:
+						print("ERROR, tipos incompatibles para " + expr.left +\
+						" y " + expr.right)
+						sys.exit()
 				# SI AMBOS SON VARIABLES
 				elif(isinstance(expr.left, Ident) and
 					isinstance(expr.right, Ident)):
 					if (table.getSymbolType(expr.right) == 'int' and\
 						table.getSymbolType(expr.left) == 'int'):
 						return True
-				print("ERROR, tipos incompatibles para " + expr.left + " y " +\
-				expr.right)
-				sys.exit()
+					else:
+						print("ERROR, tipos incompatibles para " + expr.left +\
+						" y " + expr.right)
+						sys.exit()
+				else:
+					print("ERROR, tipos incompatibles para " + expr.left +\
+					 " y " + expr.right)
+					sys.exit()
 			# LADO IZQUIERDO ARBOL Y DERECHO NO ARBOLBIN
 			elif(isinstance(expr.left, ArbolBin) and 
 				not isinstance(expr.right, ArbolBin)):
@@ -224,12 +233,21 @@ def tableBuildUp:
 					if (isinstance(expr.right, Numero)):
 						return True
 					# SI EL DERECHO ES VARIABLE
-					if (isinstance(expr.right, Ident)):
+					elif (isinstance(expr.right, Ident)):
 						if (table.getSymbolType(expr.right) == 'int'):
 							return True
-				print("ERROR, tipos incompatibles para " + expr.left.tipo + " y " +\
-				expr.right)
-				sys.exit()
+						else:
+							print("ERROR, tipos incompatibles para " + expr.left +\
+							" y " + expr.right)
+							sys.exit()
+					else:
+						print("ERROR, tipos incompatibles para " + expr.left.tipo + " y " +\
+						expr.right)
+						sys.exit()	
+				else:
+					print("ERROR, tipos incompatibles para " + expr.left.tipo + " y " +\
+					expr.right)
+					sys.exit()
 			# LADO DERECHO ARBOL Y IZQUIERDO NO ARBOLBIN
 			elif(isinstance(expr.right, ArbolBin) and 
 				not isinstance(expr.left, ArbolBin)):
@@ -238,12 +256,21 @@ def tableBuildUp:
 					if (isinstance(expr.left, Numero)):
 						return True
 					# SI EL DERECHO ES VARIABLE
-					if (isinstance(expr.left, Ident)):
+					elif (isinstance(expr.left, Ident)):
 						if (table.getSymbolType(expr.left) == 'int'):
 							return True
-				print("ERROR, tipos incompatibles para " + expr.left + " y " +\
-				expr.right.tipo)
-				sys.exit()
+						else:
+							print("ERROR, tipos incompatibles para " + expr.left +\
+							" y " + expr.right)
+							sys.exit()
+					else:
+						print("ERROR, tipos incompatibles para " + expr.left.tipo + " y " +\
+						expr.right)
+						sys.exit()
+				else:
+					print("ERROR, tipos incompatibles para " + expr.left + " y " +\
+					expr.right.tipo)
+					sys.exit()
 			# AMBOS SON ARBOLBIN
 			elif(isinstance(expr.left, ArbolBin) and 
 			isinstance(expr.right, ArbolBin)):
@@ -251,49 +278,70 @@ def tableBuildUp:
 					self.checkExpressionOk(expr.left)
 					self.checkExpressionOk(expr.right)
 					return True
-				print("ERROR, tipos incompatibles para " + expr.left. + " y " +\
-				expr.right.tipo)
-				sys.exit()
+				else:
+					print("ERROR, tipos incompatibles para " + expr.left. + " y " +\
+					expr.right.tipo)
+					sys.exit()
 
 		# SI ARBOLBIN ES DE TIPO BOOLEANO
-		elif (expr.tipo == 'BOOLEANA'):
-			if (expr.tipo == 'BOOLEANA'):
+		elif (isinstance(expr, ArbolBin) and expr.tipo == 'BOOLEANA'):
 			# LADO IZQUIERDO Y LADO DERECHO NO SON ARBOLBIN
 			if (not isinstance(expr.left, ArbolBin) and 
 				not isinstance(expr.right, ArbolBin)):
-				# SI AMBOS SON NUMEROS
+				# SI AMBOS SON BOOL
 				if(isinstance(expr.left, Bool) and
 					isinstance(expr.right, Bool)):
 					return True
-				# SI UNO ES NUMERO Y EL OTRO ES VARIABLE
+				# SI UNO ES BOOL Y EL OTRO ES VARIABLE
 				elif(isinstance(expr.left, Bool) and
 					isinstance(expr.right, Ident)):
 					if (table.getSymbolType(expr.right) == 'bool'):
 						return True
+					else:
+						print("ERROR, tipos incompatibles para " + expr.left +\
+						" y " + expr.right)
+						sys.exit()
 				elif(isinstance(expr.left, Ident) and
 					isinstance(expr.right, Bool)):
 					if (table.getSymbolType(expr.left) == 'bool'):
 						return True
+					else:
+						print("ERROR, tipos incompatibles para " + expr.left +\
+						" y " + expr.right)
+						sys.exit()
 				# SI AMBOS SON VARIABLES
 				elif(isinstance(expr.left, Ident) and
 					isinstance(expr.right, Ident)):
 					if (table.getSymbolType(expr.right) == 'bool' and\
 						table.getSymbolType(expr.left) == 'bool'):
 						return True
-				print("ERROR, tipos incompatibles para " + expr.left + " y " +\
-				expr.right)
-				sys.exit()
+					else:
+						print("ERROR, tipos incompatibles para " + expr.left +\
+						" y " + expr.right)
+						sys.exit()
+				else:
+					print("ERROR, tipos incompatibles para " + expr.left + " y " +\
+					expr.right)
+					sys.exit()
 			# LADO IZQUIERDO ARBOL Y DERECHO NO ARBOLBIN
 			elif(isinstance(expr.left, ArbolBin) and 
 				not isinstance(expr.right, ArbolBin)):
 				if (expr.left.tipo == 'BOOLEANA'):
-					# SI EL DERECHO ES NUMERO
+					# SI EL DERECHO ES BOOL
 					if (isinstance(expr.right, Bool)):
 						return True
+					else:
+						print("ERROR, tipos incompatibles para " + expr.left +\
+						" y " + expr.right)
+						sys.exit()
 					# SI EL DERECHO ES VARIABLE
 					if (isinstance(expr.right, Ident)):
 						if (table.getSymbolType(expr.right) == 'bool'):
 							return True
+						else:
+							print("ERROR, tipos incompatibles para " + expr.left +\
+							" y " + expr.right)
+							sys.exit()
 				print("ERROR, tipos incompatibles para " + expr.left.tipo + " y " +\
 				expr.right)
 				sys.exit()
@@ -301,13 +349,21 @@ def tableBuildUp:
 			elif(isinstance(expr.right, ArbolBin) and 
 				not isinstance(expr.left, ArbolBin)):
 				if (expr.right.tipo == 'BOOLEANA'):
-					# SI EL DERECHO ES NUMERO
+					# SI EL DERECHO ES BOOL
 					if (isinstance(expr.left, Bool)):
 						return True
+					else:
+						print("ERROR, tipos incompatibles para " + expr.left +\
+						" y " + expr.right)
+						sys.exit()
 					# SI EL DERECHO ES VARIABLE
 					if (isinstance(expr.left, Ident)):
 						if (table.getSymbolType(expr.left) == 'bool'):
 							return True
+						else:
+							print("ERROR, tipos incompatibles para " + expr.left +\
+							" y " + expr.right)
+							sys.exit()
 				print("ERROR, tipos incompatibles para " + expr.left + " y " +\
 				expr.right.tipo)
 				sys.exit()
@@ -323,7 +379,7 @@ def tableBuildUp:
 				sys.exit()
 
 		# SI ARBOLBIN ES RELACIONAL
-		elif (expr.tipo == 'RELACIONAL'):
+		elif (isinstance(expr, ArbolBin) and expr.tipo == 'RELACIONAL'):
 			# LADO IZQUIERDO Y LADO DERECHO NO SON ARBOLBIN
 			if (not isinstance(expr.left, ArbolBin) and 
 				not isinstance(expr.right, ArbolBin)):
@@ -339,18 +395,34 @@ def tableBuildUp:
 					isinstance(expr.right, Ident)):
 					if (table.getSymbolType(expr.right) == 'int'):
 						return True
+					else:
+						print("ERROR, tipos incompatibles para " + expr.left +\
+											 " y " + expr.right)
+											sys.exit()
 				elif(isinstance(expr.left, Ident) and
 					isinstance(expr.right, Numero)):
 					if (table.getSymbolType(expr.left) == 'int'):
 						return True
+					else:
+						print("ERROR, tipos incompatibles para " + expr.left +\
+											 " y " + expr.right)
+											sys.exit()
 				elif(isinstance(expr.left, Bool) and
 					isinstance(expr.right, Ident)):
 					if (table.getSymbolType(expr.right) == 'bool'):
 						return True
+					else:
+						print("ERROR, tipos incompatibles para " + expr.left +\
+											 " y " + expr.right)
+											sys.exit()
 				elif(isinstance(expr.left, Ident) and
 					isinstance(expr.right, Bool)):
 					if (table.getSymbolType(expr.left) == 'int'):
 						return True
+					else:
+						print("ERROR, tipos incompatibles para " + expr.left +\
+											 " y " + expr.right)
+											sys.exit()
 				# SI AMBOS SON VARIABLES
 				elif(isinstance(expr.left, Ident) and
 					isinstance(expr.right, Ident)):
@@ -369,18 +441,34 @@ def tableBuildUp:
 					# SI EL DERECHO ES NUMERO
 					if (isinstance(expr.right, Numero)):
 						return True
+					else:
+						print("ERROR, tipos incompatibles para " + expr.left +\
+											 " y " + expr.right)
+											sys.exit()
 					# SI EL DERECHO ES VARIABLE
 					if (isinstance(expr.right, Ident)):
 						if (table.getSymbolType(expr.right) == 'int'):
 							return True
+						else:
+							print("ERROR, tipos incompatibles para " + expr.left +\
+												 " y " + expr.right)
+												sys.exit()
 				if (expr.left.tipo == 'BOOLEANA'):
 					# SI EL DERECHO ES BOOL
 					if (isinstance(expr.right, Bool)):
 						return True
+					else:
+						print("ERROR, tipos incompatibles para " + expr.left +\
+											 " y " + expr.right)
+											sys.exit()
 					# SI EL DERECHO ES VARIABLE
 					if (isinstance(expr.right, Ident)):
 						if (table.getSymbolType(expr.right) == 'bool'):
 							return True
+						else:
+							print("ERROR, tipos incompatibles para " + expr.left +\
+												 " y " + expr.right)
+												sys.exit()
 				print("ERROR, tipos incompatibles para " + expr.left.tipo + " y " +\
 				expr.right)
 				sys.exit()
@@ -391,18 +479,34 @@ def tableBuildUp:
 					# SI EL IZQUIERDO ES NUMERO
 					if (isinstance(expr.left, Numero)):
 						return True
+					else:
+						print("ERROR, tipos incompatibles para " + expr.left +\
+											 " y " + expr.right)
+											sys.exit()
 					# SI EL IZQUIERDO ES VARIABLE
 					if (isinstance(expr.left, Ident)):
 						if (table.getSymbolType(expr.left) == 'int'):
 							return True
+						else:
+							print("ERROR, tipos incompatibles para " + expr.left +\
+												 " y " + expr.right)
+												sys.exit()
 				if (expr.right.tipo == 'BOOLEANA'):
 					# SI EL IZQUIERDO ES BOOL
 					if (isinstance(expr.left, Bool)):
 						return True
+					else:
+						print("ERROR, tipos incompatibles para " + expr.left +\
+											 " y " + expr.right)
+											sys.exit()
 					# SI EL IZQUIERDO ES VARIABLE
 					if (isinstance(expr.left, Ident)):
 						if (table.getSymbolType(expr.left) == 'bool'):
 							return True
+						else:
+							print("ERROR, tipos incompatibles para " + expr.left +\
+												 " y " + expr.right)
+												sys.exit()
 				print("ERROR, tipos incompatibles para " + expr.left + " y " +\
 				expr.right.tipo)
 				sys.exit()
