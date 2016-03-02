@@ -237,7 +237,7 @@ def tableBuildUp:
 						if (table.getSymbolType(expr.right) == 'int'):
 							return True
 						else:
-							print("ERROR, tipos incompatibles para " + expr.left +\
+							print("ERROR, tipos incompatibles para " + expr.left.tipo +\
 							" y " + expr.right)
 							sys.exit()
 					else:
@@ -252,20 +252,20 @@ def tableBuildUp:
 			elif(isinstance(expr.right, ArbolBin) and 
 				not isinstance(expr.left, ArbolBin)):
 				if (expr.right.tipo == 'ARITMETICA'):
-					# SI EL DERECHO ES NUMERO
+					# SI EL IZQUIERDO ES NUMERO
 					if (isinstance(expr.left, Numero)):
 						return True
-					# SI EL DERECHO ES VARIABLE
+					# SI EL IZQUIERDO ES VARIABLE
 					elif (isinstance(expr.left, Ident)):
 						if (table.getSymbolType(expr.left) == 'int'):
 							return True
 						else:
 							print("ERROR, tipos incompatibles para " + expr.left +\
-							" y " + expr.right)
+							" y " + expr.right.tipo)
 							sys.exit()
 					else:
-						print("ERROR, tipos incompatibles para " + expr.left.tipo + " y " +\
-						expr.right)
+						print("ERROR, tipos incompatibles para " + expr.left + " y " +\
+						expr.right.tipo)
 						sys.exit()
 				else:
 					print("ERROR, tipos incompatibles para " + expr.left + " y " +\
@@ -279,7 +279,7 @@ def tableBuildUp:
 					self.checkExpressionOk(expr.right)
 					return True
 				else:
-					print("ERROR, tipos incompatibles para " + expr.left. + " y " +\
+					print("ERROR, tipos incompatibles para " + expr.left.tipo + " y " +\
 					expr.right.tipo)
 					sys.exit()
 
