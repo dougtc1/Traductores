@@ -52,7 +52,7 @@ class ArbolUn(Expr):
 class Numero(Expr):
 	def __init__(self,value):
 		self.tipo = "Numero"
-		self.value = value
+		self.value = str(value)
 
 	def get_valor(self):
 		return self.value
@@ -157,94 +157,6 @@ class ArbolInstr(Instr):
                             cantidadTabs    += 1
                             auxCantidadTabs = cantidadTabs
                         child.printPreorden()
-=======
-	def __init__(self, token=None, children=None, tipoInstruccion=None):
-		self.token = token
-		if children:
-			self.children = children
-		else:
-			self.children = [ ]
-		self.tipoInstruccion = tipoInstruccion
-
-	def add_token(self, token):
-		self.token = token
-
-	def add_children(self, children):
-		self.children = children
-
-	def add_tipoInstruccion(self, tipoInstruccion):
-		self.tipoInstruccion = tipoInstruccion
-
-	def imprimir(self):
-		pass
-
-
-	def printPreorden(self):
-		global cantidadTabs
-		global auxCantidadTabs
-		global guardaTabs
-
-		if (self.children):
-			if (len(self.children) > 1 and str(self.tipoInstruccion) == 'SECUENCIACION'):
-
-				print (textwrap.fill(self.tipoInstruccion, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
-				cantidadTabs = auxCantidadTabs
-				cantidadTabs += 1
-				auxCantidadTabs = cantidadTabs
-
-			for child in self.children:
-
-				if (isinstance(child, Activate)):
-					print (textwrap.fill(child.tipoInstruccion, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
-					cantidadTabs    = auxCantidadTabs
-					cantidadTabs    += 1
-					lista = child.imprimir()
-					for i in lista:
-						print (textwrap.fill(i, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
-					cantidadTabs -= 1
-
-				elif (isinstance(child, Deactivate)):
-					print (textwrap.fill(child.tipoInstruccion, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
-					cantidadTabs    = auxCantidadTabs
-					cantidadTabs    += 1
-					lista = child.imprimir()
-					for i in lista:
-						print (textwrap.fill(i, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
-					cantidadTabs -= 1
-
-
-				elif (isinstance(child, Advance)):
-					print (textwrap.fill(child.tipoInstruccion, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
-					cantidadTabs    = auxCantidadTabs
-					cantidadTabs    += 1
-					lista = child.imprimir()
-					for i in lista:
-						print (textwrap.fill(i, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
-					cantidadTabs -= 1
-
-				elif(isinstance(child, CondicionalIf)):
-					child.imprimir()
-				elif(isinstance(child, IteracionIndef)):
-					child.imprimir()
-				elif(isinstance(child, Ident)):
-					return child.get_valor()
-				elif(isinstance(child, Bool)):
-					return child.get_valor()
-				elif(isinstance(child, Numero)):
-					return child.get_valor()
-				elif(isinstance(child, ArbolUn)):
-					return child.imprimir()
-				elif(isinstance(child, ArbolBin)):
-					"""FALTA ARREGLAR BETA DE ARBOL BIN"""
-					return child.imprimir()
-				else:
-					if (isinstance(child, ArbolInstr)):
-						if (child.tipoInstruccion == "ALCANCE"):
-
-							print (textwrap.fill(child.tipoInstruccion, initial_indent='\t'*cantidadTabs,subsequent_indent='\t'))
-							cantidadTabs    += 1
-							auxCantidadTabs = cantidadTabs
-						child.printPreorden()
 
 
 class CondicionalIf(ArbolInstr):
@@ -498,3 +410,45 @@ class Advance(ArbolInstr):
 				lista.append("- var: " + str(x.value))
 
 		return lista
+
+class Store(ArbolInstr):
+    """Clase arbol para accion de Robot Store"""
+    def __init__(self, token, children, expr):
+        ArbolInstr.__init__(self, token, children, "store")
+        self.expr = expr
+
+class Collect(ArbolInstr):
+    """Clase arbol para accion de Robot Collect"""
+    def __init__(self, token, children, id_list = None):
+        ArbolInstr.__init__(self, token, children, "collect")
+        self.id_list = id_list
+
+class Drop(ArbolInstr):
+    """Clase arbol para accion de Robot Drop"""
+    def __init__(self, token, children, expr):
+        ArbolInstr.__init__(self, token, children, "drop")
+        self.expr = expr
+
+class Direccion(ArbolInstr):
+    """Clase arbol para accion de Robot Direccion"""
+    def __init__(self, token, children, direccion, expr = None):
+        ArbolInstr.__init__(self, token, children, "direccion")
+        self.direccion = direccion
+        self.expr = expr
+        
+class Read(ArbolInstr):
+    """Clase arbol para accion de Robot Read"""
+    def __init__(self, token, children, id_list = None):
+        ArbolInstr.__init__(self, token, children, "read")
+        self.id_list = id_list
+
+class Send(ArbolInstr):
+    """Clase arbol para accion de Robot Send"""
+    def __init__(self, token, children):
+        ArbolInstr.__init__(self, token, children, "send")
+        
+class Receive(ArbolInstr):
+    """Clase arbol para accion de Robot Receive"""
+    def __init__(self, token, children):
+        ArbolInstr.__init__(self, token, children, "receive")
+        

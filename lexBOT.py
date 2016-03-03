@@ -15,6 +15,7 @@ import sys
 global globalList
 global content
 global symTable
+global behavTable
 
 with open(sys.argv[1], 'r') as content_file:
 	content = 	content_file.read()
