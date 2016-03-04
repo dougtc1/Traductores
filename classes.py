@@ -119,10 +119,24 @@ class symbolTable:
 
 	"""Verifica si el simbolo existe en la tabla de simbolos"""
 	def symbolExists(self, symbol):
+		print("\n")
+		print("ESTOY EN SYMBOLEXISTS")
+		print(symbol)
+		print("\n")
+
 		if symbol in self.tabla:
+			print("SI ESTA")
 			return True
 		else:
+			print("NO ESTA")
 			return False
+
+	"""Verifica si un simbolo esta en la tabla del padre """
+	def symbolParentExists(self,symbol):
+		if (self.padre):
+			self.padre.symbolParentExists(symbol)
+		else:
+			self.symbolExists(symbol)
 
 	"""Crea un par en el diccionario con el nombre de la variable
 	como clave y se le asigna solo el tipo"""
@@ -252,16 +266,16 @@ class tableBuildUp:
 					if (table.getSymbolType(expr.right) == 'int'):
 						return True
 					else:
-						print("ERROR, tipos incompatibles para " + expr.left.value +\
-						" y " + expr.right.value + " con operacion de " + expr.op)
+						print("ERROR, tipos incompatibles para " + str(expr.left.value) +\
+						" y " + str(expr.right.value) + " con operacion de " + str(expr.op))
 						sys.exit()
 				elif(isinstance(expr.left, Ident) and
 					isinstance(expr.right, Numero)):
 					if (table.getSymbolType(expr.left) == 'int'):
 						return True
 					else:
-						print("ERROR, tipos incompatibles para " + expr.left.value +\
-						" y " + expr.right.value + " con operacion de " + expr.op)
+						print("ERROR, tipos incompatibles para " + str(expr.left.value) +\
+						" y " + str(expr.right.value) + " con operacion de " + str(expr.op))
 						sys.exit()
 				# SI AMBOS SON VARIABLES
 				elif(isinstance(expr.left, Ident) and
@@ -270,13 +284,13 @@ class tableBuildUp:
 						table.getSymbolType(expr.left) == 'int'):
 						return True
 					else:
-						print("ERROR, tipos incompatibles para " + expr.left.value +\
-						" de tipo " + table.getSymbolType(expr.left)+ " y " + expr.right.value +\
-						" de tipo " + table.getSymbolType(expr.right) + " con operacion de " + expr.op)
+						print("ERROR, tipos incompatibles para " + str(expr.left.value) +\
+						" de tipo " + str(table.getSymbolType(expr.left))+ " y " + str(expr.right.value) +\
+						" de tipo " + str(table.getSymbolType(expr.right)) + " con operacion de " + str(expr.op))
 						sys.exit()
 				else:
-					print("ERROR, tipos incompatibles para " + expr.left.value +\
-					 " y " + expr.right.value + " con operacion de " + expr.op)
+					print("ERROR, tipos incompatibles para " + str(expr.left.value) +\
+					 " y " + str(expr.right.value) + " con operacion de " + str(expr.op))
 					sys.exit()
 			# LADO IZQUIERDO ARBOL Y DERECHO NO ARBOLBIN
 			elif(isinstance(expr.left, ArbolBin) and 
@@ -290,16 +304,16 @@ class tableBuildUp:
 						if (table.getSymbolType(expr.right) == 'int'):
 							return True
 						else:
-							print("ERROR, tipos incompatibles para expresion " + expr.left.tipo +\
-							" y " + expr.right.value + " con operacion de " + expr.op)
+							print("ERROR, tipos incompatibles para expresion " + str(expr.left.tipo) +\
+							" y " + str(expr.right.value) + " con operacion de " + str(expr.op))
 							sys.exit()
 					else:
-						print("ERROR, tipos incompatibles para expresion " + expr.left.tipo + " y " +\
-						expr.right.value + " con operacion de " + expr.op)
+						print("ERROR, tipos incompatibles para expresion " + str(expr.left.tipo) + " y " +\
+						str(expr.right.value) + " con operacion de " + str(expr.op))
 						sys.exit()	
 				else:
-					print("ERROR, tipos incompatibles para expresion " + expr.left.tipo + " y " +\
-					expr.right.value + " con operacion de " + expr.op)
+					print("ERROR, tipos incompatibles para expresion " + str(expr.left.tipo) + " y " +\
+					str(expr.right.value) + " con operacion de " + str(expr.op))
 					sys.exit()
 			# LADO DERECHO ARBOL Y IZQUIERDO NO ARBOLBIN
 			elif(isinstance(expr.right, ArbolBin) and 
@@ -313,16 +327,16 @@ class tableBuildUp:
 						if (table.getSymbolType(expr.left) == 'int'):
 							return True
 						else:
-							print("ERROR, tipos incompatibles para " + expr.left.value +\
-							" y expresion " + expr.right.tipo + " con operacion de " + expr.op)
+							print("ERROR, tipos incompatibles para " + str(expr.left.value) +\
+							" y expresion " + str(expr.right.tipo) + " con operacion de " + str(expr.op))
 							sys.exit()
 					else:
-						print("ERROR, tipos incompatibles para " + expr.left.value +\
-						 " y expresion " + expr.right.tipo + " con operacion de " + expr.op)
+						print("ERROR, tipos incompatibles para " + str(expr.left.value) +\
+						 " y expresion " + str(expr.right.tipo) + " con operacion de " + str(expr.op))
 						sys.exit()
 				else:
-					print("ERROR, tipos incompatibles para " + expr.left.value +\
-					 " y expresion " + expr.right.tipo + " con operacion de " + expr.op)
+					print("ERROR, tipos incompatibles para " + str(expr.left.value) +\
+					 " y expresion " + str(expr.right.tipo) + " con operacion de " + str(expr.op))
 					sys.exit()
 			# AMBOS SON ARBOLBIN
 			elif(isinstance(expr.left, ArbolBin) and 
@@ -332,8 +346,8 @@ class tableBuildUp:
 					self.checkExpressionOk(table, expr.right)
 					return True
 				else:
-					print("ERROR, tipos incompatibles para expresion " + expr.left.tipo +\
-					" y expresion " + expr.right.tipo + " con operacion de " + expr.op)
+					print("ERROR, tipos incompatibles para expresion " + str(expr.left.tipo) +\
+					" y expresion " + str(expr.right.tipo) + " con operacion de " + str(expr.op))
 					sys.exit()
 
 		# SI ARBOLBIN ES DE TIPO BOOLEANO
@@ -351,16 +365,16 @@ class tableBuildUp:
 					if (table.getSymbolType(expr.right) == 'bool'):
 						return True
 					else:
-						print("ERROR, tipos incompatibles para " + expr.left.value +\
-						" y " + expr.right.value + " con operacion de " + expr.op)
+						print("ERROR, tipos incompatibles para " + str(expr.left.value) +\
+						" y " + str(expr.right.value) + " con operacion de " + str(expr.op))
 						sys.exit()
 				elif(isinstance(expr.left, Ident) and
 					isinstance(expr.right, Bool)):
 					if (table.getSymbolType(expr.left) == 'bool'):
 						return True
 					else:
-						print("ERROR, tipos incompatibles para " + expr.left.value +\
-						" y " + expr.right.value + " con operacion de " + expr.op)
+						print("ERROR, tipos incompatibles para " + str(expr.left.value) +\
+						" y " + str(expr.right.value) + " con operacion de " + str(expr.op))
 						sys.exit()
 				# SI AMBOS SON VARIABLES
 				elif(isinstance(expr.left, Ident) and
@@ -370,12 +384,12 @@ class tableBuildUp:
 						table.getSymbolType(expr.left) == 'bool'):
 						return True
 					else:
-						print("ERROR, tipos incompatibles para " + expr.left.value +\
-						" y " + expr.right.value + " con operacion de " + expr.op)
+						print("ERROR, tipos incompatibles para " + str(expr.left.value) +\
+						" y " + str(expr.right.value) + " con operacion de " + str(expr.op))
 						sys.exit()
 				else:
-					print("ERROR, tipos incompatibles para " + expr.left.value + " y " +\
-					expr.right.value + " con operacion de " + expr.op)
+					print("ERROR, tipos incompatibles para " + str(expr.left.value) + " y " +\
+					str(expr.right.value) + " con operacion de " + str(expr.op))
 					sys.exit()
 			# LADO IZQUIERDO ARBOL Y DERECHO NO ARBOLBIN
 			elif(isinstance(expr.left, ArbolBin) and 
@@ -389,12 +403,12 @@ class tableBuildUp:
 						if (table.getSymbolType(expr.right) == 'bool'):
 							return True
 						else:
-							print("ERROR, tipos incompatibles para expresion " + expr.left.tipo +\
-							" y " + expr.right.value + " con operacion de " + expr.op)
+							print("ERROR, tipos incompatibles para expresion " + str(expr.left.tipo) +\
+							" y " + str(expr.right.value) + " con operacion de " + str(expr.op))
 							sys.exit()
 					else:
-						print("ERROR, tipos incompatibles para expresion " + expr.left.tipo + " y " +\
-						expr.right.value + " con operacion de " + expr.op)
+						print("ERROR, tipos incompatibles para expresion " + str(expr.left.tipo) + " y " +\
+						str(expr.right.value) + " con operacion de " + str(expr.op))
 						sys.exit()
 			# LADO DERECHO ARBOL Y IZQUIERDO NO ARBOLBIN
 			elif(isinstance(expr.right, ArbolBin) and 
@@ -408,12 +422,12 @@ class tableBuildUp:
 						if (table.getSymbolType(expr.left) == 'bool'):
 							return True
 						else:
-							print("ERROR, tipos incompatibles para " + expr.left.value +\
-							" y expresion " + expr.right.tipo + " con operacion de " + expr.op)
+							print("ERROR, tipos incompatibles para " + str(expr.left.value) +\
+							" y expresion " + str(expr.right.tipo) + " con operacion de " + str(expr.op))
 							sys.exit()
 					else:
-						print("ERROR, tipos incompatibles para " + expr.left.value +\
-						" y expresion " + expr.right.tipo + " con operacion de " + expr.op)
+						print("ERROR, tipos incompatibles para " + str(expr.left.value) +\
+						" y expresion " + str(expr.right.tipo) + " con operacion de " + str(expr.op))
 						sys.exit()
 			# AMBOS SON ARBOLBIN
 			elif(isinstance(expr.left, ArbolBin) and 
@@ -423,8 +437,8 @@ class tableBuildUp:
 					self.checkExpressionOk(table, expr.right)
 					return True
 				print("ERROR, tipos incompatibles para expresion " +\
-				expr.left.tipo + " y expresion " + expr.right.tipo +\
-				" con operacion de " + expr.op)
+				str(expr.left.tipo) + " y expresion " + str(expr.right.tipo) +\
+				" con operacion de " + str(expr.op))
 				sys.exit()
 
 		# SI ARBOLBIN ES RELACIONAL
@@ -445,32 +459,32 @@ class tableBuildUp:
 					if (table.getSymbolType(expr.right) == 'int'):
 						return True
 					else:
-						print("ERROR, tipos incompatibles para " + expr.left.value +\
-						" y " + expr.right.value + " con operacion de " + expr.op)
+						print("ERROR, tipos incompatibles para " + str(expr.left.value) +\
+						" y " + str(expr.right.value) + " con operacion de " + str(expr.op))
 						sys.exit()
 				elif(isinstance(expr.left, Ident) and
 					isinstance(expr.right, Numero)):
 					if (table.getSymbolType(expr.left) == 'int'):
 						return True
 					else:
-						print("ERROR, tipos incompatibles para " + expr.left.value +\
-						" y " + expr.right.value + " con operacion de " + expr.op)
+						print("ERROR, tipos incompatibles para " + str(expr.left.value) +\
+						" y " + str(expr.right.value) + " con operacion de " + str(expr.op))
 						sys.exit()
 				elif(isinstance(expr.left, Bool) and
 					isinstance(expr.right, Ident)):
 					if (table.getSymbolType(expr.right) == 'bool'):
 						return True
 					else:
-						print("ERROR, tipos incompatibles para " + expr.left.value +\
-						" y " + expr.right.value + " con operacion de " + expr.op)
+						print("ERROR, tipos incompatibles para " + str(expr.left.value) +\
+						" y " + str(expr.right.value) + " con operacion de " + str(expr.op))
 						sys.exit()
 				elif(isinstance(expr.left, Ident) and
 					isinstance(expr.right, Bool)):
 					if (table.getSymbolType(expr.left) == 'int'):
 						return True
 					else:
-						print("ERROR, tipos incompatibles para " + expr.left.value +\
-						" y " + expr.right.value + " con operacion de " + expr.op)
+						print("ERROR, tipos incompatibles para " + str(expr.left.value) +\
+						" y " + str(expr.right.value) + " con operacion de " + str(expr.op))
 						sys.exit()
 				# SI AMBOS SON VARIABLES
 				elif(isinstance(expr.left, Ident) and
@@ -481,12 +495,12 @@ class tableBuildUp:
 						table.getSymbolType(expr.left) == 'bool')):
 						return True
 					else:
-						print("ERROR, tipos incompatibles para " + expr.left.value + " y " +\
-						expr.right.value + " con operacion de " + expr.op)
+						print("ERROR, tipos incompatibles para " + str(expr.left.value) + " y " +\
+						str(expr.right.value) + " con operacion de " + str(expr.op))
 						sys.exit()	
 				else:		
-					print("ERROR, tipos incompatibles para " + expr.left.value + " y " +\
-					expr.right.value + " con operacion de " + expr.op)
+					print("ERROR, tipos incompatibles para " + str(expr.left.value) + " y " +\
+					str(expr.right.value) + " con operacion de " + str(expr.op))
 					sys.exit()
 			# LADO IZQUIERDO ARBOL Y DERECHO NO ARBOLBIN
 			elif(isinstance(expr.left, ArbolBin) and 
@@ -500,12 +514,12 @@ class tableBuildUp:
 						if (table.getSymbolType(expr.right) == 'int'):
 							return True
 						else:
-							print("ERROR, tipos incompatibles para expresion " + expr.left.tipo +\
-							" y " + expr.right.value + " con operacion de " + expr.op)
+							print("ERROR, tipos incompatibles para expresion " + str(expr.left.tipo) +\
+							" y " + str(expr.right.value) + " con operacion de " + str(expr.op))
 							sys.exit()
 					else:
-						print("ERROR, tipos incompatibles para expresion " + expr.left.tipo +\
-						" y " + expr.right.value + " con operacion de " + expr.op)
+						print("ERROR, tipos incompatibles para expresion " + str(expr.left.tipo) +\
+						" y " + str(expr.right.value) + " con operacion de " + str(expr.op))
 						sys.exit()
 				if (expr.left.tipo == 'BOOLEANA'):
 					# SI EL DERECHO ES BOOL
@@ -516,12 +530,12 @@ class tableBuildUp:
 						if (table.getSymbolType(expr.right) == 'bool'):
 							return True
 						else:
-							print("ERROR, tipos incompatibles para expresion " + expr.left.tipo +\
-							" y " + expr.right.value + " con operacion de " + expr.op)
+							print("ERROR, tipos incompatibles para expresion " + str(expr.left.tipo) +\
+							" y " + str(expr.right.value) + " con operacion de " + str(expr.op))
 							sys.exit()
 					else:
-						print("ERROR, tipos incompatibles para  expresion " + expr.left.tipo + " y " +\
-						expr.right.value + " con operacion de " + expr.op)
+						print("ERROR, tipos incompatibles para  expresion " + str(expr.left.tipo) + " y " +\
+						str(expr.right.value) + " con operacion de " + str(expr.op))
 						sys.exit()
 			# LADO DERECHO ARBOL Y IZQUIERDO NO ARBOLBIN
 			elif(isinstance(expr.right, ArbolBin) and 
@@ -535,11 +549,11 @@ class tableBuildUp:
 						if (table.getSymbolType(expr.left) == 'int'):
 							return True
 						else:
-							print("ERROR, tipos incompatibles para " + expr.left.value +\
-							" y expresion " + expr.right.tipo + " con operacion de " + expr.op)
+							print("ERROR, tipos incompatibles para " + str(expr.left.value) +\
+							" y expresion " + str(expr.right.tipo) + " con operacion de " + str(expr.op))
 							sys.exit()
-					print("ERROR, tipos incompatibles para " + expr.left.value +\
-					" y expresion " + expr.right.tipo + " con operacion de " + expr.op)
+					print("ERROR, tipos incompatibles para " + str(expr.left.value) +\
+					" y expresion " + str(expr.right.tipo) + " con operacion de " + str(expr.op))
 					sys.exit()
 				if (expr.right.tipo == 'BOOLEANA'):
 					# SI EL IZQUIERDO ES BOOL
@@ -550,13 +564,13 @@ class tableBuildUp:
 						if (table.getSymbolType(expr.left) == 'bool'):
 							return True
 						else:
-							print("ERROR, tipos incompatibles para " + expr.left.value +\
-							" y expresion " + expr.right.tipo + " con operacion de " + expr.op)
+							print("ERROR, tipos incompatibles para " + str(expr.left.value) +\
+							" y expresion " + str(expr.right.tipo) + " con operacion de " + str(expr.op))
 							sys.exit()
 					else:
-						print("ERROR, tipos incompatibles para " + expr.left.value +\
-						" y expresion " + expr.right.tipo + " con operacion de " +\
-						expr.op)
+						print("ERROR, tipos incompatibles para " + str(expr.left.value) +\
+						" y expresion " + str(expr.right.tipo) + " con operacion de " +\
+						str(expr.op))
 						sys.exit()
 			# AMBOS SON ARBOLBIN
 			elif(isinstance(expr.left, ArbolBin) and 
@@ -566,29 +580,30 @@ class tableBuildUp:
 					self.checkExpressionOk(table, expr.right)
 					return True
 				else:
-					print("ERROR, tipos incompatibles para expresion " + expr.left.tipo +\
-					 " y expresion " + expr.right.tipo + " con operacion de " + expr.op)
+					print("ERROR, tipos incompatibles para expresion " + str(expr.left.tipo) +\
+					 " y expresion " + str(expr.right.tipo) + " con operacion de " + str(expr.op))
 					sys.exit()	
 			else:
-				print("ERROR, tipos incompatibles para expresion " + expr.left.tipo +\
-				 " y expresion " + expr.right.tipo + " con operacion de " + expr.op)
+				print("ERROR, tipos incompatibles para expresion " + str(expr.left.tipo) +\
+				 " y expresion " + str(expr.right.tipo) + " con operacion de " + str(expr.op))
 				sys.exit()
 
 		if (isinstance(expr, ArbolUn)):
 			# SI ES EL NEGATIVO DE UNA EXPRESION
 			if (expr.opsymbol == '-'):
+
 				if (isinstance(expr.operando, ArbolBin) or
-					isinstance(expr.operando, ArbolUn)):
+					isinstance(expr.operando, ArbolUn) or isinstance(expr.operando,Numero)):
 					# DEBE SER ARITMETICA
-					if(expr.operando.tipo == 'ARITMETICA'):
+					if(expr.operando.tipo == 'Numero'):
 						return True
 					else:
 						print("ERROR, tipo incompatible para operacion de '-' y expresion " +\
-						expr.operando.tipo + " con operacion de " + expr.operando)
+						str(expr.operando.tipo) + " con operacion de " + str(expr.operando))
 						sys.exit()
 				else:
 					print("ERROR, tipo incompatible para operacion de '-' y expresion " +\
-					expr.operando.tipo + " con operacion de " + expr.operando)	
+					str(expr.operando.tipo) + " con operacion de " + str(expr.operando))	
 					sys.exit()
 			# SI ES EL NEGADO DE UNA EXPRESION
 			elif (expr.opsymbol == '~'):
@@ -599,7 +614,7 @@ class tableBuildUp:
 						return True
 					else:
 						print("ERROR, tipo incompatible para operacion de '~' y expresion " +\
-						expr.operando.tipo + " con operacion de " + expr.operando)
+						str(expr.operando.tipo) + " con operacion de " + str(expr.operando))
 						sys.exit()
 				elif (isinstance(expr.operando, ArbolUn)):
 					# SI ES ARBOLUN DEBE SER BOOLEANA
@@ -608,15 +623,16 @@ class tableBuildUp:
 						return True
 					else:
 						print("ERROR, tipo incompatible para operacion de '~' y expresion " +\
-						expr.operando.tipo + " con operacion de " + expr.operando)
+						str(expr.operando.tipo) + " con operacion de " + str(expr.operando))
 						sys.exit()
 				else:
 					print("ERROR, tipos incompatibles para '~' y expresion " +\
-					expr.operando.tipo + " con operacion de " + expr.operando)
+					str(expr.operando.tipo) + " con operacion de " + str(expr.operando))
 					sys.exit()
 
 	def checkMeExists(self, expr):
 		print("ENTRE AQUI QUE JODE con")
+		print(expr)
 		if (isinstance(expr, ArbolBin)):
 			if(isinstance(expr.left, Ident) and not isinstance(expr.right, Ident)):
 				if (isinstance(expr.right, Numero) or isinstance(expr.right, Bool)):
@@ -681,64 +697,115 @@ class tableBuildUp:
 			pass
 
 	def checkInstC_list(self, table, inst_list):
-		instc = inst_list.children[0]
-		if (instc.tipoInstruccion == None):
-			if (instc.children[0]):
-				instc = instc.children[0]
+		print("\n")
+		print("HIJOS")
+		print(inst_list.children)
+		print("EN CHECKINSTC_LIST")
+		print("\n")
 
-		if (instc.tipoInstruccion == 'ACTIVACION' or
-			instc.tipoInstruccion == 'DESACTIVACION' or
-			instc.tipoInstruccion == 'AVANCE'):
-			id_list = self.getID_list(instc.id_list)
+		for i in inst_list.children:
+			instc = i
 
-			for ID in id_list:
-				if (not table.symbolExists(ID)):
-					print("ERROR, VARIABLE NO DECLARADA")
-					sys.exit()
-				elif (ID == 'me'):
-					print("ERROR, USO DE LA PALABRA RESERVADA ME FUERA DE UN COMPORTAMINENTO")
-					sys.exit()
+			#instc = inst_list.children[0]
+			print("\n")
+			print("INSTC ANTES DE ERROR")
+			print(instc)
+			print("\n")
+			
+			""" Este primer if verifica que no sea un token cualquiera para evitar que explote."""
 
-			if (len(instc.children) > 1):
-				inst_list1 = inst_list.children[1]
-				self.checkInstC_list(table, inst_list1)
+			if (instc.tipoInstruccion == None):
+				pass
 
-		elif (instc.tipoInstruccion == 'CONDICIONAL'):
-			condition = instc.condicion
-			self.checkMeExists(condition)
-			self.checkExpressionOk(table, condition)
+			elif (instc.tipoInstruccion == 'ACTIVACION' or
+				instc.tipoInstruccion == 'DESACTIVACION' or
+				instc.tipoInstruccion == 'AVANCE'):
 
-			inst1 = instc.instruccion1
-			self.checkMeExists(condition)
-			self.checkInstC_list(table, inst1)
+				id_lista = self.getID_list(instc.id_list)
 
-			if (instc.instruccion2):
-				inst2 = instc.instruccion2
-				self.checkInstC_list(table, inst2)
+				print("\n")
+				print("ENTRE A ACTIVACION DESACTIVACION AVANCE \n")
+				print(instc.id_list)
+				print("\n")
+	
+				for ID in id_lista:
+					if (not table.symbolExists(ID)):
+						print("ERROR, VARIABLE NO DECLARADA")
+						sys.exit()
+					elif (ID == 'me'):
+						print("ERROR, USO DE LA PALABRA RESERVADA ME FUERA DE UN COMPORTAMINENTO")
+						sys.exit()
+	
+				if (len(instc.children) > 1):
+					inst_list1 = inst_list.children[1]
+					self.checkInstC_list(table, inst_list1)
+	
+			elif (instc.tipoInstruccion == 'CONDICIONAL'):
+				condition = instc.condicion
+				self.checkMeExists(condition)
+				self.checkExpressionOk(table, condition)
+	
+				inst1 = instc.instruccion1
+				self.checkMeExists(condition)
+				self.checkInstC_list(table, inst1)
+	
+				if (instc.instruccion2):
+					inst2 = instc.instruccion2
+					self.checkInstC_list(table, inst2)
+	
+				if (len(instc.children) > 1):
+					inst_list1 = inst_list.children[1]
+					self.checkInstC_list(table, inst_list1)
+	
+			elif (instc.tipoInstruccion == 'ITERACION_INDEF'):
+				condition = inst.condicion
+				self.checkMeExists(condition)
+				self.checkExpressionOk(table, condition)
+	
+				instr = instc.instruccion
+				self.checkMeExists(condition)
+				self.checkInstC_list(table, instr)
+	
+				if (len(instc.children) > 1):
+					inst_list1 = inst_list.children[1]
+					self.checkInstC_list(table, inst_list1)
+	
+			elif (instc.children[0].tipoInstruccion == "ALCANCE"):
+				print("hola")
+				childTable = symbolTable()
+				childTable.addFather(symTable)
+				symTable = childTable
+				self.fillTable(symTable)
 
-			if (len(instc.children) > 1):
-				inst_list1 = inst_list.children[1]
-				self.checkInstC_list(table, inst_list1)
+			elif (isinstance(instc,ArbolUn)):
+				self.checkMeExists(instc.operando)
 
-		elif (instc.tipoInstruccion == 'ITERACION_INDEF'):
-			condition = inst.condicion
-			self.checkMeExists(condition)
-			self.checkExpressionOk(table, condition)
+			elif (isinstance(instc,ArbolBin)):
+				self.checkExpressionOk(instc.left)
+				self.checkExpressionOk(instc.right)
+			elif (isinstance(instc, Ident)):
+				if (not table.symbolExists(instc.value)):
+					if (table.padre):
+						if (table.symbolParentExists(instc.value)):
+							print("ERROR, VARIABLE NO DECLARADA")
+							sys.exit()
+					else:
+						print("ERROR, VARIABLE NO DECLARADA")
+						sys.exit()
 
-			instr = instc.instruccion
-			self.checkMeExists(condition)
-			self.checkInstC_list(table, instr)
+			elif (isinstance(instc,ArbolInstr)):
+				for x in instc.children:
+					self.checkInstC_list(table,x)
 
-			if (len(instc.children) > 1):
-				inst_list1 = inst_list.children[1]
-				self.checkInstC_list(table, inst_list1)
+			else:
+				"""print("ES ARBOL INSTRUCCION")
+				print("ESTE ES instc.token")
+				print(instc.token)
+				print("ESTE ES instc.tipoinstruccion")
+				print(instc.tipoInstruccion)
+				print("ESTE ES instc.children")
+				print(instc.children)"""
 
-		elif (instc.children[0].tipoInstruccion == "ALCANCE"):
-			print("hola")
-			childTable = symbolTable()
-			childTable.addFather(symTable)
-			symTable = childTable
-			self.fillTable(symTable)
 
 	def declist_check(self, table, dec_list):
 		Type = dec_list.children[0].children[0].children[0]
@@ -755,11 +822,17 @@ class tableBuildUp:
 		if (isinstance(self.tree, ArbolInstr)):
 			# Vamos a buscar que sea declaraciones
 			for child in self.tree.children:
+				#print("ESTOY IMPRIMIENDO LOS HIJOS")
+				#print(child.token)
 				if (child.token == 'Declaraciones_lista'):
 					self.declist_check(table, child)
 					#Si tiene comportamiento especificado
 					if (child.children[0].children[2]):
 						self.checkComp_list(table, child.children[0].children[2])
 				elif (child.token == 'InstC_lista'):
+					print("\n")
+					print("ESTOY EN InstC_lista de FILLTABLE")
+					print(child.token)		
 					print(child.children[1].children[0].children[0].token)
+					print("\n")
 					self.checkInstC_list(table, child)
