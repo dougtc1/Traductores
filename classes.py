@@ -11,6 +11,7 @@
 from lexBOT import *
 from arboles import *
 import sys
+global symTable
 
 class Token: 
 	def __init__(self, name=None, row=None, column=None, arg=None):
@@ -119,24 +120,34 @@ class symbolTable:
 
 	"""Verifica si el simbolo existe en la tabla de simbolos"""
 	def symbolExists(self, symbol):
-		print("\n")
-		print("ESTOY EN SYMBOLEXISTS")
-		print(symbol)
-		print("\n")
+		#print("\n")
+		#print("ESTOY EN SYMBOLEXISTS")
+		#print(symbol)
+		#print("\n")
+		
+		resultado = False
 
-		if symbol in self.tabla:
-			print("SI ESTA")
-			return True
+		if self.padre:
+#			print("DEBO ENTRAR AQUI")
+			if (not self.padre.symbolExists(symbol)):
+				if (symbol in self.tabla):
+					resultado = True
+			else:
+				resultado = True
 		else:
-			print("NO ESTA")
-			return False
+#			print("DEBO ENTRAR AQUI DESPUES")
+			if(symbol in self.tabla):
+				resultado = True
 
-	"""Verifica si un simbolo esta en la tabla del padre """
-	def symbolParentExists(self,symbol):
-		if (self.padre):
-			self.padre.symbolParentExists(symbol)
-		else:
-			self.symbolExists(symbol)
+		return resultado
+
+
+#		if (symbol in self.tabla and not self.padre.symbolExists(symbol)):
+#			print("SI ESTA")
+#			return True
+#		else:
+#			print("NO ESTA")
+#			return False
 
 	"""Crea un par en el diccionario con el nombre de la variable
 	como clave y se le asigna solo el tipo"""
@@ -184,13 +195,19 @@ class symbolTable:
 
 	def getSymbolType(self, symbol):
 		if (isinstance(symbol, Ident)):
-			symbol = symbol.value
+			symbol = symbol.get_valor()
 		if (self.symbolExists(symbol)):
 			return self.getSymbolData(symbol).tipo
+		else:
+			print("ERROR, VARIABLE " + str(symbol) + " NO DECLARADA")
+			sys.exit()
 		return None
 
 	def addFather(self, padre):
 		self.padre = padre
+
+	def addSonNode(self, hijo):
+		self.hijo = hijo
 
 	def addBehav(self, behav):
 		self.behav = behav
@@ -249,7 +266,8 @@ class tableBuildUp:
 
 		return idlist
 
-	def checkExpressionOk(self, table, expr):
+	def checkExpressionOk(self, table, expr, ver_condicion = None):
+		#print ("AQUIIIIIIIIIIII EEEEEEEEEEEEEEEEEEEEEEEEESTOY EN checkExpressionOk con expr = ", expr.tipo)
 		
 		# SI ARBOLBIN ES DE TIPO ARITMETICO
 		if (isinstance(expr, ArbolBin) and expr.tipo == 'ARITMETICA'):
@@ -342,7 +360,9 @@ class tableBuildUp:
 			elif(isinstance(expr.left, ArbolBin) and 
 			isinstance(expr.right, ArbolBin)):
 				if(expr.left.tipo == expr.right.tipo):
+					self.checkMeExists(expr.left)
 					self.checkExpressionOk(table, expr.left)
+					self.checkMeExists(expr.right)
 					self.checkExpressionOk(table, expr.right)
 					return True
 				else:
@@ -379,7 +399,6 @@ class tableBuildUp:
 				# SI AMBOS SON VARIABLES
 				elif(isinstance(expr.left, Ident) and
 					isinstance(expr.right, Ident)):
-					print(table.getSymbolType(expr.right))
 					if (table.getSymbolType(expr.right) == 'bool' and\
 						table.getSymbolType(expr.left) == 'bool'):
 						return True
@@ -433,7 +452,9 @@ class tableBuildUp:
 			elif(isinstance(expr.left, ArbolBin) and 
 			isinstance(expr.right, ArbolBin)):
 				if(expr.left.tipo == expr.right.tipo):
+					self.checkMeExists(expr.left)
 					self.checkExpressionOk(table, expr.left)
+					self.checkMeExists(expr.right)
 					self.checkExpressionOk(table, expr.right)
 					return True
 				print("ERROR, tipos incompatibles para expresion " +\
@@ -446,6 +467,8 @@ class tableBuildUp:
 			# LADO IZQUIERDO Y LADO DERECHO NO SON ARBOLBIN
 			if (not isinstance(expr.left, ArbolBin) and 
 				not isinstance(expr.right, ArbolBin)):
+				#print("DEBERIA ESTAR AQUI PANAXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+				#print(expr.left)
 				# SI AMBOS SON NUMEROS O BOOL
 				if(isinstance(expr.left, Numero) and
 					isinstance(expr.right, Numero)):
@@ -494,10 +517,17 @@ class tableBuildUp:
 					(table.getSymbolType(expr.right) == 'bool' and\
 						table.getSymbolType(expr.left) == 'bool')):
 						return True
+					elif (not table.symbolExists(expr.left)):
+						print("ERROR, VARIABLE " + str(expr.left.get_valor()) + " NO DECLARADA")
+						sys.exit()
+					elif (not table.symbolExists(expr.right)):
+						print("ERROR, VARIABLE " + str(expr.right.get_valor()) + " NO DECLARADA")
+						sys.exit()
 					else:
 						print("ERROR, tipos incompatibles para " + str(expr.left.value) + " y " +\
 						str(expr.right.value) + " con operacion de " + str(expr.op))
 						sys.exit()	
+
 				else:		
 					print("ERROR, tipos incompatibles para " + str(expr.left.value) + " y " +\
 					str(expr.right.value) + " con operacion de " + str(expr.op))
@@ -576,7 +606,9 @@ class tableBuildUp:
 			elif(isinstance(expr.left, ArbolBin) and 
 			isinstance(expr.right, ArbolBin)):
 				if(expr.left.tipo == expr.right.tipo):
+					self.checkMeExists(expr.left)
 					self.checkExpressionOk(table, expr.left)
+					self.checkMeExists(expr.right)
 					self.checkExpressionOk(table, expr.right)
 					return True
 				else:
@@ -595,8 +627,11 @@ class tableBuildUp:
 				if (isinstance(expr.operando, ArbolBin) or
 					isinstance(expr.operando, ArbolUn) or isinstance(expr.operando,Numero)):
 					# DEBE SER ARITMETICA
-					if(expr.operando.tipo == 'Numero'):
+					if(expr.operando.tipo == 'Numero' and not ver_condicion):
 						return True
+					elif (ver_condicion):
+						print("ERROR, no se aceptan numeros como condiciones.")
+						sys.exit()
 					else:
 						print("ERROR, tipo incompatible para operacion de '-' y expresion " +\
 						str(expr.operando.tipo) + " con operacion de " + str(expr.operando))
@@ -616,11 +651,15 @@ class tableBuildUp:
 						print("ERROR, tipo incompatible para operacion de '~' y expresion " +\
 						str(expr.operando.tipo) + " con operacion de " + str(expr.operando))
 						sys.exit()
-				elif (isinstance(expr.operando, ArbolUn)):
+				elif (isinstance(expr.operando, ArbolUn) or isinstance(expr.operando, Ident)):
 					# SI ES ARBOLUN DEBE SER BOOLEANA
+					if (not table.symbolExists(expr.operando)):
+						print("ERROR, variable " + str(expr.operando.get_valor()) + " no definida. JAJAJAJA")
+						sys.exit()
 					if (expr.operando.tipo == 'BOOLEANA'):
 						self.checkExpressionOk(table, expr)
 						return True
+
 					else:
 						print("ERROR, tipo incompatible para operacion de '~' y expresion " +\
 						str(expr.operando.tipo) + " con operacion de " + str(expr.operando))
@@ -631,54 +670,66 @@ class tableBuildUp:
 					sys.exit()
 
 	def checkMeExists(self, expr):
-		print("ENTRE AQUI QUE JODE con")
-		print(expr)
+		#print("ENTRE AQUI QUE JODE con")
+		#print(expr)
 		if (isinstance(expr, ArbolBin)):
 			if(isinstance(expr.left, Ident) and not isinstance(expr.right, Ident)):
 				if (isinstance(expr.right, Numero) or isinstance(expr.right, Bool)):
-					if (expr.left.value == 'me'):
-						print("ERROR: 'me' no esta definido para su uso en\
-						instrucciones de controlador.")
+					if (expr.left.get_valor() == 'me'):
+						print("ERROR: 'me' no esta definido para su uso en " +\
+						"instrucciones de controlador.")
 						sys.exit()
 				elif(isinstance(expr.right, ArbolBin)):
-					if (expr.left.value == 'me'):
-						print("ERROR: 'me' no esta definido para su uso en\
-						instrucciones de controlador.")
+					if (expr.left.get_valor() == 'me'):
+						print("ERROR: 'me' no esta definido para su uso en " +\
+						"instrucciones de controlador.")
 						sys.exit()
 					self.checkMeExists(expr.right)
 
 			elif(isinstance(expr.right, Ident) and not isinstance(expr.left, Ident)):
 				if (isinstance(expr.left, Numero) or isinstance(expr.left, Bool)):
-					if (expr.right.value == 'me'):
-						print("ERROR: 'me' no esta definido para su uso en \
-						instrucciones de controlador.")
+					if (expr.right.get_valor() == 'me'):
+						print("ERROR: 'me' no esta definido para su uso en " +\
+						"instrucciones de controlador.")
 						sys.exit()
 				elif(isinstance(expr.left, ArbolBin)):
-					if (expr.right.value == 'me'):
-						print("ERROR: 'me' no esta definido para su uso en\
-						 instrucciones de controlador.")
+					if (expr.right.get_valor() == 'me'):
+						print("ERROR: 'me' no esta definido para su uso en " +\
+						 "instrucciones de controlador.")
 						sys.exit()
 					self.checkMeExists(left.right)
 			elif(isinstance(expr.right, Ident) and isinstance(expr.left, Ident)):
-				if (expr.left.value == 'me' or expr.right.value == 'me'):
-					print("ERROR: 'me' no esta definido para su uso en\
-					instrucciones de controlador.")
+				if (expr.left.value.get_valor() == 'me' or expr.right.get_valor() == 'me'):
+					print("ERROR: 'me' no esta definido para su uso en " +\
+					"instrucciones de controlador.")
 					sys.exit()
 			elif (isinstance(expr.left, ArbolBin) and isinstance(expr.right, Ident)):
-				if(expr.right.value == 'me'):
-					print("ERROR: 'me' no esta definido para su uso en\
-					instrucciones de controlador.")
+				if(expr.right.get_valor() == 'me'):
+					print("ERROR: 'me' no esta definido para su uso en " +\
+					"instrucciones de controlador.")
 					sys.exit()
 				self.checkMeExists(expr.left)
 			elif(isinstance(expr.right, ArbolBin) and isinstance(expr.left, Ident)):
-				if (expr.left.value == 'me'):
-					print("ERROR: 'me' no esta definido para su uso en\
-					instrucciones de controlador.")
+				if (expr.left.get_valor() == 'me'):
+					print("ERROR: 'me' no esta definido para su uso en " +\
+					"instrucciones de controlador.")
 					sys.exit()
 				self.checkMeExists(expr.right)
 			elif(isinstance(expr.right, ArbolBin) and isinstance(expr.left, ArbolBin)):
 				self.checkMeExists(expr.left)
 				self.checkMeExists(expr.right)
+		
+		elif(isinstance(expr, ArbolUn)):
+			if (expr.get_valor() == 'me'):
+				print("ERROR: 'me' no esta definido para su uso en " +\
+					"instrucciones de controlador.")
+				sys.exit()
+		
+		elif(isinstance(expr, Ident)):
+			if (expr.get_valor() == 'me'):
+				print("ERROR: 'me' no esta definido para su uso en " +\
+					"instrucciones de controlador.")
+				sys.exit()
 
 	def checkComp_list(self, table, comp_list):
 		comp = comp_list.children[0]
@@ -697,142 +748,181 @@ class tableBuildUp:
 			pass
 
 	def checkInstC_list(self, table, inst_list):
-		print("\n")
-		print("HIJOS")
-		print(inst_list.children)
-		print("EN CHECKINSTC_LIST")
-		print("\n")
+		#print("\n")
+		#print("ESTOY EN CHECKINSTC_LIST, ESTE ES INST_LIST")
+		#print(inst_list)
+		#print(table.tabla)
 
-		for i in inst_list.children:
-			instc = i
+		#print("\n")
 
-			#instc = inst_list.children[0]
-			print("\n")
-			print("INSTC ANTES DE ERROR")
-			print(instc)
-			print("\n")
-			
-			""" Este primer if verifica que no sea un token cualquiera para evitar que explote."""
+		#print("\n")
+		#print("HIJOS DEL NODO INST_LIST, INST_LIST.CHILDREN")
+		#print(inst_list.children)
+		#print("\n")
 
-			if (instc.tipoInstruccion == None):
-				pass
+		#for i in inst_list.children:
+		#	instc = i
 
-			elif (instc.tipoInstruccion == 'ACTIVACION' or
-				instc.tipoInstruccion == 'DESACTIVACION' or
-				instc.tipoInstruccion == 'AVANCE'):
+		#instc = inst_list.children[0]
 
-				id_lista = self.getID_list(instc.id_list)
+#		""" Este primer if verifica que no sea un token cualquiera para evitar que explote."""
+#		if (instc.tipoInstruccion == None):
+#			pass
+		if (isinstance(inst_list,IteracionIndef)):
+			#print("ESTOY EN UNA ITERACION")
+			instc = inst_list
+		elif(isinstance(inst_list,CondicionalIf)):
+			#print("ESTOY EN UN CONDICIONAL")
+			instc = inst_list
+		elif(isinstance(inst_list,ArbolBin)):
+			self.checkMeExists(inst_list.left)
+			self.checkExpressionOk(table, inst_list.left)
+			self.checkMeExists(inst_list.right)
+			self.checkExpressionOk(table, inst_list.right)
+			return True
 
-				print("\n")
-				print("ENTRE A ACTIVACION DESACTIVACION AVANCE \n")
-				print(instc.id_list)
-				print("\n")
-	
-				for ID in id_lista:
-					if (not table.symbolExists(ID)):
-						print("ERROR, VARIABLE NO DECLARADA")
-						sys.exit()
-					elif (ID == 'me'):
-						print("ERROR, USO DE LA PALABRA RESERVADA ME FUERA DE UN COMPORTAMINENTO")
-						sys.exit()
-	
-				if (len(instc.children) > 1):
-					inst_list1 = inst_list.children[1]
-					self.checkInstC_list(table, inst_list1)
-	
-			elif (instc.tipoInstruccion == 'CONDICIONAL'):
-				condition = instc.condicion
-				self.checkMeExists(condition)
-				self.checkExpressionOk(table, condition)
-	
-				inst1 = instc.instruccion1
-				self.checkMeExists(condition)
-				self.checkInstC_list(table, inst1)
-	
-				if (instc.instruccion2):
-					inst2 = instc.instruccion2
-					self.checkInstC_list(table, inst2)
-	
-				if (len(instc.children) > 1):
-					inst_list1 = inst_list.children[1]
-					self.checkInstC_list(table, inst_list1)
-	
-			elif (instc.tipoInstruccion == 'ITERACION_INDEF'):
-				condition = inst.condicion
-				self.checkMeExists(condition)
-				self.checkExpressionOk(table, condition)
-	
-				instr = instc.instruccion
-				self.checkMeExists(condition)
-				self.checkInstC_list(table, instr)
-	
-				if (len(instc.children) > 1):
-					inst_list1 = inst_list.children[1]
-					self.checkInstC_list(table, inst_list1)
-	
-			elif (instc.children[0].tipoInstruccion == "ALCANCE"):
-				print("hola")
-				childTable = symbolTable()
-				childTable.addFather(symTable)
-				symTable = childTable
-				self.fillTable(symTable)
+		else:
+			#print("ESTOY EN UN NODO ARRIBA DE ACTIVATE DEACTIVATE Y ADVANCE")
+			instc = inst_list.children[0]
 
-			elif (isinstance(instc,ArbolUn)):
-				self.checkMeExists(instc.operando)
+		#print("TIPO INSTC.ID_LIST: ", instc.tipoInstruccion)
 
-			elif (isinstance(instc,ArbolBin)):
-				self.checkExpressionOk(instc.left)
-				self.checkExpressionOk(instc.right)
-			elif (isinstance(instc, Ident)):
-				if (not table.symbolExists(instc.value)):
-					if (table.padre):
-						if (table.symbolParentExists(instc.value)):
-							print("ERROR, VARIABLE NO DECLARADA")
-							sys.exit()
-					else:
-						print("ERROR, VARIABLE NO DECLARADA")
-						sys.exit()
+		if (instc.tipoInstruccion == 'ACTIVACION' or
+			instc.tipoInstruccion == 'DESACTIVACION' or
+			instc.tipoInstruccion == 'AVANCE'):
+			id_lista = self.getID_list(instc.id_list[0])
+			#print("\n")
+			#print("ENTRE A ACTIVACION DESACTIVACION AVANCE \n")
+			#print(id_lista)
+			#print("\n")
 
-			elif (isinstance(instc,ArbolInstr)):
-				for x in instc.children:
-					self.checkInstC_list(table,x)
+			for ID in id_lista:
+				if (not table.symbolExists(ID)):
+					print("ERROR, VARIABLE NO DECLARADA")
+					sys.exit()
+				elif (ID == 'me'):
+					print("ERROR, USO DE LA PALABRA RESERVADA ME FUERA DE UN COMPORTAMINENTO")
+					sys.exit()
 
-			else:
-				"""print("ES ARBOL INSTRUCCION")
-				print("ESTE ES instc.token")
-				print(instc.token)
-				print("ESTE ES instc.tipoinstruccion")
-				print(instc.tipoInstruccion)
-				print("ESTE ES instc.children")
-				print(instc.children)"""
+			if (len(inst_list.children) > 1):
+				inst_list1 = inst_list.children[1]
+				self.checkInstC_list(table, inst_list1)
+
+		elif (instc.tipoInstruccion == 'CONDICIONAL'):
+			#print("ESTA ES LA CONDICION DEL IF: ", instc.condicion)
+			condition = instc.condicion
+			self.checkMeExists(condition)
+			self.checkExpressionOk(table, condition, True)
+
+			inst1 = instc.instruccion1
+			self.checkMeExists(condition)
+			self.checkInstC_list(table, inst1)
+
+			if (instc.instruccion2):
+				inst2 = instc.instruccion2
+				self.checkInstC_list(table, inst2)
+
+			if (len(instc.children) > 1):
+				inst_list1 = inst_list.children[1]
+				self.checkInstC_list(table, inst_list1)
+
+		elif (instc.tipoInstruccion == 'ITERACION_INDEF'):
+			condition = instc.condicion
+			self.checkMeExists(condition)
+			self.checkExpressionOk(table, condition)
+
+			instr = instc.instruccion
+			self.checkMeExists(condition)
+			self.checkInstC_list(table, instr)
+
+			if (len(instc.children) > 1):
+				inst_list1 = inst_list.children[1]
+				self.checkInstC_list(table, inst_list1)
+
+		elif (instc.children[0].tipoInstruccion == "ALCANCE"):
+			#print("HOLAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+			#print(table.tabla)
+			childTable = symbolTable()
+			table.addSonNode(childTable)
+			childTable.addFather(table)
+			self.fillTable(childTable, instc)
+
+		elif (isinstance(instc,ArbolInstr)):
+			for x in instc.children:
+				self.checkInstC_list(table,x)
+
+		#elif (isinstance(instc,ArbolUn)):
+		#	self.checkMeExists(instc.operando)
+		
+		#elif (isinstance(instc, Ident)):
+		#	if (not table.symbolExists(instc.value)):
+		#		if (table.padre):
+		#			if (table.padre.symbolExists(instc.value)):
+		#				print("ERROR, VARIABLE NO DECLARADA")
+		#				sys.exit()
+		#		else:
+		#			print("ERROR, VARIABLE NO DECLARADA")
+		#			sys.exit()
+		#else:
+		#	"""print("ES ARBOL INSTRUCCION")
+		#	print("ESTE ES instc.token")
+		#	print(instc.token)
+		#	print("ESTE ES instc.tipoinstruccion")
+		#	print(instc.tipoInstruccion)
+		#	print("ESTE ES instc.children")
+		#	print(instc.children)"""
 
 
 	def declist_check(self, table, dec_list):
 		Type = dec_list.children[0].children[0].children[0]
 		idlist = dec_list.children[0].children[1]
+		#print("TYPE = ",Type)
+		#print("ID_LIST = ",idlist)
 		for ID in self.getID_list(idlist):
+			#print(ID)
 			table.addSymbol(ID, Type)
 		if(len(dec_list.children) > 1):
 			self.declist_check(table, dec_list.children[1])
 
 
 	"""Aqui se llenara la tabla"""
-	def fillTable(self, table):
+	def fillTable(self, table, arbol = None):
+		#print("\n")
+		#print("ESTOY ENTRANDO AL FILLTABLE")
+		#print("\n")
+		if arbol:
+			#print("ENTRE AL CABLEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE")
+			#print(table.padre.tabla)
+			self.tree = arbol
+			#print(self.tree.children)
 		# Si es instrucciones..
 		if (isinstance(self.tree, ArbolInstr)):
 			# Vamos a buscar que sea declaraciones
 			for child in self.tree.children:
+				#print("\n")
 				#print("ESTOY IMPRIMIENDO LOS HIJOS")
 				#print(child.token)
+				#print("\n")
+				#print("TABLA EN ESTE MOMENTO: ")
+				#print("\n")
+				#print(table.tabla)
+				#print("\n")
+				#print("CHILD EN ESTE MOMENTO: ")
+				#print("\n")
+				#print(child.token)
 				if (child.token == 'Declaraciones_lista'):
+					#print("EN Declaraciones_lista PERRROOOOOOOOO")
 					self.declist_check(table, child)
 					#Si tiene comportamiento especificado
 					if (child.children[0].children[2]):
 						self.checkComp_list(table, child.children[0].children[2])
 				elif (child.token == 'InstC_lista'):
-					print("\n")
-					print("ESTOY EN InstC_lista de FILLTABLE")
-					print(child.token)		
-					print(child.children[1].children[0].children[0].token)
-					print("\n")
+					#print("\n")
+					#print("ESTOY EN InstC_lista de FILLTABLE")
+					#print(child.token)		
+					#print(child.children[1].children[0].children[0].token)
+					#print("\n")
 					self.checkInstC_list(table, child)
+				elif (child.token == 'Alcance'): 
+					#print("EN ALCANCE PANA")
+					self.fillTable(table, child)					

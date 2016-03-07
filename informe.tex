@@ -91,7 +91,7 @@
 		\par
 		\medskip
 		En esta sección se presenta el desarrollo y respuestas para las preguntas propuestas para esta 
-		etapa.
+		etapa.\\
 		
 		\bigskip
 		\begin{enumerate}[leftmargin=*]
@@ -116,13 +116,13 @@
 					};
 					\node[draw, right= of I0] (I1) {
 						\textbf{$I_1$ : }\textit{S$'$} $\rightarrow$ \textit{S} \textbf{$.$} \$\\
-			   			$\hphantom{\quad}\hspace{5pt}$ \textit{S} $\rightarrow$ \textbf{$.$} \textit{S} \textbf{$.$} \textit{a}\\
+			   			$\hphantom{\quad}\hspace{5pt}$ \textit{S} $\rightarrow$ \textit{S} \textbf{$.$} \textit{a}\\
 					};
 					\node[draw, right=of I1] (I2) {
 						\textbf{$I_2$ : }\textit{S$'$} $\rightarrow$ \textit{S} \$ \textbf{$.$}\\
 					};
 					\node[draw, below=of I1] (I3) {
-						\textbf{$I_3$ : }\textit{S} $\rightarrow$ \textbf{$.$} \textit{S} \textit{a} \textbf{$.$}\\
+						\textbf{$I_3$ : }\textit{S} $\rightarrow$ \textit{S} \textit{a} \textbf{$.$}\\
 					};
 
 					\draw[->] (I0) -- (I1) node[midway,above] {\textbf{S}};
@@ -239,7 +239,7 @@
 					el autómata de $G1_i$.\\
 
 					Finalmente, la complejidad es \textbf{O(n)} para ambos puesto que en ambos casos la complejidad es lineal y depende
-					del tamaño de la frase perteneciente al lenguaje.
+					del tamaño de la frase perteneciente al lenguaje.\\
 
 			\end{enumerate}
 		\item
@@ -252,7 +252,6 @@
 			\end{enumerate}
 
 			Vemos que ocurre un conflicto \textbf{shift-reduce} en el estado $I_5$, como se ve en los siguientes estados:\\
-							
 			
 			\begin{tikzpicture}[every node/.style={minimum height={1cm},thick,align=left}]
 					
@@ -292,19 +291,17 @@
 					\draw[->] (I5) to [out=0,in=0] node[midway,right] {\textbf{$;$}} (I4);
 					\end{tikzpicture}
 
-
 			Tratamos de resolver el conflicto calculando el \textit{First} y después el \textit{Follow} y usamos este último para saber
 			como resolver el \textbf{shift-reduce}:\\
-		
+			\newline
 			\begin{center}
 				\begin{tabular}{| c | c | c |}
 					\hline & \textbf{FIRST} & \textbf{FOLLOW} \\
-					\hline \textbf{S'} & a, $\lambda$ & \$ \\
-					\hline \textbf{S} & a, $\lambda$ & \$ \\
+					\hline \textbf{Instr'} & IS & \$ \\
+					\hline \textbf{Instr} & IS & \textbf{$;$},\$ \\
 					\hline
 				\end{tabular} \\
 			\end{center}
-
 			Luego vemos que en la \textbf{Tabla de Parsing} hay un conflicto pues con \textbf{$;$} puedo tanto avanzar como reducir al mismo tiempo y no hay forma de decidir exactamente cuál seguir siempre, luego, no es \textit{LR(1)}.\\
 
 			\item Aún cuando existe un conflicto \textbf{shift-reduce} en el estado $I_5$ para el símbolo $;$ construiremos la \textbf{Tabla de Parsing} con conflictos, la cual quedaría de la siguiente forma:\\
@@ -325,7 +322,7 @@
 			\end{center}
 
 			\item Para el reconocimiento de la frase \textit{IS;IS;IS} priorizaremos al shift y después al reduce:\\
-			Priorizando el shift \textbf(avanzar):
+			Priorizando el shift \textbf(avanzar):\\
 
 			\begin{center}
 				\begin{tabular}{| c | c | c |}
@@ -359,7 +356,8 @@
 				\end{tabular} \\
 			\end{center}
 
-			Priorizando el reduce \textbf(reducir):
+			\newpage
+			Priorizando el reduce \textbf(reducir):\\
 
 			\begin{center}
 				\begin{tabular}{| c | c | c |}
@@ -394,7 +392,7 @@
 			\end{center}
 
 			Como vemos en el primer caso se asocia a la izquierda y en la segunda a la derecha pero en verdad vemos que es indiferente pues 
-			existe una ambigüedad en el lenguaje al existir dos árboles sintácticos para la misma gramática.
+			existe una ambigüedad en el lenguaje al existir dos árboles sintácticos para la misma gramática.\\
 
 			\item En cuanto al tamaño de la pila, el favorecer al \textbf{reduce} hace que la pila no sea tan grande y comparta la cantidad de pasos con el caso de favorecer al \textbf{shift}. En terminos de complejidad, para una frase IS;$(IS)^n$ vemos que conviene el uso de la segunda alternativa ya que se empilarían menos estados a la pila y por ende se harían menos operaciones de empilar y desempilar, lo que llevaría a una complejidad del tipo \textbf{O(n)} al depender de la cantidad de $';IS'$.
 

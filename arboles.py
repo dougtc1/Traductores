@@ -31,8 +31,8 @@ class ArbolBin(Expr):
 			auxiliar.get_valor_right()
 		elif (isinstance(self.left, ArbolUn)):
 			return self.left.get_valor()
-		else:
-			return self.left
+		elif (isinstance(self.left, Ident) or isinstance(self.left, Numero) or isinstance(self.left, Bool)):
+			return self.left.get_valor()
 			
 	def get_valor_right(self):
 		if (isinstance(self.right, ArbolBin)):
@@ -41,8 +41,8 @@ class ArbolBin(Expr):
 			auxiliar.get_valor_right()
 		elif (isinstance(self.right, ArbolUn)):
 			return self.right.get_valor()
-		else:
-			return self.right
+		elif (isinstance(self.right, Ident) or isinstance(self.right, Numero) or isinstance(self.right, Bool)):
+			return self.right.get_valor()
 
 class ArbolUn(Expr):
 	def __init__(self,tipo, operador,operando, opsymbol):
