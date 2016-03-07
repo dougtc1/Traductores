@@ -20,13 +20,13 @@ execute
 	activate contador.
 	$- Asignar al contador
 	el valor 35, si bar > 2 -$
-	if -1:
-		advance contador,loHicimos.
+	if -2:
+		advance contador, falle.
 		advance contador.
 	else:
 		advance falle.
-		activate benyi.
-		while (benyi /= bar):
+		activate bar.
+		while -1:
 			activate bar.
 			create
 				char bot yo

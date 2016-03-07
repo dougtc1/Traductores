@@ -64,7 +64,8 @@ def p_expresion_Type(p):
 
 def p_expresion_ID_list(p):
     '''ID_list : TkIdent TkComa ID_list
-               | TkIdent'''
+               | TkIdent
+               | TkMe'''
     if (len(p) == 4):
         p[0] = ArbolInstr("ID_list", [p[1], p[3]])
     else:
