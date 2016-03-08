@@ -785,9 +785,35 @@ class tableBuildUp:
 					"instrucciones de controlador.")
 				sys.exit()
 
-	def checkInstRobot_List(self, table, instr_list):
-		pass
-	def checkComp_list(self, table, comp_list, idlist, behavTab = None):
+	def checkInstRobot_List(self, table, instr_list, Type):
+		inst1 = instr_list.children[0]
+
+		if isinstance(inst1, Store):
+			pass
+		elif isinstance(inst1,Collect):
+			if inst1.id_list:
+				idList = self.getID_list(inst1.id_list)
+				for ID in idList:
+					if ID in table.tabla:
+						print("Uso de bot ", ID, " prohibido en instrucciones de robot.")
+						sys.exit()
+					else:
+						table.addSymbol(ID, Type)
+		elif isinstance(inst1, Drop):
+			pass
+		elif isinstance(inst1, Direccion):
+			pass
+		elif(isinstance(inst1, Read)):
+			if inst1.id_list:
+				idList = self.getID_list(inst1.id_list)
+				for ID in idList:
+					if ID in table.tabla:
+						print("Uso de bot ", ID, " prohibido en instrucciones de robot.")
+						sys.exit()
+					else:
+						table.addSymbol(ID, Type)
+
+	def checkComp_list(self, table, comp_list, idlist, Type, behavTab = None):
 		comp = comp_list.children[0]
 		condition = comp.children[0]
 		if (isinstance(condition.children[0], ArbolBin) or
@@ -813,7 +839,6 @@ class tableBuildUp:
 				print("Error: comportamiento 'default' definido antes de otros comportamientos.")
 				sys.exit()
 
-			print("Condicion definida: ",condition.children[0])
 			if not behavTab:
 				behavTab = behavTable(table)
 
@@ -821,9 +846,9 @@ class tableBuildUp:
 				behavTab.addBehav(ID, condition.children[0])
 
 			if (len(comp_list.children) > 1):
-				self.checkComp_list(table, comp_list.children[1], idlist, behavTab)
+				self.checkComp_list(table, comp_list.children[1], idlist, Type, behavTab)
 
-			return behavTab
+			instRobot = condition.children[1]
 
 	def checkInstC_list(self, table, inst_list):
 		instc = inst_list.children[0]
@@ -898,7 +923,7 @@ class tableBuildUp:
 			table.addSymbol(ID, Type)
 		idlist = self.getID_list(idlist)
 		if (len(dec_list.children[0].children) > 2):
-			self.checkComp_list(table, dec_list.children[0].children[2], idlist)
+			self.checkComp_list(table, dec_list.children[0].children[2], idlist, Type)
 		if(len(dec_list.children) > 1):
 			self.declist_check(table, dec_list.children[1])
 

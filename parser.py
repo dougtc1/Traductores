@@ -168,7 +168,7 @@ def p_instruccion_InstRobot(p):
         if (len(p) == 5):
             p[0] = Collect("Collect", [p[3]], p[3])
         else:
-            p[0] = Collect("Collect")
+            p[0] = Collect("Collect", [p[1]])
     elif (p[1] == "drop"):
         p[0] = Drop("Drop", [p[2]], p[2])
     elif (p[1] == "up" or p[1] == "down" or p[1] == "left" or p[1] == "right"):
@@ -178,11 +178,11 @@ def p_instruccion_InstRobot(p):
             p[0] = Direccion("Direccion", [p[1]], p[1])
     elif (p[1] == "read"):
         if (len(p) == 5):
-            p[0] = Read("Read", [p[3]], p[3])
+            p[0] = Read("read", [p[3]], p[3])
         else:
-            p[0] = Read("Read")
+            p[0] = Read("read", [p[1]])
     elif (p[1] == "send"):
-        p[0] = Send("send")
+        p[0] = Send("send", [p[1]])
     elif (p[1] == "receive"):
         p[0] = Receive("receive")     
 
