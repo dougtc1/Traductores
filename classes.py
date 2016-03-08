@@ -785,10 +785,30 @@ class tableBuildUp:
 					"instrucciones de controlador.")
 				sys.exit()
 
+	def checkExprNotInTable(self, table, expr):
+		if isinstance(expr, ArbolBin):
+			if(isinstance(expr.left, Ident)):
+				if expr.left.value in table.tabla:
+					print("Error: ", expr.left.value, " no puede ser usado en instrucciones de robot")
+			if (isinstance(expr.right, Ident)):
+				if expr.right.value in table.tabla:
+					print("Error: ", expr.right.value, " no puede ser usado en instrucciones de robot")
+			if (isinstance(expr.left, ArbolBin)):
+				self.checkExprNotInTable(table, expr.left)
+			if (isinstance(expr.right, ArbolBin)):
+				self.checkExprNotInTable(table, expr.right)
+		elif isinstance(expr, ArbolUn):
+			if (isinstance(expr.operando, ArbolBin)):
+				self.checkExprNotInTable(expr.operando)
+			if (isinstance(expr.operando, Ident)):
+				if expr.operando.value in table.tabla:
+					print("Error: ", expr.operando.value, " no puede ser usado en instrucciones de robot")
+
 	def checkInstRobot_List(self, table, instr_list, Type):
 		inst1 = instr_list.children[0]
 
 		if isinstance(inst1, Store):
+			self.checkExprNotInTable(table, expr)
 			self.checkExpressionOk(table, expr)
 		elif isinstance(inst1,Collect):
 			if inst1.id_list:
@@ -801,8 +821,10 @@ class tableBuildUp:
 						table.addSymbol(ID, Type)
 		elif isinstance(inst1, Drop):
 			self.checkExpressionOk(table, expr)
+			self.checkExprNotInTable(table, expr)
 		elif isinstance(inst1, Direccion):
 			self.checkExpressionOk(table, expr)
+			self.checkExprNotInTable(table, expr)
 		elif(isinstance(inst1, Read)):
 			if inst1.id_list:
 				idList = self.getID_list(inst1.id_list)
@@ -845,10 +867,13 @@ class tableBuildUp:
 			for ID in idlist:
 				behavTab.addBehav(ID, condition.children[0])
 
+			instRobot = condition.children[1]
+			self.checkInstRobot_List(instRobot)
+			
 			if (len(comp_list.children) > 1):
 				self.checkComp_list(table, comp_list.children[1], idlist, Type, behavTab)
+			
 
-			instRobot = condition.children[1]
 
 	def checkInstC_list(self, table, inst_list):
 		instc = inst_list.children[0]
