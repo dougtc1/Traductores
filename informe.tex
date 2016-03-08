@@ -21,7 +21,7 @@
   \endgroup
 }
 
-\title{Etapa 2: Análisis Sintáctico}
+\title{Etapa 3: Análisis Sintáctico}
 \date{Enero - Marzo 2016}
 \author{Benjamin Amos, Douglas Torres}
 
@@ -233,13 +233,12 @@
 		
 					Así, vemos que ésta gramática es finalmente \textit{LR(1)}.\\
 
-				\item En términos de espacio, para la eficiencia de los analizadores de ambas gramáticas, tenemos que $G1_i$
-					tiene sólo 4 estados en su tabla de parseo, mientras que $G1_d$ tiene 5 estados, así, la cantidad de pila y pasos utilizados para el reconocimiento de cualquier palabra perteneciente a \textit{L(a*)} es menor en $G1_i$ . En cuanto al 
-					tiempo que le tomaría a cada autómata de pila en reconocer una frase de \textit{L(a*)} seguiría siendo menor para 
-					el autómata de $G1_i$.\\
+				\item Para evaluar la eficiencia en cuanto a espacio y tiempo de las gramáticas pedidas se hicieron los reconocimientos de
+					frases tales como \textit{a}, \textit{aa} y \textit{aaa} para cada una de las gramáticas.\\
 
-					Finalmente, la complejidad es \textbf{O(n)} para ambos puesto que en ambos casos la complejidad es lineal y depende
-					del tamaño de la frase perteneciente al lenguaje.\\
+					Con esto se logró identifica un patrón tal que para $G1_i$ se usan \textit{2n+3} pasos en la cantidad de pasos que se necesitan para reconocer cualquier frase de \textbf{L(a*)}, así como que empila hasta 3 items en la pila.\\
+					
+					Para el caso de $G1_d$ vemos que se usan la misma cantidad de pasos \textit{2n+3} pero en la pila se llegan a empilar hasta 4 items, por lo que en terminos de espacio es más eficiente usar $G1_i$ pero en órden de complejidad (\textbf{O(n)}) es exactamente la misma para ambas gramáticas.	El órden de complejidad viene dado por la cantidad de pasos necesarios para reconocer cada palabra del lenguaje y vemos	que depende de \textit{n} que es la cantidad de lestras a en la frase, luego, ésta complejidad es lineal.
 
 			\end{enumerate}
 		\item
@@ -394,7 +393,12 @@
 			Como vemos en el primer caso se asocia a la izquierda y en la segunda a la derecha pero en verdad vemos que es indiferente pues 
 			existe una ambigüedad en el lenguaje al existir dos árboles sintácticos para la misma gramática.\\
 
-			\item En cuanto al tamaño de la pila, el favorecer al \textbf{reduce} hace que la pila no sea tan grande y comparta la cantidad de pasos con el caso de favorecer al \textbf{shift}. En terminos de complejidad, para una frase IS;$(IS)^n$ vemos que conviene el uso de la segunda alternativa ya que se empilarían menos estados a la pila y por ende se harían menos operaciones de empilar y desempilar, lo que llevaría a una complejidad del tipo \textbf{O(n)} al depender de la cantidad de $';IS'$.
+			\item La eficiencia de ambas alternativas se determinó a través del reconocimiento de las frases IS;IS;IS;IS, IS;IS;IS;IS;IS, adicional a la frase pedida en la pregunta 2, sección (c), esto con el fin de buscar patrones que ayudan a determinar cuál es 
+			más eficiente. \\
+			
+			En cuanto al tamaño de la pila, el favorecer al \textbf{reduce} hace que la pila no sea tan grande (máximo 4 items para los casos probados) como sí es el caso de favorecer el \textbf{shift} (8 items y 10 items respectivamente).\\
+
+			En terminos de complejidad, para una frase IS;$(IS)^n$ vemos que favorecer al \textbf{reduce} o al \textbf{shift} es indiferente pues la cantidad de pasos necesitados para reconocer la misma palabra es igual en ambos casos pero en caso de favorecer el reduce se usa mucho menos espacio para la pila, a diferencia del caso del shift. Luego, con todo lo anterior podemos decir que la complejidad es \textbf{O(n)}, lineal, puesto que la cantidad de pasos necesarios para reconocer una palabra en el lenguaje viene dada por \textit{4(n+1)} y depende de n, que es la cantidad de $';IS'$ en la frase. 
 
 			\end{enumerate}
 		\end{enumerate}
