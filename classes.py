@@ -789,7 +789,7 @@ class tableBuildUp:
 		inst1 = instr_list.children[0]
 
 		if isinstance(inst1, Store):
-			pass
+			self.checkExpressionOk(table, expr)
 		elif isinstance(inst1,Collect):
 			if inst1.id_list:
 				idList = self.getID_list(inst1.id_list)
@@ -800,9 +800,9 @@ class tableBuildUp:
 					else:
 						table.addSymbol(ID, Type)
 		elif isinstance(inst1, Drop):
-			pass
+			self.checkExpressionOk(table, expr)
 		elif isinstance(inst1, Direccion):
-			pass
+			self.checkExpressionOk(table, expr)
 		elif(isinstance(inst1, Read)):
 			if inst1.id_list:
 				idList = self.getID_list(inst1.id_list)
