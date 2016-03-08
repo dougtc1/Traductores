@@ -206,7 +206,7 @@ class symbolTable:
 class RobotBehav:
 	def __init__(self, bot, instr_list = []):
 		self.bot       = bot
-		self.inst_list = inst_list
+		self.inst_list = instr_list
 
 	def addInstr(self, instr):
 		self.inst_list.append(instr)
@@ -231,32 +231,12 @@ class behavTable:
 		else:
 			return None
 
-	def checkTableOk(self, bot):
-		actCounter, deactCounter, defCounter = 0, 0, 0
-		for behav in self.behavs:
-			if behav == 'activate':
-				if bot == self.behavs.get(behav).bot:
-					actCounter += 1
-			elif behav == 'deactivate':
-				if bot == self.behavs.get(behav).bot:
-					deactCounter += 1
-			elif behav == 'default':
-				if bot == self.behavs.get(behav).bot:
-					defCounter += 1
-		
-		if actCounter > 1: 
-			print("Error: Comportamiento 'activate' definido mas de una vez para ", bot)	
-			sys.exit()
-		elif deactCounter > 1:
-			print("Error: Comportamiento 'deactivate' definido mas de una vez para ", bot)	
-			sys.exit()
-		elif defCounter > 1:
-			print("Error: Comportamiento 'default' definido mas de una vez para ", bot)	
-			sys.exit()
-
 	def addBehav(self, bot, behav):
-		self.createTuple(behav, bot)
-
+		if (behav not in self.behavs):
+			self.createTuple(behav, bot)
+		else:
+			print("Error: comportamiento " + behav + " definido mas de una vez para " + bot)
+			sys.exit()	
 # Esto es como un main de la construccion de la tabla. Me parecio
 # demasiado trancado escribir todo lo que esto implica en el main
 # aparte de que me estoy dando cuenta de que construyendo metodos se
@@ -835,13 +815,15 @@ class tableBuildUp:
 
 			print("Condicion definida: ",condition.children[0])
 			if not behavTab:
-				tabBehav = behavTable(table)
+				behavTab = behavTable(table)
 
 			for ID in idlist:
-				
+				behavTab.addBehav(ID, condition.children[0])
 
 			if (len(comp_list.children) > 1):
-				self.checkComp_list(table, comp_list.children[1], idlist)
+				self.checkComp_list(table, comp_list.children[1], idlist, behavTab)
+
+			return behavTab
 
 	def checkInstC_list(self, table, inst_list):
 		instc = inst_list.children[0]
@@ -914,6 +896,7 @@ class tableBuildUp:
 		idlist = dec_list.children[0].children[1]
 		for ID in self.getID_list(idlist):
 			table.addSymbol(ID, Type)
+		idlist = self.getID_list(idlist)
 		if (len(dec_list.children[0].children) > 2):
 			self.checkComp_list(table, dec_list.children[0].children[2], idlist)
 		if(len(dec_list.children) > 1):
