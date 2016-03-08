@@ -203,14 +203,14 @@ class symbolTable:
 		if self.hijo:
 			self.hijo.printTables() 
 
-class RobotInstr:
-	def __init__(self, var = None, instr = []):
-		self.var   = var
-		self.instr = instr
-	
-	def addInstr(self, var, instr):
-		self.var   = var
-		self.instr = instr	
+class RobotBehav:
+	def __init__(self, bot, position, instr_list = []):
+		self.bot       = bot
+		self.position  = position
+		self.inst_list = inst_list
+
+	def addInstr(self, instr):
+		self.inst_list.append(instr)
 
 class behavTable:
 	def __init__(self, tabAssoc):
@@ -218,7 +218,32 @@ class behavTable:
 		self.tabAssoc = tabAssoc
 	
 	def behavExists(self, behav):	
-		pass
+		if behav in self.behavs:
+			return True
+		else:
+			return False
+	
+	def createTuple(self, behav, bot, position):
+		self.behavs[behav] = RobotBehav(bot, position)
+	
+	def getBehavData(self, behav):
+		if self.behavs.behavExists(behav):
+			return self.behavs.get(behav)
+		else:
+			return None
+
+	def checkTableOk(self):
+		
+		actCounter, deactCounter, defCounter = 0, 0, 0
+		for behav in self.behavs:
+			if (behav == 'default' and
+			self.getBehavData(behav).position != len(self.behavs)): 
+				return False
+
+			if behav == 'activation':
+
+
+
 	def addBehav(self, condition, var, ):
 		pass
 # Esto es como un main de la construccion de la tabla. Me parecio
@@ -781,7 +806,7 @@ class tableBuildUp:
 			self.checkMeExists(expr)
 			self.checkExpressionOk(table, expr)
 			if (len(comp_list.children) > 1):
-				self.checkComp_list(comp_list.children[1])
+				self.checkComp_list(table, comp_list.children[1])
 
 		elif (isinstance(condition.children[0], Ident)):
 			idnt = condition.children[0]
@@ -792,7 +817,10 @@ class tableBuildUp:
 		elif(condition.children[0] == 'activation' or
 			condition.children[0] == 'deactivation' or
 			condition.children[0] == 'default' ):
-				print("Condicion definida: ",condition.children[0])
+			print("Condicion definida: ",condition.children[0])
+
+			if (len(comp_list.children) > 1):
+				self.checkComp_list(table, comp_list.children[1])
 
 	def checkInstC_list(self, table, inst_list):
 		instc = inst_list.children[0]
@@ -864,10 +892,8 @@ class tableBuildUp:
 		Type = dec_list.children[0].children[0].children[0]
 		idlist = dec_list.children[0].children[1]
 		for ID in self.getID_list(idlist):
-			print("Entre con declaraciones ", ID )
 			table.addSymbol(ID, Type)
 		if (len(dec_list.children[0].children) > 2):
-			print("HELLO ", dec_list.children[0].children[2])
 			self.checkComp_list(table, dec_list.children[0].children[2])
 		if(len(dec_list.children) > 1):
 			self.declist_check(table, dec_list.children[1])
