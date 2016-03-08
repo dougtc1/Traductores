@@ -204,9 +204,8 @@ class symbolTable:
 			self.hijo.printTables() 
 
 class RobotBehav:
-	def __init__(self, bot, position, instr_list = []):
+	def __init__(self, bot, instr_list = []):
 		self.bot       = bot
-		self.position  = position
 		self.inst_list = inst_list
 
 	def addInstr(self, instr):
@@ -223,8 +222,8 @@ class behavTable:
 		else:
 			return False
 	
-	def createTuple(self, behav, bot, position):
-		self.behavs[behav] = RobotBehav(bot, position)
+	def createTuple(self, behav, bot):
+		self.behavs[behav] = RobotBehav(bot)
 	
 	def getBehavData(self, behav):
 		if self.behavs.behavExists(behav):
@@ -232,20 +231,32 @@ class behavTable:
 		else:
 			return None
 
-	def checkTableOk(self):
-		
+	def checkTableOk(self, bot):
 		actCounter, deactCounter, defCounter = 0, 0, 0
 		for behav in self.behavs:
-			if (behav == 'default' and
-			self.getBehavData(behav).position != len(self.behavs)): 
-				return False
+			if behav == 'activate':
+				if bot == self.behavs.get(behav).bot:
+					actCounter += 1
+			elif behav == 'deactivate':
+				if bot == self.behavs.get(behav).bot:
+					deactCounter += 1
+			elif behav == 'default':
+				if bot == self.behavs.get(behav).bot:
+					defCounter += 1
+		
+		if actCounter > 1: 
+			print("Error: Comportamiento 'activate' definido mas de una vez para ", bot)	
+			sys.exit()
+		elif deactCounter > 1:
+			print("Error: Comportamiento 'deactivate' definido mas de una vez para ", bot)	
+			sys.exit()
+		elif defCounter > 1:
+			print("Error: Comportamiento 'default' definido mas de una vez para ", bot)	
+			sys.exit()
 
-			if behav == 'activation':
+	def addBehav(self, bot, behav):
+		self.createTuple(behav, bot)
 
-
-
-	def addBehav(self, condition, var, ):
-		pass
 # Esto es como un main de la construccion de la tabla. Me parecio
 # demasiado trancado escribir todo lo que esto implica en el main
 # aparte de que me estoy dando cuenta de que construyendo metodos se
@@ -796,7 +807,7 @@ class tableBuildUp:
 
 	def checkInstRobot_List(self, table, instr_list):
 		pass
-	def checkComp_list(self, table, comp_list):
+	def checkComp_list(self, table, comp_list, idlist, behavTab = None):
 		comp = comp_list.children[0]
 		condition = comp.children[0]
 		if (isinstance(condition.children[0], ArbolBin) or
@@ -817,10 +828,20 @@ class tableBuildUp:
 		elif(condition.children[0] == 'activation' or
 			condition.children[0] == 'deactivation' or
 			condition.children[0] == 'default' ):
+			if (condition.children[0] == 'default' and
+				len(comp_list.children) > 1):
+				print("Error: comportamiento 'default' definido antes de otros comportamientos.")
+				sys.exit()
+
 			print("Condicion definida: ",condition.children[0])
+			if not behavTab:
+				tabBehav = behavTable(table)
+
+			for ID in idlist:
+				
 
 			if (len(comp_list.children) > 1):
-				self.checkComp_list(table, comp_list.children[1])
+				self.checkComp_list(table, comp_list.children[1], idlist)
 
 	def checkInstC_list(self, table, inst_list):
 		instc = inst_list.children[0]
@@ -894,7 +915,7 @@ class tableBuildUp:
 		for ID in self.getID_list(idlist):
 			table.addSymbol(ID, Type)
 		if (len(dec_list.children[0].children) > 2):
-			self.checkComp_list(table, dec_list.children[0].children[2])
+			self.checkComp_list(table, dec_list.children[0].children[2], idlist)
 		if(len(dec_list.children) > 1):
 			self.declist_check(table, dec_list.children[1])
 
