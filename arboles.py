@@ -38,12 +38,6 @@ class ArbolUn(Expr):
         self.operando = operando
         self.opsymbol = opsymbol
 
-class ArbolUn(Expr):
-    def __init__(self,tipo, operador,operando):
-        self.tipo     = tipo
-        self.operador = operador
-        self.operando = operando
-
     def imprimir(self):
         return (self.operador + self.operando)
 

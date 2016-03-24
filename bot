@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Universidad Simon Bolivar 
+#
+# Traductores e interpretadores - CI3715
+#
+# Benjamin Amos. Carnet: 12-10240
+# Douglas Torres. Carnet: 11-11027
+#
+# Etapa 4
+# Script que permite que ejecutar codigo escrito en lenguaje "bot"
+# $1 refiere al primer argumento (archivo de entrada)
+# pasado al correr el script.
+
+python3 main.py $1

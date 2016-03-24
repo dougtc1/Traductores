@@ -247,7 +247,7 @@ def p_expresion_Expr(p):
             p[0] = p[2]
     else:
         if (p[1] == "-" and len(p) == 3):
-            p[0] = ArbolUn("ARITMETICA", "Negativo",p[2], p[1])
+            p[0] = ArbolUn("ARITMETICA", "Negativo", p[2], p[1])
         elif (p[1] == "~" and len(p) == 3):
             p[0] = ArbolUn("BOOLEANA", "Negacion", p[2], p[1])
         elif (len(p) == 2 and isinstance(p[1],int)):

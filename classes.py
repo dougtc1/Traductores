@@ -808,8 +808,8 @@ class tableBuildUp:
 		inst1 = instr_list.children[0]
 
 		if isinstance(inst1, Store):
-			self.checkExprNotInTable(table, expr)
-			self.checkExpressionOk(table, expr)
+			self.checkExprNotInTable(table, inst1.expr)
+			self.checkExpressionOk(table, inst1.expr)
 		elif isinstance(inst1,Collect):
 			if inst1.id_list:
 				idList = self.getID_list(inst1.id_list)
@@ -838,9 +838,9 @@ class tableBuildUp:
 	def checkComp_list(self, table, comp_list, idlist, Type, behavTab = None):
 		comp = comp_list.children[0]
 		condition = comp.children[0]
+
 		if (isinstance(condition.children[0], ArbolBin) or
 			isinstance(condition.children[0], ArbolUn)):
-
 			expr = condition.children[0]
 			self.checkMeExists(expr)
 			self.checkExpressionOk(table, expr)
@@ -867,8 +867,8 @@ class tableBuildUp:
 			for ID in idlist:
 				behavTab.addBehav(ID, condition.children[0])
 
-			instRobot = condition.children[1]
-			self.checkInstRobot_List(instRobot)
+			instRobot = comp.children[1]
+			self.checkInstRobot_List(table, instRobot, Type)
 			
 			if (len(comp_list.children) > 1):
 				self.checkComp_list(table, comp_list.children[1], idlist, Type, behavTab)
@@ -942,7 +942,9 @@ class tableBuildUp:
 			return
 
 	def declist_check(self, table, dec_list):
+		#print("YA ESTOY POR ASIGNAR TYPE")
 		Type = dec_list.children[0].children[0].children[0]
+		#print(Type)
 		idlist = dec_list.children[0].children[1]
 		for ID in self.getID_list(idlist):
 			table.addSymbol(ID, Type)
