@@ -10,6 +10,7 @@
 # Proyecto 2
 # Archivo que contiene las estructuras de datos de arboles utilizadas.
 import textwrap
+from classes import *
 
 cantidadTabs = 0
 auxCantidadTabs = 0
@@ -152,6 +153,22 @@ class ArbolInstr(Instr):
                             cantidadTabs    += 1
                             auxCantidadTabs = cantidadTabs
                         child.printPreorden()
+
+    def ejecutar(self, tabla):
+        print("Tabla de simbolos")
+        print("\n")
+        tabla.printTables()
+        tablaComportamientos = tabla.behav
+        print("\n")
+        print("Tablas de Comportamientos asociada a la tabla de simbolos")
+        print("\n")
+        #print(tablaComportamientos)
+        for i in tablaComportamientos:
+            #print("i.behavs: ", i.behavs)
+            i.printTable()
+
+        print("\n")
+
 
 
 class CondicionalIf(ArbolInstr):

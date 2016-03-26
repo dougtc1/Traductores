@@ -3,9 +3,18 @@ create
 		on activation:
 			store 3.
 		end
+		on deactivation:
+			store 4.
+		end
 	end
 
 	int bot contador
+		on activation:
+			store 33.
+		end	
+		on deactivation:
+			store 34.
+		end
 		on default:
 			store 35.
 		end

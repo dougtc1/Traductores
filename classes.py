@@ -86,15 +86,22 @@ class TokenList:
 			return True
 		else:
 			return False
+"""OLD"""
 # Estructura de datos correspondiente a la tabla de simbolos
 # Esta corresponde a una terna que contiene tipo de la variable
-# y su valor. 
+# y su valor.
+"""NEW"""
+# Estructura de datos correspondiente al controlador de cada robot declarado, tenemos estado, posicion y valores,
+# creo que hace falta agregar el identificador(nombre) como atributo. El nombre se le deberia cambiar luego.
 class symbolData:
-	def __init__(self, tipo, value = None, meType = None, meVal = None):
+	def __init__(self, tipo, behaviors = None, value = None, meType = None, meVal = None, posicion = (0,0), estado = None):
 		self.tipo   = tipo
 		self.value  = value
 		self.meType = meType
-		self.meVal  = meVal 
+		self.meVal  = meVal
+		self.posicion = posicion
+		self.estado = estado
+		self.behaviors = behaviors
 
 	"""Modifica el valor del simbolo"""
 	def modifValue(self, value):
@@ -108,6 +115,20 @@ class symbolData:
 
 	def modifMeVal(self, meVal):
 		self.meVal = meVal
+	def moverse (self, direccion, cantidad = 1):
+		if (direccion == "left"):
+			self.posicion = (self.posicion[0] - cantidad, self.posicion[1])
+		elif (direccion == 'right'):
+			self.posicion = (self.posicion[0] + cantidad, self.posicion[1])
+		elif (direccion == 'up'):
+			self.posicion = (self.posicion[0], self.posicion[1] + cantidad)
+		elif (direccion == 'down'):
+			self.posicion = (self.posicion[0], self.posicion[1] - cantidad)
+		else:
+			print("Error: Direccion no permitida.")
+			sys.exit()
+
+
 # Estructura de datos correspondiente a la tabla de simbolos
 # Esta corresponde a el diccionario en el que se contendran las
 # declaraciones  
@@ -116,7 +137,7 @@ class symbolTable:
 		self.tabla = {}
 		self.padre = padre
 		self.hijo = hijo
-		self.behav = None
+		self.behav = []
 
 	"""Verifica si el simbolo existe en la tabla de simbolos"""
 	def symbolExistsForDec(self, symbol):
@@ -135,18 +156,20 @@ class symbolTable:
 
 	"""Crea un par en el diccionario con el nombre de la variable
 	como clave y se le asigna solo el tipo"""
-	def createTuple(self, symbol, tipo):
-		self.tabla[symbol] = symbolData(tipo)
-		self.tabla[symbol].modifMeType(tipo)	
+	def createTuple(self, symbol, tipo, behavTable):
+		aux = symbolData(tipo, behavTable)
+		self.tabla[symbol] = aux
+		#print (symbol, " -> TABLA DE COMPORTAMIENTOS: ", aux.behaviors)
+		self.tabla[symbol].modifMeType(tipo)
 
 	"""Verifica que una variable no exista en la tabla para agregarla"""
-	def addSymbol(self, symbol, tipo):
+	def addSymbol(self, symbol, tipo, behavTable):
 		if (self.symbolExistsForDec(symbol)):
 			print("Error: Idenficador " + symbol + ", de tipo: " +\
 			self.getSymbolType(symbol) + " ya ha sido declarada.")
 			sys.exit()
 		else:
-			self.createTuple(symbol, tipo)
+			self.createTuple(symbol, tipo, behavTable)
 
 	"""Retorna el objeto que contiene la informacion de una variable 
 	declarada"""
@@ -162,7 +185,9 @@ class symbolTable:
 	"""Verifica que exista la variable en la tabla actual para agregar
 	el valor correspondiente. De no existir, busca en la tabla padre"""
 	def addValue(self, var, valor):
+		#print("COMO CARAJO LLEGUE A AQUI, (VAR,VALOR)", var, valor)
 		if symbolExists(var):
+			#print("ESTOY EN EL IF DE ADDVALUE Y ESTE ES VAR: ", var)
 			self.getSymbolData(var).modifValue(valor)
 			self.getSymbolData(var).modifMeVal(valor)
 		elif(self.padre):
@@ -195,7 +220,7 @@ class symbolTable:
 		self.hijo = hijo
 
 	def addBehav(self, behav):
-		self.behav = behav
+		self.behav.append(behav)
 
 	def printTables(self):
 		for keys in self.tabla:
@@ -212,7 +237,8 @@ class RobotBehav:
 		self.inst_list.append(instr)
 
 class behavTable:
-	def __init__(self, tabAssoc):
+	def __init__(self, identificador, tabAssoc):
+		self.identificador = identificador
 		self.behavs   = {}
 		self.tabAssoc = tabAssoc
 	
@@ -223,6 +249,9 @@ class behavTable:
 			return False
 	
 	def createTuple(self, behav, bot):
+		#print("ESTE ES BOT: ", bot)
+		#aux = RobotBehav(bot)
+		#print("ESTE ES BEHAV: ", behav)
 		self.behavs[behav] = RobotBehav(bot)
 	
 	def getBehavData(self, behav):
@@ -232,11 +261,17 @@ class behavTable:
 			return None
 
 	def addBehav(self, bot, behav):
+		#print("EN ADDBEHAV DE BEHAVTABLE, esto es self.behavs: ", self.behavs)
 		if (behav not in self.behavs):
 			self.createTuple(behav, bot)
 		else:
 			print("Error: comportamiento " + behav + " definido mas de una vez para " + bot)
-			sys.exit()	
+			sys.exit()
+
+	def printTable(self):
+		for keys in self.behavs:
+			print(self.identificador + " " + keys + " Tipo: " + str(self.behavs[keys].inst_list))
+
 # Esto es como un main de la construccion de la tabla. Me parecio
 # demasiado trancado escribir todo lo que esto implica en el main
 # aparte de que me estoy dando cuenta de que construyendo metodos se
@@ -804,7 +839,7 @@ class tableBuildUp:
 				if expr.operando.value in table.tabla:
 					print("Error: ", expr.operando.value, " no puede ser usado en instrucciones de robot")
 
-	def checkInstRobot_List(self, table, instr_list, Type):
+	def checkInstRobot_List(self, table, instr_list, Type, behavTab):
 		inst1 = instr_list.children[0]
 
 		if isinstance(inst1, Store):
@@ -818,7 +853,7 @@ class tableBuildUp:
 						print("Uso de bot ", ID, " prohibido en instrucciones de robot.")
 						sys.exit()
 					else:
-						table.addSymbol(ID, Type)
+						table.addSymbol(ID, Type, behavTab)
 		elif isinstance(inst1, Drop):
 			self.checkExpressionOk(table, expr)
 			self.checkExprNotInTable(table, expr)
@@ -833,9 +868,20 @@ class tableBuildUp:
 						print("Uso de bot ", ID, " prohibido en instrucciones de robot.")
 						sys.exit()
 					else:
-						table.addSymbol(ID, Type)
+						table.addSymbol(ID, Type, behavTab)
 
 	def checkComp_list(self, table, comp_list, idlist, Type, behavTab = None):
+
+		#print("\n")
+		#print("comp_list: ", comp_list.token)
+		#print("\n")
+		#print("comp_list.children: ", comp_list.children)
+		#print("\n")
+		#print("comp_list.children[0] == comp: ", comp_list.children[0].children[0])
+		#print("\n")
+		#print("comp_list.children[0].children[0] == condition: ", comp_list.children[0].children[0].children)
+		#print("\n")
+
 		comp = comp_list.children[0]
 		condition = comp.children[0]
 
@@ -845,7 +891,7 @@ class tableBuildUp:
 			self.checkMeExists(expr)
 			self.checkExpressionOk(table, expr)
 			if (len(comp_list.children) > 1):
-				self.checkComp_list(table, comp_list.children[1])
+				self.checkComp_list(table, comp_list.children[1], behavTab)
 
 		elif (isinstance(condition.children[0], Ident)):
 			idnt = condition.children[0]
@@ -861,15 +907,17 @@ class tableBuildUp:
 				print("Error: comportamiento 'default' definido antes de otros comportamientos.")
 				sys.exit()
 
-			if not behavTab:
-				behavTab = behavTable(table)
 
 			for ID in idlist:
+				#print("ESTOY EN checkComp_list Y ESTE ES condition.children[0]: ", condition.children[0])
 				behavTab.addBehav(ID, condition.children[0])
 
-			instRobot = comp.children[1]
-			self.checkInstRobot_List(table, instRobot, Type)
+
+			#print("table.behav.behavs", table.behav.behavs["activation"].inst_list)
 			
+
+			instRobot = comp.children[1]
+			self.checkInstRobot_List(table, instRobot, Type, behavTab)
 			if (len(comp_list.children) > 1):
 				self.checkComp_list(table, comp_list.children[1], idlist, Type, behavTab)
 			
@@ -888,7 +936,8 @@ class tableBuildUp:
 
 			for ID in id_list:
 				if table.padre:
-					print(table.padre.tabla)
+					#print(table.padre.tabla)
+					pass
 
 				if (ID == 'me'):
 					print("Error, uso de la palabra 'me' fuera de una instruccion de robot.")
@@ -947,10 +996,13 @@ class tableBuildUp:
 		#print(Type)
 		idlist = dec_list.children[0].children[1]
 		for ID in self.getID_list(idlist):
-			table.addSymbol(ID, Type)
+			#print("SE AGREGARON A LA TABLA DE SIMBOLOS: ", ID)
+			behavTab = behavTable(ID, table)
+			table.addBehav(behavTab)
+			table.addSymbol(ID, Type, behavTab)
 		idlist = self.getID_list(idlist)
 		if (len(dec_list.children[0].children) > 2):
-			self.checkComp_list(table, dec_list.children[0].children[2], idlist, Type)
+			self.checkComp_list(table, dec_list.children[0].children[2], idlist, Type, behavTab)
 		if(len(dec_list.children) > 1):
 			self.declist_check(table, dec_list.children[1])
 
@@ -969,5 +1021,4 @@ class tableBuildUp:
 				elif (child.token == 'InstC_lista'):
 					self.checkInstC_list(table, child)
 				elif (child.token == 'Alcance'): 
-					self.fillTable(table, child)			
-
+					self.fillTable(table, child)
