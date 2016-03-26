@@ -960,7 +960,10 @@ class tableBuildUp:
 
 			#print("table.behav.behavs", table.behav.behavs["activation"].inst_list)
 			
-
+			if (not comp.children[1]):
+				print("Error: comportamiento definido sin instrucciones.")
+				sys.exit()
+				
 			instRobot = comp.children[1]
 			#print("instRobot: ", instRobot.children)
 			self.checkInstRobot_List(table, instRobot, Type, behavTab, condition.children[0])
