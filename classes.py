@@ -246,6 +246,7 @@ class RobotBehav:
 		print(self.inst_list)
 
 		for i in self.inst_list:
+			print("I PANA: ", i)
 			i.ejecutar(tabla, self.bot)
 
 

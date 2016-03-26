@@ -470,7 +470,6 @@ class Activate(ArbolInstr):
 						if (i == "activation"):
 							aux = bot.behaviors.getBehavData(i)
 							print("aux",aux)
-							sys.exit()
 							aux.ejecutar(tabla)
 
 			else:
@@ -636,6 +635,9 @@ class Collect(ArbolInstr):
 	def __init__(self, token, children, id_list = None):
 		ArbolInstr.__init__(self, token, children, "collect")
 		self.id_list = id_list
+
+	def ejecutar(self, tabla, bot):
+		pass
 
 class Drop(ArbolInstr):
 	"""Clase arbol para accion de Robot Drop"""
