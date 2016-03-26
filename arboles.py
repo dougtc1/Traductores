@@ -11,6 +11,7 @@
 # Archivo que contiene las estructuras de datos de arboles utilizadas.
 import textwrap
 from classes import *
+import sys
 
 cantidadTabs = 0
 auxCantidadTabs = 0
@@ -27,10 +28,26 @@ class ArbolBin(Expr):
 		self.opsymbol = opsymbol
 
 	def get_valor_left(self):
-		return self.left.get_valor()
 		
+		if (isinstance(self.left, ArbolBin)):
+			auxiliar = self.left
+			auxiliar.get_valor_left()
+			auxiliar.get_valor_right()
+		elif (isinstance(self.left, ArbolUn)):
+			return self.left.get_valor()
+		elif (isinstance(self.left, Ident) or isinstance(self.left, Numero) or isinstance(self.left, Bool)):
+			return self.left.get_valor()
+			
 	def get_valor_right(self):
-		return self.right.get_valor()
+		
+		if (isinstance(self.right, ArbolBin)):
+			auxiliar = self.right
+			auxiliar.get_valor_left()
+			auxiliar.get_valor_right()
+		elif (isinstance(self.right, ArbolUn)):
+			return self.right.get_valor()
+		elif (isinstance(self.right, Ident) or isinstance(self.right, Numero) or isinstance(self.right, Bool)):
+			return self.right.get_valor()
 
 class ArbolUn(Expr):
 	def __init__(self,tipo, operador,operando, opsymbol):
@@ -68,18 +85,6 @@ class Ident(Expr):
 
 	def get_valor(self):
 		return self.value
-
-	def desactivarBot(self, new_Estado, tabla):
-		bot = tabla.getSymbolData(self.value)
-
-		if (bot.estado == "activado"):
-			bot.estado = new_Estado
-		else:
-			print("Error: el bot " + bot.nombre + " ya se encuentra desactivado.")
-			sys.exit()		
-
-
-
 
 class ArbolInstr(Instr):
 	def __init__(self, token=None, children=None, tipoInstruccion=None):
@@ -460,9 +465,13 @@ class Activate(ArbolInstr):
 					bot.behaviors.printTable()
 				
 					for i in bot.behaviors.behavs:
-						aux = bot.behaviors.getBehavData(i)
-						print(aux)
-						aux.ejecutar(tabla)
+						print("i",i)
+
+						if (i == "activation"):
+							aux = bot.behaviors.getBehavData(i)
+							print("aux",aux)
+							sys.exit()
+							aux.ejecutar(tabla)
 
 			else:
 				print("Error: el bot " + bot.nombre + " ya se encuentra activado.")
@@ -543,11 +552,82 @@ class Store(ArbolInstr):
 		ArbolInstr.__init__(self, token, children, "store")
 		self.expr = expr
 
-	def ejecutar(self, tabla):
+	def ejecutar(self, tabla, bot):
 		print("\n")
 		print("EN EJECUTAR DE STORE")
 		print(self.expr)
 		print("\n")
+
+		if (isinstance(self.expr, ArbolBin)):
+
+			izquierda = self.expr.get_valor_left()
+			operador = self.expr.opsymbol
+			derecha = self.expr.get_valor_right()
+
+			print("izquierda: ", izquierda)
+			print("derecha: ", derecha)
+			print("operador: ", operador)
+
+
+		elif (isinstance(self.expr, ArbolUn)):
+			unario = self.expr.get_valor()
+			aux_bot = tabla.getSymbolData(bot)
+
+			if (self.expr.tipo == "ARITMETICA"):
+				print("SOY INT UNARIO")
+				aux_bot.value = unario
+				aux_bot.meVal = unario
+			elif (self.expr.tipo == "BOOLEANA"):
+				print("SOY BOOL UNARIO")
+				aux_bot.value = unario
+				aux_bot.meVal = unario
+
+			else:
+				print("Error: Tipo de bot " + aux_bot.nombre +" incompatible.")
+				sys.exit()
+
+		elif (isinstance(self.expr, Numero)):
+			num = self.expr.get_valor()
+			aux_bot = tabla.getSymbolData(bot)
+
+			if (aux_bot.tipo == "int"):
+				print("SOY INT")
+				aux_bot.value = num
+				aux_bot.meVal = num
+
+			else:
+				print("Error: Tipo de bot " + aux_bot.nombre +" incompatible.")
+				sys.exit()
+
+		elif (isinstance(self.expr, Bool)):
+			boolean = self.expr.get_valor()
+			aux_bot = tabla.getSymbolData(bot)
+
+			if (aux_bot.tipo == "bool"):
+				print("SOY BOOL")
+				aux_bot.value = boolean
+				aux_bot.meVal = boolean
+
+			else:
+				print("Error: Tipo de bot " + aux_bot.nombre +" incompatible.")
+				sys.exit()
+
+		elif (isinstance(self.expr, Ident)):
+			ident = self.expr.get_valor()
+			# Verifico que el identificador este declarado y obtengo su instancia en la tabla 
+			ident = tabla.getSymbolData(ident)
+			aux_bot = tabla.getSymbolData(bot)
+
+			if (aux_bot.tipo == ident.tipo):
+				print("SOY IDENT")
+				aux_bot.value = ident.value
+				aux_bot.meVal = ident.meVal
+
+			else:
+				print("Error: Tipo de bot " + aux_bot.nombre +" incompatible.")
+				sys.exit()
+
+
 
 		
 

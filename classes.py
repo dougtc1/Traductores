@@ -246,7 +246,7 @@ class RobotBehav:
 		print(self.inst_list)
 
 		for i in self.inst_list:
-			i.ejecutar(tabla)
+			i.ejecutar(tabla, self.bot)
 
 
 class behavTable:
