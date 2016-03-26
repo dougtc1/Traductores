@@ -6,8 +6,9 @@ create
 	end
 
 	int bot contador
-		on default:
-			store 35.
+		on activation:
+			collect as x.
+			store 35 + x.
 		end
 	end
 

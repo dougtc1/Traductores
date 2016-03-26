@@ -94,7 +94,8 @@ class TokenList:
 # Estructura de datos correspondiente al controlador de cada robot declarado, tenemos estado, posicion y valores,
 # creo que hace falta agregar el identificador(nombre) como atributo. El nombre se le deberia cambiar luego.
 class symbolData:
-	def __init__(self, tipo, behaviors = None, value = None, meType = None, meVal = None, posicion = (0,0), estado = None):
+	def __init__(self, nombre, tipo, behaviors = None, value = None, meType = None, meVal = None, posicion = (0,0), estado = "desactivado"):
+		self.nombre = nombre
 		self.tipo   = tipo
 		self.value  = value
 		self.meType = meType
@@ -157,7 +158,7 @@ class symbolTable:
 	"""Crea un par en el diccionario con el nombre de la variable
 	como clave y se le asigna solo el tipo"""
 	def createTuple(self, symbol, tipo, behavTable):
-		aux = symbolData(tipo, behavTable)
+		aux = symbolData(symbol, tipo, behavTable)
 		self.tabla[symbol] = aux
 		#print (symbol, " -> TABLA DE COMPORTAMIENTOS: ", aux.behaviors)
 		self.tabla[symbol].modifMeType(tipo)
@@ -238,6 +239,16 @@ class RobotBehav:
 
 	def addInstr(self, instr):
 		self.inst_list.append(instr)
+
+	def ejecutar(self, tabla):
+		print("EN EJECUTAR DE ROBOTBEHAV")
+		print(self.bot)
+		print(self.inst_list)
+
+		for i in self.inst_list:
+			print("I PANA: ", i)
+			i.ejecutar(tabla, self.bot)
+
 
 class behavTable:
 	def __init__(self, identificador, tabAssoc):
