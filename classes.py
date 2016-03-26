@@ -229,9 +229,12 @@ class symbolTable:
 			self.hijo.printTables() 
 
 class RobotBehav:
-	def __init__(self, bot, instr_list = []):
+	def __init__(self, bot, inst_list = None):
 		self.bot       = bot
-		self.inst_list = instr_list
+		if inst_list:
+			self.inst_list = inst_list
+		else:
+			self.inst_list = [ ]
 
 	def addInstr(self, instr):
 		self.inst_list.append(instr)
@@ -249,13 +252,11 @@ class behavTable:
 			return False
 	
 	def createTuple(self, behav, bot):
-		#print("ESTE ES BOT: ", bot)
-		#aux = RobotBehav(bot)
-		#print("ESTE ES BEHAV: ", behav)
-		self.behavs[behav] = RobotBehav(bot)
-	
+		aux = RobotBehav(bot)
+		self.behavs[behav] = aux
+
 	def getBehavData(self, behav):
-		if self.behavs.behavExists(behav):
+		if self.behavExists(behav):
 			return self.behavs.get(behav)
 		else:
 			return None
@@ -269,8 +270,19 @@ class behavTable:
 			sys.exit()
 
 	def printTable(self):
-		for keys in self.behavs:
-			print(self.identificador + " " + keys + " Tipo: " + str(self.behavs[keys].inst_list))
+		print("Esta es una tabla de comportamientos relacionada al bot ", self.identificador)
+		print("\n")
+		for key in self.behavs:
+			#print("KEY: ", key)
+			#print("VALUE: ", self.behavs[key].inst_list)
+			print(key + " Tipo: " + str(self.behavs[key].inst_list))
+		
+		# SI SE DESCOMENTA ESTO SE IMPRIME DE FORMA REPETIDA LA TABLA DE COMPORTAMIENTO DE
+		# CADA VARIABLE EN LA TABLA DE SIMBOLOS HIJA
+		"""if self.tabAssoc.hijo:
+			for i in self.tabAssoc.hijo.behav:
+				i.printTable() """
+		print("\n")
 
 # Esto es como un main de la construccion de la tabla. Me parecio
 # demasiado trancado escribir todo lo que esto implica en el main
@@ -761,6 +773,7 @@ class tableBuildUp:
 				sys.exit()
 
 	def checkMeExists(self, expr):
+		
 		if (isinstance(expr, ArbolBin)):
 			if(isinstance(expr.left, Ident) and not isinstance(expr.right, Ident)):
 				if (isinstance(expr.right, Numero) or isinstance(expr.right, Bool)):
@@ -820,6 +833,11 @@ class tableBuildUp:
 					"instrucciones de controlador.")
 				sys.exit()
 
+		elif(expr == 'me'):
+			print("Error: 'me' no puede ser usado como identificador al ser palaba reservada.")
+			sys.exit()
+
+
 	def checkExprNotInTable(self, table, expr):
 		if isinstance(expr, ArbolBin):
 			if(isinstance(expr.left, Ident)):
@@ -839,38 +857,68 @@ class tableBuildUp:
 				if expr.operando.value in table.tabla:
 					print("Error: ", expr.operando.value, " no puede ser usado en instrucciones de robot")
 
-	def checkInstRobot_List(self, table, instr_list, Type, behavTab):
+	def checkInstRobot_List(self, table, instr_list, Type, behavTab, condition):
+		#print("instr_list: ", instr_list.children)
 		inst1 = instr_list.children[0]
-
+		#print("QUE MAS PANA ", inst1)
 		if isinstance(inst1, Store):
 			self.checkExprNotInTable(table, inst1.expr)
 			self.checkExpressionOk(table, inst1.expr)
+
+			aux = behavTab.getBehavData(condition)
+			aux.addInstr(inst1)
+
 		elif isinstance(inst1,Collect):
 			if inst1.id_list:
 				idList = self.getID_list(inst1.id_list)
 				for ID in idList:
+					self.checkMeExists(ID)
 					if ID in table.tabla:
 						print("Uso de bot ", ID, " prohibido en instrucciones de robot.")
 						sys.exit()
 					else:
+						#self.checkExpressionOk
+						"""Creo que hay que agregar behavTab para cada uno de estos que se 
+						agreguen a la tabla de simbolos aqui """
 						table.addSymbol(ID, Type, behavTab)
+
+			aux = behavTab.getBehavData(condition)
+			aux.addInstr(inst1)
+
 		elif isinstance(inst1, Drop):
-			self.checkExpressionOk(table, expr)
-			self.checkExprNotInTable(table, expr)
+			self.checkExpressionOk(table, inst1.expr)
+			self.checkExprNotInTable(table, inst1.expr)
+
+			aux = behavTab.getBehavData(condition)
+			aux.addInstr(inst1)
+		
 		elif isinstance(inst1, Direccion):
-			self.checkExpressionOk(table, expr)
-			self.checkExprNotInTable(table, expr)
+			self.checkExpressionOk(table, inst1.expr)
+			self.checkExprNotInTable(table, inst1.expr)
+			aux = behavTab.getBehavData(condition)
+			aux.addInstr(inst1)
+		
 		elif(isinstance(inst1, Read)):
 			if inst1.id_list:
 				idList = self.getID_list(inst1.id_list)
 				for ID in idList:
+					self.checkMeExists(ID)
 					if ID in table.tabla:
 						print("Uso de bot ", ID, " prohibido en instrucciones de robot.")
 						sys.exit()
 					else:
 						table.addSymbol(ID, Type, behavTab)
 
+			aux = behavTab.getBehavData(condition)
+			aux.addInstr(inst1)
+		
+		if (len(instr_list.children) > 1):
+			instRobot = instr_list.children[1]
+			self.checkInstRobot_List(table, instRobot, Type, behavTab, condition)
+
 	def checkComp_list(self, table, comp_list, idlist, Type, behavTab = None):
+
+		# Prints que los he colocado n veces y ya no los borro hasta que entreguemos
 
 		#print("\n")
 		#print("comp_list: ", comp_list.token)
@@ -907,17 +955,15 @@ class tableBuildUp:
 				print("Error: comportamiento 'default' definido antes de otros comportamientos.")
 				sys.exit()
 
-
 			for ID in idlist:
-				#print("ESTOY EN checkComp_list Y ESTE ES condition.children[0]: ", condition.children[0])
 				behavTab.addBehav(ID, condition.children[0])
-
 
 			#print("table.behav.behavs", table.behav.behavs["activation"].inst_list)
 			
 
 			instRobot = comp.children[1]
-			self.checkInstRobot_List(table, instRobot, Type, behavTab)
+			#print("instRobot: ", instRobot.children)
+			self.checkInstRobot_List(table, instRobot, Type, behavTab, condition.children[0])
 			if (len(comp_list.children) > 1):
 				self.checkComp_list(table, comp_list.children[1], idlist, Type, behavTab)
 			
@@ -1000,6 +1046,7 @@ class tableBuildUp:
 			behavTab = behavTable(ID, table)
 			table.addBehav(behavTab)
 			table.addSymbol(ID, Type, behavTab)
+			#print("VALOR DE ESTO ES: ", dec_list.children[0].children)
 		idlist = self.getID_list(idlist)
 		if (len(dec_list.children[0].children) > 2):
 			self.checkComp_list(table, dec_list.children[0].children[2], idlist, Type, behavTab)

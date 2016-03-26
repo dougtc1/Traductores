@@ -42,7 +42,7 @@ execute
 					on activation:
 						store 3.
 						up.
-						read as me.
+						read as x.
 					end
 				end
 			execute

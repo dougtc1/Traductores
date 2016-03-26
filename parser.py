@@ -173,7 +173,7 @@ def p_instruccion_InstRobot(p):
         p[0] = Drop("Drop", [p[2]], p[2])
     elif (p[1] == "up" or p[1] == "down" or p[1] == "left" or p[1] == "right"):
         if (len(p) == 4):
-            p[0] = Direccion("Direccion", [p[1], p[3]], p[1], p[3])
+            p[0] = Direccion("Direccion", [p[1], p[2]], p[1], p[2])
         else:
             p[0] = Direccion("Direccion", [p[1]], p[1])
     elif (p[1] == "read"):
@@ -191,7 +191,8 @@ def p_instruccion_Direccion(p):
                  | TkDown
                  | TkLeft
                  | TkRight'''
-    p[0] = ArbolInstr("Direccion", [p[1]])
+    #p[0] = ArbolInstr("Direccion", [p[1]])
+    p[0] = p[1]
 
 def p_expresion_Expr(p):
     ''' Expr : Expr TkSuma Expr

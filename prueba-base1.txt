@@ -3,6 +3,9 @@ create
 		on activation:
 			store 3.
 		end
+		on deactivation:
+			store 4.
+		end
 	end
 
 	int bot contador
@@ -31,9 +34,9 @@ execute
 			create
 				char bot yo
 					on activation:
-						store 3.
+						collect as x.
 						up.
-						read as me.
+						store me + x.
 					end
 				end
 			execute

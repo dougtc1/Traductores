@@ -164,12 +164,11 @@ class ArbolInstr(Instr):
         print("\n")
         #print(tablaComportamientos)
         for i in tablaComportamientos:
+            #print("ESTA ES I: ",i)
             #print("i.behavs: ", i.behavs)
             i.printTable()
 
         print("\n")
-
-
 
 class CondicionalIf(ArbolInstr):
     def __init__(self, token, children, condicion, instruccion1, instruccion2=None):
