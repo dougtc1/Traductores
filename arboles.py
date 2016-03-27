@@ -31,8 +31,10 @@ class ArbolBin(Expr):
 		
 		if (isinstance(self.left, ArbolBin)):
 			auxiliar = self.left
-			auxiliar.get_valor_left()
-			auxiliar.get_valor_right()
+			auxizq = auxiliar.get_valor_left()
+			auxder = auxiliar.get_valor_right()
+			resultado = auxiliar.evaluar(auxizq, auxiliar.op, auxder)
+			return resultado
 		elif (isinstance(self.left, ArbolUn)):
 			return self.left.get_valor()
 		elif (isinstance(self.left, Ident) or isinstance(self.left, Numero) or isinstance(self.left, Bool)):
@@ -42,8 +44,10 @@ class ArbolBin(Expr):
 		
 		if (isinstance(self.right, ArbolBin)):
 			auxiliar = self.right
-			auxiliar.get_valor_left()
-			auxiliar.get_valor_right()
+			auxizq = auxiliar.get_valor_left()
+			auxder = auxiliar.get_valor_right()
+			resultado = auxiliar.evaluar(auxizq, auxiliar.op, auxder)
+			return resultado
 		elif (isinstance(self.right, ArbolUn)):
 			return self.right.get_valor()
 		elif (isinstance(self.right, Ident) or isinstance(self.right, Numero) or isinstance(self.right, Bool)):
@@ -79,6 +83,21 @@ class ArbolBin(Expr):
 
 		elif (operador == '\\/'):
 			resultado = izquierda or derecha
+
+		elif (operador == '>'):
+			resultado = izquierda > derecha
+
+		elif (operador == '>='):
+			resultado = izquierda >= derecha
+			
+		elif (operador == '<'):
+			resultado = izquierda < derecha
+
+		elif (operador == '<='):
+			resultado = izquierda <= derecha
+
+		elif (operador == '/\='):
+			resultado = izquierda != derecha
 
 		else:
 			print("Error: Operacion " + str(operador) + " no definida.")
@@ -233,6 +252,7 @@ class ArbolInstr(Instr):
 			if (isinstance(self.children[0], CondicionalIf)):
 				print("CONDICIONAL IF")
 				print(self.children[0])
+				self.children[0].ejecutar(tabla)
 
 			elif (isinstance(self.children[0], IteracionIndef)):
 				print("ITERACION INDEF")
@@ -626,6 +646,7 @@ class Store(ArbolInstr):
 			unario = self.expr.get_valor()
 			aux_bot = tabla.getSymbolData(bot)
 
+			# Se pueden achicar en uno solo con un "or"
 			if (self.expr.tipo == "ARITMETICA"):
 				print("SOY INT UNARIO")
 				aux_bot.value = unario
@@ -688,7 +709,7 @@ class Collect(ArbolInstr):
 
 	def ejecutar(self, tabla, bot):
 		print("EN EJECUTAR DE COLLECT")
-		print(bot)
+		print("bot", bot)
 		print("id_list: ",self.id_list.get_valor())
 
 		""" Falta implementar matriz, mientras el valor siempre va a ser 1 """
@@ -701,7 +722,7 @@ class Collect(ArbolInstr):
 
 		if (self.id_list):
 			var = self.id_list.get_valor()
-			print(aux_bot.behaviors.interna)
+			#print(aux_bot.behaviors.interna)
 
 			aux_bot.behaviors.modificarVarInterna(var, valorMatriz)
 			

@@ -242,12 +242,13 @@ class RobotBehav:
 		self.inst_list.append(instr)
 
 	def ejecutar(self, tabla):
-		print("EN EJECUTAR DE ROBOTBEHAV")
-		print(self.bot)
-		print(self.inst_list)
+		#print("\n")
+		#print("EN EJECUTAR DE ROBOTBEHAV")
+		#print(self.bot)
+		#print(self.inst_list)
 
 		for i in self.inst_list:
-			print("I PANA: ", i)
+			#print("I PANA: ", i)
 			i.ejecutar(tabla, self.bot)
 
 
@@ -303,7 +304,6 @@ class behavTable:
 		# Por defecto, estoy colocando que es int a falta de verificar si puede haber cualquier otra cosa en la matriz
 
 		if (not (var in self.interna)):
-			print("VOY A AGREGAR VARIABLE INTERNA")
 			aux = symbolData(var, "int", self)
 			aux.value = valor
 			aux.modifMeType("int")
@@ -960,16 +960,13 @@ class tableBuildUp:
 		#print("\n")
 		
 		if isinstance(inst1, Store):
-			print("STORE")
 			self.checkExprNotInTable(table, inst1.expr)
-			print("ANTES DEL PEO?", behavTab)
 			self.checkExpressionOk(table, inst1.expr, behavTab)
 
 			aux = behavTab.getBehavData(condition)
 			aux.addInstr(inst1)
 
 		elif isinstance(inst1,Collect):
-			print("COLLECT",inst1.id_list.get_valor())
 			if inst1.id_list:
 				idList = self.getID_list(inst1.id_list)
 				for ID in idList:
@@ -978,16 +975,7 @@ class tableBuildUp:
 						print("Uso de bot ", ID, " prohibido en instrucciones de robot.")
 						sys.exit()
 					else:
-						print("BEHAVTAB EN EL COLLECT QUE JODE",behavTab.identificador)
 						behavTab.createVarInterna(ID)
-
-						"""#self.checkExpressionOk
-						Creo que hay que agregar behavTab para cada uno de estos que se 
-						agreguen a la tabla de simbolos aqui
-						print("VOY A AGREGAR LA VARIABLE DESPUES DEL AS: ", ID)
-						print(behavTab.interna)
-						AQUI SE SACA EL VALOR DEL
-						table.addSymbol(ID, Type, behavTab)"""
 
 			aux = behavTab.getBehavData(condition)
 			aux.addInstr(inst1)
