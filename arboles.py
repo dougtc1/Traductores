@@ -408,6 +408,24 @@ class CondicionalIf(ArbolInstr):
 			cantidadTabs    = 0
 			self.instruccion2.printPreorden()
 
+
+	def ejecutar(self, tabla):
+		print("\n")
+		print("EN EL EVALUAR DEL IF")
+		print("\n")
+
+		print("condicion", self.condicion)
+		print("\n")
+		print("self.instruccion1", self.instruccion1)
+		print("\n")
+		print("self.instruccion2", self.instruccion2)
+		print("\n")
+
+
+
+
+
+
 class IteracionIndef(ArbolInstr):
 	def __init__(self, token, children, condicion, instruccion):
 		ArbolInstr.__init__(self, token, children, "ITERACION_INDEF")
@@ -617,6 +635,8 @@ class Store(ArbolInstr):
 		print(self.expr)
 		print("\n")
 
+		aux_bot = tabla.getSymbolData(bot)
+
 		if (isinstance(self.expr, ArbolBin)):
 
 			izquierda = self.expr.get_valor_left()
@@ -624,12 +644,12 @@ class Store(ArbolInstr):
 			derecha = self.expr.get_valor_right()
 
 			if (not isinstance(izquierda, int)):
-				aux_bot = tabla.getSymbolData(bot)
+				#aux_bot = tabla.getSymbolData(bot)
 				aux = aux_bot.behaviors.getVarData(izquierda)
 				izquierda = aux.value
 
 			if (not isinstance(derecha, int)):
-				aux_bot = tabla.getSymbolData(bot)
+				#aux_bot = tabla.getSymbolData(bot)
 				aux = aux_bot.behaviors.getVarData(derecha)
 				derecha = aux.value
 
@@ -643,54 +663,36 @@ class Store(ArbolInstr):
 
 
 		elif (isinstance(self.expr, ArbolUn)):
-			unario = self.expr.get_valor()
-			aux_bot = tabla.getSymbolData(bot)
-
-			# Se pueden achicar en uno solo con un "or"
-			if (self.expr.tipo == "ARITMETICA"):
-				print("SOY INT UNARIO")
-				aux_bot.value = unario
-				aux_bot.meVal = unario
-			elif (self.expr.tipo == "BOOLEANA"):
-				print("SOY BOOL UNARIO")
-				aux_bot.value = unario
-				aux_bot.meVal = unario
-
+			
+			if (self.expr.tipo == "ARITMETICA" or self.expr.tipo == "BOOLEANA"):
+				resultado = self.expr.get_valor()
+				
 			else:
 				print("Error: Tipo de bot " + aux_bot.nombre +" incompatible.")
 				sys.exit()
 
 		elif (isinstance(self.expr, Numero)):
-			num = self.expr.get_valor()
-			aux_bot = tabla.getSymbolData(bot)
 
 			if (aux_bot.tipo == "int"):
-				print("SOY INT")
-				aux_bot.value = num
-				aux_bot.meVal = num
-
+				resultado = self.expr.get_valor()
 			else:
 				print("Error: Tipo de bot " + aux_bot.nombre +" incompatible.")
 				sys.exit()
 
 		elif (isinstance(self.expr, Bool)):
-			boolean = self.expr.get_valor()
-			aux_bot = tabla.getSymbolData(bot)
-
 			if (aux_bot.tipo == "bool"):
-				print("SOY BOOL")
-				aux_bot.value = boolean
-				aux_bot.meVal = boolean
+				resultado = self.expr.get_valor()
 
 			else:
 				print("Error: Tipo de bot " + aux_bot.nombre +" incompatible.")
 				sys.exit()
 
+		# ESTO CREO QUE NO VA
 		elif (isinstance(self.expr, Ident)):
 			ident = self.expr.get_valor()
 			# Verifico que el identificador este declarado y obtengo su instancia en la tabla 
 			ident = tabla.getSymbolData(ident)
-			aux_bot = tabla.getSymbolData(bot)
+			#aux_bot = tabla.getSymbolData(bot)
 
 			if (aux_bot.tipo == ident.tipo):
 				print("SOY IDENT")
@@ -700,6 +702,13 @@ class Store(ArbolInstr):
 			else:
 				print("Error: Tipo de bot " + aux_bot.nombre +" incompatible.")
 				sys.exit()
+
+		aux_bot.value = resultado
+
+		aux_bot.meVal = resultado
+
+
+
 
 class Collect(ArbolInstr):
 	"""Clase arbol para accion de Robot Collect"""
