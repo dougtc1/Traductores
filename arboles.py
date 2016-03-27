@@ -49,6 +49,44 @@ class ArbolBin(Expr):
 		elif (isinstance(self.right, Ident) or isinstance(self.right, Numero) or isinstance(self.right, Bool)):
 			return self.right.get_valor()
 
+	def evaluar(self, izquierda, operador, derecha):
+		
+		if (operador == '+'):
+			resultado = izquierda + derecha
+
+		elif (operador == '*'):
+			resultado = izquierda * derecha
+
+		elif (operador == '-'):
+			resultado = izquierda - derecha
+
+		elif (operador == '%'):
+			if (derecha == 0):
+				print("Error: No se puede dividir por cero (0).")
+				sys.exit()
+			else:
+				resultado = izquierda % derecha
+
+		elif (operador == '/'):
+			if (derecha == 0):
+				print("Error: No se puede dividir por cero (0).")
+				sys.exit()
+			else:	
+				resultado = izquierda / derecha
+
+		elif (operador == '/\\'):
+			resultado = izquierda and derecha
+
+		elif (operador == '\\/'):
+			resultado = izquierda or derecha
+
+		else:
+			print("Error: Operacion " + str(operador) + " no definida.")
+			sys.exit()
+
+		return resultado
+
+
 class ArbolUn(Expr):
 	def __init__(self,tipo, operador,operando, opsymbol):
 		self.tipo     = tipo
@@ -65,7 +103,7 @@ class ArbolUn(Expr):
 class Numero(Expr):
 	def __init__(self,value):
 		self.tipo = "Numero"
-		self.value = str(value)
+		self.value = value
 
 	def get_valor(self):
 		return self.value
@@ -563,9 +601,23 @@ class Store(ArbolInstr):
 			operador = self.expr.opsymbol
 			derecha = self.expr.get_valor_right()
 
+			if (not isinstance(izquierda, int)):
+				aux_bot = tabla.getSymbolData(bot)
+				aux = aux_bot.behaviors.getVarData(izquierda)
+				izquierda = aux.value
+
+			if (not isinstance(derecha, int)):
+				aux_bot = tabla.getSymbolData(bot)
+				aux = aux_bot.behaviors.getVarData(derecha)
+				derecha = aux.value
+
 			print("izquierda: ", izquierda)
 			print("derecha: ", derecha)
 			print("operador: ", operador)
+
+			resultado = self.expr.evaluar(izquierda, operador, derecha)
+
+			print ("ESTE ES VALOR DEL EVALUAR: ", resultado)
 
 
 		elif (isinstance(self.expr, ArbolUn)):
@@ -626,10 +678,6 @@ class Store(ArbolInstr):
 				print("Error: Tipo de bot " + aux_bot.nombre +" incompatible.")
 				sys.exit()
 
-
-
-		
-
 class Collect(ArbolInstr):
 	"""Clase arbol para accion de Robot Collect"""
 	def __init__(self, token, children, id_list = None):
@@ -637,7 +685,29 @@ class Collect(ArbolInstr):
 		self.id_list = id_list
 
 	def ejecutar(self, tabla, bot):
-		pass
+		print("EN EJECUTAR DE COLLECT")
+		print(bot)
+		print("id_list: ",self.id_list.get_valor())
+
+		""" Falta implementar matriz, mientras el valor siempre va a ser 1 """
+		valorMatriz = 1
+
+		aux_bot = tabla.getSymbolData(bot)
+
+
+		# En caso de que tenga as, se saca el nombre de dicho identificador y se busca para guardar su valor
+
+		if (self.id_list):
+			var = self.id_list.get_valor()
+			print(aux_bot.behaviors.interna)
+
+			if not (var in aux_bot.behaviors.interna):
+				aux_bot.behaviors.createVarInterna(var, valorMatriz)
+			
+		else:
+
+			aux_bot.value = valorMatriz
+			aux_bot.modifMeVal(valorMatriz)
 
 class Drop(ArbolInstr):
 	"""Clase arbol para accion de Robot Drop"""

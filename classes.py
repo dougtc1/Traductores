@@ -177,10 +177,10 @@ class symbolTable:
 	def getSymbolData(self, symbol):
 		if self.symbolExists(symbol):
 			return self.tabla[symbol]
-		elif (not symbolExists(symbol) and self.padre):
+		elif (not self.symbolExists(symbol) and self.padre):
 			self.padre.getSymbolData(symbol)
 		else:
-			print("Error: Idenficador " + symbol + " no declarado")
+			print("Error: Idenficador " + str(symbol) + " no declarado")
 			sys.exit()
 
 	"""Verifica que exista la variable en la tabla actual para agregar
@@ -255,6 +255,7 @@ class behavTable:
 		self.identificador = identificador
 		self.behavs   = {}
 		self.tabAssoc = tabAssoc
+		self.interna  = {}
 	
 	def behavExists(self, behav):	
 		if behav in self.behavs:
@@ -294,6 +295,34 @@ class behavTable:
 			for i in self.tabAssoc.hijo.behav:
 				i.printTable() """
 		print("\n")
+
+	def createVarInterna(self, var, valor):
+		"""Se pregunta si existe, en caso de que no se crea el "bot" (para que se mantengan los nombres de atributos)
+		y se le coloca el valor que se tome de la matriz o de la entrada de usuario."""
+		# Por defecto, estoy colocando que es int a falta de verificar si puede haber cualquier otra cosa en la matriz
+
+		if (not (var in self.interna)):
+			print("VOY A AGREGAR VARIABLE INTERNA")
+			aux = symbolData(var, "int", self)
+			aux.value = valor
+			aux.modifMeType("int")
+			aux.modifMeVal(valor)
+			self.interna[var] = aux
+		else:
+			print("Error: Ya creada y alguna verificacion fallo, esto no deberia ir al final.")
+			sys.exit()
+
+	def modificarVarInterna(self, var, valor):
+		aux = self.interna[var]
+		aux.value = valor
+		aux.modifMeVal(valor)
+
+	def getVarData(self, var):
+		if (var in self.interna):
+			return self.interna[var]
+		else:
+			print("Error: Idenficador " + str(variable) + " no declarado")
+			sys.exit()
 
 # Esto es como un main de la construccion de la tabla. Me parecio
 # demasiado trancado escribir todo lo que esto implica en el main
@@ -970,7 +999,10 @@ class tableBuildUp:
 				behavTab.addBehav(ID, condition.children[0])
 
 			#print("table.behav.behavs", table.behav.behavs["activation"].inst_list)
-			
+
+			if (not comp.children[1]):
+ 				print("Error: comportamiento definido sin instrucciones.")
+ 				sys.exit()
 
 			instRobot = comp.children[1]
 			#print("instRobot: ", instRobot.children)
