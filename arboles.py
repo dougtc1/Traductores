@@ -211,6 +211,8 @@ class ArbolInstr(Instr):
 
 	def ejecutar(self, tabla):
 
+		print("ESTOY EMPEZANDO EJECUTAR")
+
 		if (self.token == 'Start'):
 			
 			print("INICIAL")
@@ -701,8 +703,7 @@ class Collect(ArbolInstr):
 			var = self.id_list.get_valor()
 			print(aux_bot.behaviors.interna)
 
-			if not (var in aux_bot.behaviors.interna):
-				aux_bot.behaviors.createVarInterna(var, valorMatriz)
+			aux_bot.behaviors.modificarVarInterna(var, valorMatriz)
 			
 		else:
 
