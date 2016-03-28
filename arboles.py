@@ -203,7 +203,7 @@ class Ident(Expr):
 		self.value = value
 
 	def get_valor(self):
-		return self.value
+		return self.value		
 
 class NewLine(Expr):
 	def __init__(self, value):
@@ -1008,20 +1008,34 @@ class Store(ArbolInstr):
 		elif (isinstance(self.expr, Ident)):
 			ident = self.expr.get_valor()
 			# Verifico que el identificador este declarado y obtengo su instancia en la tabla 
-			ident = tabla.getSymbolData(ident)
-			#aux_bot = tabla.getSymbolData(bot)
 
-			if (aux_bot.tipo == ident.tipo):
-				print("SOY IDENT")
-				aux_bot.value = ident.value
-				aux_bot.meVal = ident.meVal
+			if (ident in tabla.tabla):
+				# Es identificador declarado y obtengo su instancia
+
+				ident = tabla.getSymbolData(ident)
+
+				if (aux_bot.tipo == ident.tipo):
+					resultado = ident.value
+
+				else:
+					print("Error: Tipo de bot " + aux_bot.nombre +" incompatible.")
+					sys.exit()
 
 			else:
-				print("Error: Tipo de bot " + aux_bot.nombre +" incompatible.")
-				sys.exit()
+				if (len(ident) == 3):
+					# Es un caracter
+					resultado = ident
+
+				else:
+					print("Error: Identificador " + ident + "no declarado.")
+					sys.exit()
+
 
 		elif (isinstance(self.expr, NewLine)):
 			resultado = self.expr.get_valor()
+
+		elif (isinstance(self.expr, str)):
+			print("SE ME OLVIDO HACER LO DEL CHAR")
 
 		aux_bot.value = resultado
 
@@ -1192,7 +1206,7 @@ class Send(ArbolInstr):
 			print("\n")
 
 		else:
-			print(aux_bot.value)
+			print(aux_bot.value,end=" ")
 			#print("RESULTADO SEND: ",aux_bot.value, " para bot: ", aux_bot.nombre)
 
 
