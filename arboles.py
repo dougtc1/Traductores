@@ -139,6 +139,10 @@ class ArbolBin(Expr):
 
 		return resultado
 
+	def get_valor(self):
+		print("LEFT: ",self.get_valor_right())
+		print("RIGHT: ",self.get_valor_left())
+
 
 class ArbolUn(Expr):
 	def __init__(self,tipo, operador,operando, opsymbol):
@@ -552,15 +556,15 @@ class CondicionalIf(ArbolInstr):
 
 
 		if (resultado):
-			print("este es el resultado de la condicion del if: ",resultado)
-			print("\n")
-			print("VOY A EJECUTAR LA INSTRUCCION 1 DEL IF")
+			#print("este es el resultado de la condicion del if: ",resultado)
+			#print("\n")
+			#print("VOY A EJECUTAR LA INSTRUCCION 1 DEL IF")
 			self.instruccion1.ejecutar(tabla, matrix)
 		else:
 			if (self.instruccion2):
-				print("este es el resultado de la condicion del if: ",resultado)
-				print("\n")
-				print("VOY A EJECUTAR LA INSTRUCCION 2 DEL IF")
+				#print("este es el resultado de la condicion del if: ",resultado)
+				#print("\n")
+				#print("VOY A EJECUTAR LA INSTRUCCION 2 DEL IF")
 				self.instruccion2.ejecutar(tabla, matrix)
 
 
@@ -643,7 +647,6 @@ class IteracionIndef(ArbolInstr):
 
 	def ejecutar(self, tabla, matrix):
 		iterar = True
-		counter = 0
 		while iterar:
 			
 			#print("\n")
@@ -711,9 +714,6 @@ class IteracionIndef(ArbolInstr):
 			else:
 				iterar = False
 
-			print("COUNTER: ", counter)
-			counter += 1
-
 class Activate(ArbolInstr):
 	def __init__(self, token, children, id_list):
 		ArbolInstr.__init__(self, token, children, "ACTIVACION")
@@ -772,7 +772,7 @@ class Activate(ArbolInstr):
 						#print("i",i)
 						if (x == "activation"):
 							aux = bot.behaviors.getBehavData(x)
-							print("nombre", aux.bot)
+							#print("nombre", aux.bot)
 							aux.ejecutar(tabla, matrix)
 							#print("aux",aux)
 	
@@ -942,6 +942,13 @@ class Store(ArbolInstr):
 			if (not isinstance(izquierda, int)):
 				if (izquierda == "me"):
 					izquierda = aux_bot.meVal
+
+				elif (izquierda in tabla.tabla):
+						
+					tmp_boti = tabla.getSymbolData(izquierda)
+		
+					izquierda = tmp_boti.value 
+					
 				else:
 					#aux_bot = tabla.getSymbolData(bot)
 					aux = aux_bot.behaviors.getVarData(izquierda)
@@ -950,6 +957,13 @@ class Store(ArbolInstr):
 			if (not isinstance(derecha, int)):
 				if (derecha == "me"):
 					derecha = aux_bot.meVal
+
+				elif (derecha in tabla.tabla):
+							
+					tmp_botd = tabla.getSymbolData(derecha)
+		
+					derecha = tmp_botd.value
+
 				else:
 					#aux_bot = tabla.getSymbolData(bot)
 					aux = aux_bot.behaviors.getVarData(derecha)
@@ -1012,7 +1026,7 @@ class Store(ArbolInstr):
 
 		aux_bot.meVal = resultado
 
-		print("RESULTADO STORE: ",resultado," para bot: ", aux_bot.nombre)
+		#print("RESULTADO STORE: ",resultado," para bot: ", aux_bot.nombre)
 
 class Collect(ArbolInstr):
 	"""Clase arbol para accion de Robot Collect"""
@@ -1023,26 +1037,34 @@ class Collect(ArbolInstr):
 	def ejecutar(self, tabla, bot, matrix):
 		#print("EN EJECUTAR DE COLLECT")
 		#print("bot", bot)
-		#print("id_list: ",self.id_list.get_valor())
-
-		#""" Falta implementar matriz, mientras el valor siempre va a ser 1 """
-		#valorMatriz = 1
+		#print("id_list: ", self.id_list.get_valor())
+		#print("ESTA EN LA TABLA ", self.id_list.get_valor() in tabla.tabla)
 
 		aux_bot = tabla.getSymbolData(bot)
 		valueInMatrix = matrix.collectOf(aux_bot.posicion)
-		# En caso de que tenga as, se saca el nombre de dicho identificador y se busca para guardar su valor
-		if (self.id_list):
+		# En caso de que tenga as, se verifica si no esta en la tabla interna,
+		# se saca el nombre de dicho identificador y se busca para guardar su valor
+
+		if ((self.id_list) and (self.id_list.get_valor() in aux_bot.behaviors.interna)):
+
 			var = self.id_list.get_valor()
 			#print(aux_bot.behaviors.interna)
 
 			aux_bot.behaviors.modificarVarInterna(var, valueInMatrix)
+
+		elif (self.id_list.get_valor() in tabla.tabla):
+
+			aux_bot = tabla.getSymbolData(self.id_list.get_valor())
+
+			aux_bot.value = valueInMatrix
+			aux_bot.modifMeVal(valueInMatrix)
 			
 		else:
 
 			aux_bot.value = valueInMatrix
 			aux_bot.modifMeVal(valueInMatrix)
 
-		print("RESULTADO COLLECT: ",aux_bot.value ," para bot: ", var or aux_bot.nombre)
+		#print("RESULTADO COLLECT: ",aux_bot.value ," para bot: ", var or aux_bot.nombre)
 
 
 class Drop(ArbolInstr):
@@ -1052,11 +1074,11 @@ class Drop(ArbolInstr):
 		self.expr = expr
 
 	def ejecutar(self, tabla, bot, matrix):
-		print("\n")
-		print("EN EJECUTAR DE DROP")
-		print("bot", bot)
-		print("self.expr: ",self.expr.get_valor())
-		print("\n")
+		#print("\n")
+		#print("EN EJECUTAR DE DROP")
+		#print("bot", bot)
+		#print("self.expr: ",self.expr.get_valor())
+		#print("\n")
 
 		botToDrop = tabla.getSymbolData(bot)
 
@@ -1066,19 +1088,8 @@ class Drop(ArbolInstr):
 			expr = self.expr.get_valor()
 
 		if (expr == 'me'):
-			#print("nombre",botToDrop.nombre)
-			#print("tipo",botToDrop.tipo)
-			#print("value",botToDrop.value)
-			#print("meType",botToDrop.meType)
-			#print("meVal",botToDrop.meVal)
-			#print("posicion",botToDrop.posicion)
-			#print("estado",botToDrop.estado)
-			#print("behaviors",botToDrop.behaviors)
 
 			expr = botToDrop.meVal
-
-		
-
 
 		#print("ANTES DE EXPLOTAR: ", expr)		
 		matrix.dropIn(botToDrop.posicion, expr)
@@ -1094,10 +1105,10 @@ class Direccion(ArbolInstr):
 		self.expr = expr
 
 	def ejecutar(self, tabla, bot, matrix):
-		print("EN EJECUTAR DE DIRECCION")
-		print("bot", bot)
-		print("self.expr: ",self.expr)
-		print("self.direccion: ", self.direccion)
+		#print("EN EJECUTAR DE DIRECCION")
+		#print("bot", bot)
+		#print("self.expr: ",self.expr)
+		#print("self.direccion: ", self.direccion)
 
 		botToMove = tabla.getSymbolData(bot)
 		bot.moverse(self.direccion, expr)
@@ -1115,7 +1126,7 @@ class Read(ArbolInstr):
 
 
 		aux_bot = tabla.getSymbolData(bot)
-		print("aux_bot.tipo", aux_bot.tipo)
+		#print("aux_bot.tipo", aux_bot.tipo)
 
 		# En caso de que tenga as, se saca el nombre de dicho identificador y se busca para guardar su valor
 
@@ -1133,9 +1144,9 @@ class Read(ArbolInstr):
 					valorEntrada = bool(input("Introduzca la entrada para el bot " + aux_bot.nombre + " de tipo " + aux_bot.tipo + ": "))
 
 
-				print("TYPE DE valorEntrada", type(valorEntrada))
+				#print("TYPE DE valorEntrada", type(valorEntrada))
 				aux_bot.behaviors.modificarVarInterna(var, valorEntrada)
-				print("RESULTADO READ: ",valorEntrada ," para variable: ", var)
+				#print("RESULTADO READ: ",valorEntrada ," para variable: ", var)
 			
 		else:
 			if (aux_bot.tipo == "int"):
@@ -1148,10 +1159,10 @@ class Read(ArbolInstr):
 			elif (aux_bot.tipo == 'bool'):
 				aux_bot.value = bool(input("Introduzca la entrada para el bot " + aux_bot.nombre + " de tipo " + aux_bot.tipo + ": "))
 
-			print("TYPE DE aux_bot.value", type(aux_bot.value))
+			#print("TYPE DE aux_bot.value", type(aux_bot.value))
 			aux_bot.modifMeVal(aux_bot.value)
 
-		print("RESULTADO READ: ",aux_bot.value ," para bot: ", aux_bot.nombre)
+		#print("RESULTADO READ: ",aux_bot.value ," para bot: ", aux_bot.nombre)
 
 
 class Send(ArbolInstr):
@@ -1169,7 +1180,8 @@ class Send(ArbolInstr):
 			print("\n")
 
 		else:
-			print("RESULTADO SEND: ",aux_bot.value, " para bot: ", aux_bot.nombre)
+			print(aux_bot.value)
+			#print("RESULTADO SEND: ",aux_bot.value, " para bot: ", aux_bot.nombre)
 
 
 
