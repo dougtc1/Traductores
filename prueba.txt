@@ -1,0 +1,26 @@
+create 
+	int bot contador, a
+		on default:
+			store 3.
+		end
+		on activation:
+			collect.
+		end
+		on deactivation:
+			collect.
+		end
+	end
+	bool bot c, d
+		on default:
+			send.
+		end
+	end
+	char bot rogelio
+	end
+
+execute
+	advance rogelio, a.
+	if contador:
+		advance contador.	
+	end
+end

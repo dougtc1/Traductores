@@ -1,4 +1,4 @@
-$- sum.bot:
+  $- sum.bot:
  - ========
  - Recibe un entero 'n' y luego 'n' enteros mas, suma estos ultimos los imprime.
  - Autor: Ricardo Monascal, 2016
@@ -20,13 +20,14 @@ create
       right.
       store 0.
     end
+    on deactivation:
+      send.
+    end
     on default:
       read as next.
       store me + next.
     end
-    on deactivation:
-      send.
-    end
+    
   end
 
 execute

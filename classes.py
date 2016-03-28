@@ -265,7 +265,7 @@ class RobotBehav:
 		#print(self.inst_list)
 
 		for i in self.inst_list:
-			#print("I PANA: ", i)
+			# print("I PANA: ", i)
 			i.ejecutar(tabla, self.bot, matrix)
 
 
@@ -1096,6 +1096,7 @@ class tableBuildUp:
 			condition.children[0] == 'default' ):
 			if (condition.children[0] == 'default' and
 				len(comp_list.children) > 1):
+				print("asdasdasdadasdasdsa")
 				print("Error: comportamiento 'default' definido antes de otros comportamientos.")
 				sys.exit()
 

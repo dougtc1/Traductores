@@ -1,0 +1,7 @@
+Clave: a Tipo: int
+Clave: c Tipo: bool
+Clave: d Tipo: bool
+Clave: rogelio Tipo: char
+Clave: contador Tipo: int
+Clave: yo Tipo: char
+corrio :)

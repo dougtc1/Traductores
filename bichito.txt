@@ -1,0 +1,402 @@
+EN Type
+p[0] None
+p[1] int
+
+
+EN ID_list
+p[0] None
+p[1] bar
+
+
+EN Condicion
+p[0] None
+p[1] activation
+
+
+EN EXPR
+P <ply.yacc.YaccProduction object at 0x7f0a779d4a58>
+P[0] None
+P[1] 3
+
+
+EN InstRobot
+p[0] None
+p[1] store
+
+
+EN InstRobot_lista
+p[0] None
+p[1] <arboles.ArbolInstr object at 0x7f0a770f9198>
+
+
+EN Comportamiento
+p[0] None
+p[1] on
+p[2] <arboles.ArbolInstr object at 0x7f0a7774df28>
+p[3] :
+p[4] <arboles.ArbolInstr object at 0x7f0a770f90b8>
+p[5] end
+
+
+EN Comportamiento_lista
+p[0] None
+p[1] <arboles.ArbolInstr object at 0x7f0a770f9358>
+
+
+EN Declaraciones
+p[0] None
+p[1] <arboles.ArbolInstr object at 0x7f0a7774de48>
+p[2] bot
+
+
+EN Type
+p[0] None
+p[1] int
+
+
+EN ID_list
+p[0] None
+p[1] contador
+
+
+EN Condicion
+p[0] None
+p[1] default
+
+
+EN EXPR
+P <ply.yacc.YaccProduction object at 0x7f0a779d4a58>
+P[0] None
+P[1] 35
+
+
+EN InstRobot
+p[0] None
+p[1] store
+
+
+EN InstRobot_lista
+p[0] None
+p[1] <arboles.ArbolInstr object at 0x7f0a770f95c0>
+
+
+EN Comportamiento
+p[0] None
+p[1] on
+p[2] <arboles.ArbolInstr object at 0x7f0a770f9320>
+p[3] :
+p[4] <arboles.ArbolInstr object at 0x7f0a770f94e0>
+p[5] end
+
+
+EN Comportamiento_lista
+p[0] None
+p[1] <arboles.ArbolInstr object at 0x7f0a770f9780>
+
+
+EN Declaraciones
+p[0] None
+p[1] <arboles.ArbolInstr object at 0x7f0a779d4dd8>
+p[2] bot
+
+
+EN Declaraciones_lista
+p[0] None
+p[1] <arboles.ArbolInstr object at 0x7f0a770f9668>
+
+
+EN Declaraciones_lista
+p[0] None
+p[1] <arboles.ArbolInstr object at 0x7f0a770f9278>
+
+
+EN ID_list
+p[0] None
+p[1] contador
+
+
+EN InstC
+p[0] None
+p[1] activate
+
+
+ASIGNANDO A ARBOL Activate #######################################################################################
+<arboles.Ident object at 0x7f0a770f90f0>
+EN EXPR
+P <ply.yacc.YaccProduction object at 0x7f0a779d4a58>
+P[0] None
+P[1] bar
+
+
+EN EXPR
+P <ply.yacc.YaccProduction object at 0x7f0a779d4a58>
+P[0] None
+P[1] 2
+
+
+EN EXPR
+P <ply.yacc.YaccProduction object at 0x7f0a779d4a58>
+P[0] None
+P[1] <arboles.Ident object at 0x7f0a770f9828>
+
+
+EN EXPR
+P <ply.yacc.YaccProduction object at 0x7f0a779d4a58>
+P[0] None
+P[1] bar
+
+
+EN EXPR
+P <ply.yacc.YaccProduction object at 0x7f0a779d4a58>
+P[0] None
+P[1] 2
+
+
+EN EXPR
+P <ply.yacc.YaccProduction object at 0x7f0a779d4a58>
+P[0] None
+P[1] <arboles.Ident object at 0x7f0a770f9908>
+
+
+EN ID_list
+p[0] None
+p[1] contador
+
+
+EN InstC
+p[0] None
+p[1] advance
+
+
+ASIGNANDO A ARBOL Advance ########################################################################################
+<arboles.Ident object at 0x7f0a770f9a58>
+EN EXPR
+P <ply.yacc.YaccProduction object at 0x7f0a779d4a58>
+P[0] None
+P[1] bar
+
+
+EN EXPR
+P <ply.yacc.YaccProduction object at 0x7f0a779d4a58>
+P[0] None
+P[1] 2
+
+
+EN EXPR
+P <ply.yacc.YaccProduction object at 0x7f0a779d4a58>
+P[0] None
+P[1] <arboles.Ident object at 0x7f0a770f9c88>
+
+
+EN ID_list
+p[0] None
+p[1] bar
+
+
+EN InstC
+p[0] None
+p[1] advance
+
+
+ASIGNANDO A ARBOL Advance ########################################################################################
+<arboles.Ident object at 0x7f0a770f9d68>
+EN InstC_lista
+p[0] None
+p[1] <arboles.Advance object at 0x7f0a770f9f60>
+
+
+EN ID_list
+p[0] None
+p[1] bar
+
+
+EN InstC
+p[0] None
+p[1] deactivate
+
+
+ASIGNANDO A ARBOL Deactivate #####################################################################################
+EN EXPR
+P <ply.yacc.YaccProduction object at 0x7f0a779d4a58>
+P[0] None
+P[1] me
+
+
+EN EXPR
+P <ply.yacc.YaccProduction object at 0x7f0a779d4a58>
+P[0] None
+P[1] ~
+
+
+EN ID_list
+p[0] None
+p[1] contador
+
+
+EN InstC
+p[0] None
+p[1] advance
+
+
+ASIGNANDO A ARBOL Advance ########################################################################################
+<arboles.Ident object at 0x7f0a770fd208>
+EN ID_list
+p[0] None
+p[1] contador
+
+
+EN InstC
+p[0] None
+p[1] deactivate
+
+
+ASIGNANDO A ARBOL Deactivate #####################################################################################
+EN InstC_lista
+p[0] None
+p[1] <arboles.Deactivate object at 0x7f0a770fd438>
+
+
+EN InstC_lista
+p[0] None
+p[1] <arboles.Advance object at 0x7f0a770fd358>
+
+
+EN InstrWhile
+p[0] None
+p[1] while
+p[2] <arboles.ArbolUn object at 0x7f0a770fd240>
+p[3] :
+p[4] <arboles.ArbolInstr object at 0x7f0a770fd2e8>
+p[5] end
+
+
+EN InstC
+p[0] None
+p[1] <arboles.IteracionIndef object at 0x7f0a770fd1d0>
+
+
+EN InstC_lista
+p[0] None
+p[1] <arboles.ArbolInstr object at 0x7f0a770fd198>
+
+
+EN InstC_lista
+p[0] None
+p[1] <arboles.Deactivate object at 0x7f0a770f9fd0>
+
+
+EN InstrIf
+p[0] None
+p[1] if
+p[2] <arboles.ArbolBin object at 0x7f0a770f9c18>
+p[3] :
+p[4] <arboles.ArbolInstr object at 0x7f0a770f9f28>
+p[5] else
+
+
+EN InstC
+p[0] None
+p[1] <arboles.CondicionalIf object at 0x7f0a770fd128>
+
+
+EN InstC_lista
+p[0] None
+p[1] <arboles.ArbolInstr object at 0x7f0a770f9d30>
+
+
+EN InstC_lista
+p[0] None
+p[1] <arboles.Advance object at 0x7f0a770f9cc0>
+
+
+EN InstrIf
+p[0] None
+p[1] if
+p[2] <arboles.ArbolBin object at 0x7f0a770f9748>
+p[3] :
+p[4] <arboles.ArbolInstr object at 0x7f0a770f9eb8>
+p[5] end
+
+
+EN InstC
+p[0] None
+p[1] <arboles.CondicionalIf object at 0x7f0a770f9b70>
+
+
+EN InstC_lista
+p[0] None
+p[1] <arboles.ArbolInstr object at 0x7f0a770f9ac8>
+
+
+EN InstrIf
+p[0] None
+p[1] if
+p[2] <arboles.ArbolBin object at 0x7f0a770f9860>
+p[3] :
+p[4] <arboles.ArbolInstr object at 0x7f0a770f9ba8>
+p[5] end
+
+
+EN InstC
+p[0] None
+p[1] <arboles.CondicionalIf object at 0x7f0a770f9e80>
+
+
+EN InstC_lista
+p[0] None
+p[1] <arboles.ArbolInstr object at 0x7f0a770f9898>
+
+
+EN InstC_lista
+p[0] None
+p[1] <arboles.Activate object at 0x7f0a770f9710>
+
+
+EN START
+p[2] - Declaraciones_lista int
+
+
+ARRIBA PRINTS PARA DEBBUG
+
+
+##########################
+
+
+ABAJO PRINTS SALIDA
+
+
+SECUENCIACION
+	ACTIVACION
+		- var: contador
+	CONDICIONAL
+		- guardia: RELACIONAL
+			- operacion: 'Mayor que'
+			- operador izquierdo: bar
+			- operador derecho: 2
+		- exito: CONDICIONAL
+			- guardia: RELACIONAL
+				- operacion: 'Mayor que'
+				- operador izquierdo: bar
+				- operador derecho: 2
+			- exito: SECUENCIACION
+				AVANCE
+					- var: contador
+				CONDICIONAL
+					- guardia: BOOLEANA
+						- operacion: 'Disyuncion'
+						- operador izquierdo: bar
+						- operador derecho: 2
+					- exito: AVANCE
+						- var: bar
+					- fracaso: SECUENCIACION
+						DESACTIVACION
+							- var: bar
+						ITERACION_INDEF
+							- guardia: BOOLEANA
+								- operacion: Negacion
+								- operando: me
+							- exito: SECUENCIACION
+								AVANCE
+									- var: contador
+								DESACTIVACION
+									- var: contador

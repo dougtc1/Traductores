@@ -78,6 +78,7 @@ class ArbolBin(Expr):
 				derecha = temporal.value
 		
 		if (operador == '+'):
+			print(izquierda, derecha, "Jiji")
 			resultado = izquierda + derecha
 			resultado = int(resultado)
 
@@ -1109,9 +1110,17 @@ class Direccion(ArbolInstr):
 		#print("bot", bot)
 		#print("self.expr: ",self.expr)
 		#print("self.direccion: ", self.direccion)
-
 		botToMove = tabla.getSymbolData(bot)
-		bot.moverse(self.direccion, expr)
+
+		if self.expr:
+			if (isinstance(self.expr, ArbolBin) or isinstance(self.expr, ArbolUn)):
+				expr = self.expr.evaluar()
+			else:
+				expr = self.expr.get_valor()
+			botToMove.moverse(self.direccion, expr)
+		else:
+			botToMove.moverse(self.direccion)	
+
 		
 class Read(ArbolInstr):
 	"""Clase arbol para accion de Robot Read"""
@@ -1145,7 +1154,10 @@ class Read(ArbolInstr):
 
 
 				#print("TYPE DE valorEntrada", type(valorEntrada))
-				aux_bot.behaviors.modificarVarInterna(var, valorEntrada)
+				if (not var in aux_bot.behaviors.interna):
+					aux_bot.behaviors.createVarInterna(var, valorEntrada)
+				else:
+					aux_bot.behaviors.modificarVarInterna(var, valorEntrada)
 				#print("RESULTADO READ: ",valorEntrada ," para variable: ", var)
 			
 		else:
