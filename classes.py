@@ -191,6 +191,7 @@ class symbolTable:
 	"""Retorna el objeto que contiene la informacion de una variable 
 	declarada"""
 	def getSymbolData(self, symbol):
+		
 		if self.symbolExists(symbol):
 			return self.tabla[symbol]
 		elif (not self.symbolExists(symbol) and self.padre):
@@ -972,13 +973,16 @@ class tableBuildUp:
 
 
 	def checkExprNotInTable(self, table, expr):
+
 		if isinstance(expr, ArbolBin):
 			if(isinstance(expr.left, Ident)):
 				if expr.left.value in table.tabla:
 					print("Error: ", expr.left.value, " no puede ser usado en instrucciones de robot")
+					sys.exit()
 			if (isinstance(expr.right, Ident)):
 				if expr.right.value in table.tabla:
 					print("Error: ", expr.right.value, " no puede ser usado en instrucciones de robot")
+					sys.exit()
 			if (isinstance(expr.left, ArbolBin)):
 				self.checkExprNotInTable(table, expr.left)
 			if (isinstance(expr.right, ArbolBin)):
@@ -989,6 +993,7 @@ class tableBuildUp:
 			if (isinstance(expr.operando, Ident)):
 				if expr.operando.value in table.tabla:
 					print("Error: ", expr.operando.value, " no puede ser usado en instrucciones de robot")
+					sys.exit()
 
 	def checkInstRobot_List(self, table, instr_list, Type, behavTab, condition):
 		#print("\n")
@@ -998,7 +1003,6 @@ class tableBuildUp:
 		#print("\n")
 		
 		if isinstance(inst1, Store):
-			self.checkExprNotInTable(table, inst1.expr)
 			self.checkExpressionOk(table, inst1.expr, behavTab)
 
 			aux = behavTab.getBehavData(condition)
@@ -1010,8 +1014,10 @@ class tableBuildUp:
 				for ID in idList:
 					self.checkMeExists(ID)
 					if ID in table.tabla:
-						print("Uso de bot ", ID, " prohibido en instrucciones de robot.")
-						sys.exit()
+						#print("COLLECT: El bot ya se encuentra en la taba: ", ID)
+						#print("Uso de bot ", ID, " prohibido en instrucciones de robot.")
+						#sys.exit()
+						pass
 					else:
 						behavTab.createVarInterna(ID)
 
@@ -1037,8 +1043,9 @@ class tableBuildUp:
 				for ID in idList:
 					self.checkMeExists(ID)
 					if ID in table.tabla:
-						print("Uso de bot ", ID, " prohibido en instrucciones de robot.")
-						sys.exit()
+						print("READ: El bot ya se encuentra en la taba: ", ID)
+						#print("Uso de bot ", ID, " prohibido en instrucciones de robot.")
+						#sys.exit()
 					else:
 						table.addSymbol(ID, Type, behavTab)
 

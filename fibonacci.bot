@@ -37,7 +37,6 @@ create
 
 execute
   activate n, f, endl.
-  advance f.
   advance endl.
   while n > 0:
     advance n, f, endl.
