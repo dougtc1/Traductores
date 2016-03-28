@@ -78,7 +78,6 @@ class ArbolBin(Expr):
 				derecha = temporal.value
 		
 		if (operador == '+'):
-			print(izquierda, derecha, "Jiji")
 			resultado = izquierda + derecha
 			resultado = int(resultado)
 
@@ -942,6 +941,7 @@ class Store(ArbolInstr):
 
 			if (not isinstance(izquierda, int)):
 				if (izquierda == "me"):
+
 					izquierda = aux_bot.meVal
 
 				elif (izquierda in tabla.tabla):
@@ -960,7 +960,9 @@ class Store(ArbolInstr):
 					derecha = aux_bot.meVal
 
 				elif (derecha in tabla.tabla):
-							
+					# print("ADSADASD", tabla)
+					# tabla.printTables()		
+
 					tmp_botd = tabla.getSymbolData(derecha)
 		
 					derecha = tmp_botd.value
@@ -1187,7 +1189,6 @@ class Read(ArbolInstr):
 
 			#print("TYPE DE aux_bot.value", type(aux_bot.value))
 			aux_bot.modifMeVal(aux_bot.value)
-
 		#print("RESULTADO READ: ",aux_bot.value ," para bot: ", aux_bot.nombre)
 
 

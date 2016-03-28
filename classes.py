@@ -1048,7 +1048,7 @@ class tableBuildUp:
 					# 	print("Uso de bot ", ID, " prohibido en instrucciones de robot.")
 					# 	sys.exit()
 					# else:
-					table.addSymbol(ID, Type, behavTab)
+						behavTab.createVarInterna(ID)
 
 			aux = behavTab.getBehavData(condition)
 			aux.addInstr(inst1)
