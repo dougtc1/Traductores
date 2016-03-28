@@ -27,33 +27,47 @@ class ArbolBin(Expr):
 		self.right    = right
 		self.opsymbol = opsymbol
 
-	def get_valor_left(self):
+	def get_valor_left(self, tabla = None):
 		
 		if (isinstance(self.left, ArbolBin)):
 			auxiliar = self.left
 			auxizq = auxiliar.get_valor_left()
 			auxder = auxiliar.get_valor_right()
-			resultado = auxiliar.evaluar(auxizq, auxiliar.op, auxder)
-			return resultado
+			if tabla:
+				resultado = auxiliar.evaluar(auxizq, auxiliar.op, auxder, tabla)
+				return resultado
 		elif (isinstance(self.left, ArbolUn)):
 			return self.left.get_valor()
 		elif (isinstance(self.left, Ident) or isinstance(self.left, Numero) or isinstance(self.left, Bool)):
 			return self.left.get_valor()
 			
-	def get_valor_right(self):
+	def get_valor_right(self, tabla = None):
 		
 		if (isinstance(self.right, ArbolBin)):
 			auxiliar = self.right
 			auxizq = auxiliar.get_valor_left()
 			auxder = auxiliar.get_valor_right()
-			resultado = auxiliar.evaluar(auxizq, auxiliar.op, auxder)
-			return resultado
+			if tabla:
+				resultado = auxiliar.evaluar(auxizq, auxiliar.op, auxder, tabla)
+				return resultado
 		elif (isinstance(self.right, ArbolUn)):
 			return self.right.get_valor()
 		elif (isinstance(self.right, Ident) or isinstance(self.right, Numero) or isinstance(self.right, Bool)):
 			return self.right.get_valor()
 
-	def evaluar(self, izquierda, operador, derecha):
+	def evaluar(self, izquierda, operador, derecha, tabla = None):
+
+		if tabla:
+			if (isinstance(izquierda, str)):
+				#print("TENGO QUE TRANSFORMAR ESTO: ", izquierda)
+				temporal = tabla.getSymbolData(izquierda)
+				#print("temporal", temporal.value)
+				izquierda = temporal.value
+
+				#print("izquierda es ahora: ", izquierda)
+			if (isinstance(derecha, str)):
+				temporal = tabla.getSymbolData(derecha)
+				derecha = temporal.value
 		
 		if (operador == '+'):
 			resultado = izquierda + derecha
@@ -118,6 +132,29 @@ class ArbolUn(Expr):
 
 	def get_valor(self):
 		return self.operando.get_valor()
+
+	def evaluar(self):
+		if (self.tipo == "ARITMETICA"):
+			if (self.opsymbol == '-'):
+				resultado = -1*self.operando.get_valor()
+			else:
+				print("DAFUQ?")
+				sys.exit()
+		elif(self.tipo == "BOOLEANA"):
+			if (self.opsymbol == '~'):
+				if (self.operando.get_valor() == 'True'):
+					resultado = False
+				elif (self.operando.get_valor() == 'False'):
+					resultado = True
+				else:
+					print("BRODER LO ESTAS HACIENDO MAL", self.operando)
+					sys.exit()
+			else:
+				print("DAFUQ?")
+				sys.exit()
+
+		print("RESULTADO de ARBOL UNARIO", resultado)
+		return resultado
 
 class Numero(Expr):
 	def __init__(self,value):
@@ -234,37 +271,42 @@ class ArbolInstr(Instr):
 
 		if (self.token == 'Start'):
 			
-			print("INICIAL")
-			print(self.children)
+			#print("INICIAL")
+			#print(self.children)
 			self.children[1].ejecutar(tabla)
 
 		elif(self.token == 'InstC_lista'):
 			
-			print("INSTC_LISTA")
-			print(self.children[0].token)
+			#print("INSTC_LISTA")
+			#print(self.children[0].token)
 			for i in self.children:
 				i.ejecutar(tabla)
 
 		elif(self.token == 'InstrC'):
-			print("INSTRC")
-			print(self.children)
+			#print("INSTRC")
+			#print(self.children)
 
-			if (isinstance(self.children[0], CondicionalIf)):
-				print("CONDICIONAL IF")
-				print(self.children[0])
+			if (isinstance(self, Activate)):
+				#print("ACTIVATE")
+				self.ejecutar(tabla)
+
+			elif (isinstance(self, Deactivate)):
+				#print("DEACTIVATE")
+				self.ejecutar(tabla)
+
+			elif (isinstance(self, Advance)):
+				#print("ADVANCE")
+				self.ejecutar(tabla)
+
+			elif (isinstance(self.children[0], CondicionalIf)):
+				#print("CONDICIONAL IF")
+				#print(self.children[0])
 				self.children[0].ejecutar(tabla)
 
 			elif (isinstance(self.children[0], IteracionIndef)):
-				print("ITERACION INDEF")
-				print(self.children[0])
-
-
-		elif(isinstance(self, Activate)):
-			
-			print("ACTIVATE")
-			print(self.id_list)
-			self.ejecutar(tabla)
-
+				#print("ITERACION INDEF")
+				#print(self.children[0])
+				self.children[0].ejecutar(tabla)
 
 		"""
 		print("Tabla de simbolos")
@@ -282,6 +324,37 @@ class ArbolInstr(Instr):
 
 		print("\n")
 		"""
+
+	def unirID_lista(self):
+
+		lista=[]
+		seguir = True
+
+		while seguir:
+			auxiliar = self.children[0]
+
+			if (isinstance(auxiliar,str)):
+				auxiliar = Ident(auxiliar)
+				lista.append(auxiliar)
+
+			elif (isinstance(auxiliar, Ident)):
+				lista.append(auxiliar)
+
+			else:
+				print("Error: ID_LIST invalido.", auxiliar)
+				sys.exit()
+
+			if (len(self.children) > 1):
+				self = self.children[1]
+				if (isinstance(self, Ident)):
+					lista.append(self)
+					break
+			else:
+				seguir = False
+		
+		return lista
+
+
 class CondicionalIf(ArbolInstr):
 	def __init__(self, token, children, condicion, instruccion1, instruccion2=None):
 		ArbolInstr.__init__(self, token, children, "CONDICIONAL")
@@ -410,17 +483,42 @@ class CondicionalIf(ArbolInstr):
 
 
 	def ejecutar(self, tabla):
-		print("\n")
-		print("EN EL EVALUAR DEL IF")
-		print("\n")
+		#print("\n")
+		#print("EN EL EVALUAR DEL IF")
+		#print("\n")
+		#print("condicion", self.condicion)
+		#print("\n")
+		#print("self.instruccion1", self.instruccion1)
+		#print("\n")
+		#print("self.instruccion2", self.instruccion2)
+		#print("\n")
 
-		print("condicion", self.condicion)
-		print("\n")
-		print("self.instruccion1", self.instruccion1)
-		print("\n")
-		print("self.instruccion2", self.instruccion2)
-		print("\n")
+		if (isinstance(self.condicion,ArbolBin)):
+			izquierda = self.condicion.get_valor_left()
+			operador = self.condicion.opsymbol
+			derecha = self.condicion.get_valor_right()
+			resultado = self.condicion.evaluar(izquierda, operador, derecha, tabla)
 
+			if (resultado):
+				print("este es el resultado de la condicion del if: ",resultado)
+				print("\n")
+				print("VOY A EJECUTAR LA INSTRUCCION 1 DEL IF")
+				self.instruccion1.ejecutar(tabla)
+			else:
+				if (self.instruccion2):
+					print("este es el resultado de la condicion del if: ",resultado)
+					print("\n")
+					print("VOY A EJECUTAR LA INSTRUCCION 2 DEL IF")
+					self.instruccion2.ejecutar(tabla)
+
+		elif (isinstance(self.condicion, ArbolUn)):
+
+			print ("CONDICION ArbolUn: ", self.condicion)
+
+			resultado = self.condicion.evaluar()
+
+		elif (isinstance(self.condicion), Bool):
+			print ("CONDICION Bool ", self.condicion)
 
 
 
@@ -518,15 +616,31 @@ class Activate(ArbolInstr):
 
 	def ejecutar(self, tabla):
 
-		print("\n")
-		print("ESTOY EN EL EJECUTAR DE ACTIVATE")
+		#print("\n")
+		#print("ESTOY EN EL EJECUTAR DE ACTIVATE")
+		#print("ESTOS SON LOS IDENTIFICADRES QUE VOY A ACTIVAR")
+		#print(self.id_list)
 
-		print("ESTOS SON LOS IDENTIFICADRES QUE VOY A ACTIVAR")
-		print(self.id_list)
+		if (isinstance(self.id_list[0], ArbolInstr)):
+				#print("NOS VAMOS A unirID_lista: ", self.id_list[0])
+				#print("\n")
+				#print("LISTA DEFINITIVA DE self.id_list", self.id_list)
+				#print("\n")
+
+				self.id_list = self.id_list[0].unirID_lista()
+
+		elif (isinstance(self.id_list[0], Ident) and len(self.id_list) == 1):
+
+			pass
+
+		else:
+			print("Error: Declaracion de activate no permitida.", self.id_list)
+			sys.exit()
+
 
 		for i in self.id_list:
+			#print("ESTE ES EL I QUE VOY A USAR: ", i)
 			bot = tabla.getSymbolData(i.value)
-
 			#print(bot.nombre)
 			#print(bot.tipo)
 			#print(bot.value)
@@ -538,26 +652,18 @@ class Activate(ArbolInstr):
 			
 			if (bot.estado == "desactivado"):
 				bot.estado = "activado"
-
 				if (bot.behaviors):
 					bot.behaviors.printTable()
-				
-					for i in bot.behaviors.behavs:
-						print("i",i)
-
-						if (i == "activation"):
-							aux = bot.behaviors.getBehavData(i)
-							print("aux",aux)
+					for x in bot.behaviors.behavs:
+						#print("i",i)
+						if (x == "activation"):
+							aux = bot.behaviors.getBehavData(x)
 							aux.ejecutar(tabla)
-
+							#print("aux",aux)
+	
 			else:
 				print("Error: el bot " + bot.nombre + " ya se encuentra activado.")
 				sys.exit()
-				i.activarBot("activado",tabla)
-
-
-		print("\n")
-
 
 class Deactivate(ArbolInstr):
 	def __init__(self, token, children, id_list):
@@ -575,13 +681,31 @@ class Deactivate(ArbolInstr):
 
 	def ejecutar(self, tabla):
 
-		print("\n")
-		print("ESTOY EN EL EJECUTAR DE DEACTIVATE")
+		#print("\n")
+		#print("ESTOY EN EL EJECUTAR DE DEACTIVATE")
+		#print("ESTOS SON LOS IDENTIFICADRES QUE VOY A DESACTIVAR")
+		#print(self.id_list)
 
-		print("ESTOS SON LOS IDENTIFICADRES QUE VOY A DESACTIVAR")
-		print(self.id_list)
+
+
+		if (isinstance(self.id_list[0], ArbolInstr)):
+				#print("NOS VAMOS A unirID_lista: ", self.id_list[0])
+				self.id_list = self.id_list[0].unirID_lista()
+				#print("\n")
+				#print("LISTA DEFINITIVA DE self.id_list", self.id_list)
+				#print("\n")
+
+		elif (isinstance(self.id_list[0], Ident) and len(self.id_list) == 1):
+
+			pass
+
+		else:
+			print("Error: Declaracion de activate no permitida.", self.id_list)
+			sys.exit()
+
 
 		for i in self.id_list:
+			#print("ESTE ES EL I QUE VOY A USAR: ", i)
 			bot = tabla.getSymbolData(i.value)
 
 			if (bot.estado == "activado"):
@@ -590,10 +714,11 @@ class Deactivate(ArbolInstr):
 				if (bot.behaviors):
 					bot.behaviors.printTable()
 				
-					for i in bot.behaviors.behavs:
-						aux = bot.behaviors.getBehavData(i)
-						print(aux)
-						aux.ejecutar(tabla)
+					for x in bot.behaviors.behavs:
+						if (x == "deactivation"):
+							aux = bot.behaviors.getBehavData(x)
+							aux.ejecutar(tabla)
+							#print(aux)
 
 			else:
 				print("Error: el bot " + bot.nombre + " ya se encuentra desactivado.")
@@ -623,6 +748,60 @@ class Advance(ArbolInstr):
 
 		return lista
 
+	def ejecutar(self, tabla):
+		#print("\n")
+		#print("EN EJECUTAR DE ADVANCE")
+		#print("\n")
+		#print("ESTOS SON LOS IDENTIFICADRES QUE VOY A AVANZAR")
+		#print(self.id_list)
+
+		if (isinstance(self.id_list[0], ArbolInstr)):
+				print("NOS VAMOS A unirID_lista: ", self.id_list[0])
+				self.id_list = self.id_list[0].unirID_lista()
+				print("\n")
+				print("LISTA DEFINITIVA DE self.id_list", self.id_list)
+				print("\n")
+
+		elif (isinstance(self.id_list[0], Ident) and len(self.id_list) == 1):
+
+			pass
+
+		else:
+			print("Error: Declaracion de avance no permitida.", self.id_list)
+			sys.exit()
+
+		for i in self.id_list:
+
+			print("ESTE ES EL I QUE VOY A USAR EN ADVANCE: ", i)
+			bot = tabla.getSymbolData(i.value)
+
+			if (bot.estado == "activado"):
+				
+				if (bot.behaviors):
+					bot.behaviors.printTable()
+				
+					for x in bot.behaviors.behavs:
+
+						#print("x de bot.behaviors.behavs: ",x)
+
+						if(x == True):
+							"""AQUI VA EL MANEJO DE LAS EXPRESIONES COMO COMPORTAMIENTOS, HAY QUE VER COMO SE HACE
+							PERO ESTOY SERIA LO IDEAL DE LA EJECUCION, EL BETA ES COMO SE LLEGA A QUE LA X SE HAGA TRUE"""
+							aux = bot.behaviors.getBehavData(x)
+							#print("x de bot.behaviors.behavs: ",x)
+							#print("aux_bot",aux.bot)
+							aux.ejecutar(tabla)							
+
+						elif (x == "default"):
+							aux = bot.behaviors.getBehavData(x)
+							#print("aux_bot",aux.bot)
+							aux.ejecutar(tabla)
+							break
+
+			else:
+				print("Error: el bot " + bot.nombre + " no se encuentra activado.")
+				sys.exit()		
+
 class Store(ArbolInstr):
 	"""Clase arbol para accion de Robot Store"""
 	def __init__(self, token, children, expr):
@@ -630,10 +809,10 @@ class Store(ArbolInstr):
 		self.expr = expr
 
 	def ejecutar(self, tabla, bot):
-		print("\n")
-		print("EN EJECUTAR DE STORE")
-		print(self.expr)
-		print("\n")
+		#print("\n")
+		#print("EN EJECUTAR DE STORE")
+		#print(self.expr)
+		#print("\n")
 
 		aux_bot = tabla.getSymbolData(bot)
 
@@ -653,13 +832,13 @@ class Store(ArbolInstr):
 				aux = aux_bot.behaviors.getVarData(derecha)
 				derecha = aux.value
 
-			print("izquierda: ", izquierda)
-			print("derecha: ", derecha)
-			print("operador: ", operador)
+			#print("izquierda: ", izquierda)
+			#print("derecha: ", derecha)
+			#print("operador: ", operador)
 
-			resultado = self.expr.evaluar(izquierda, operador, derecha)
+			resultado = self.expr.evaluar(izquierda, operador, derecha, tabla)
 
-			print ("ESTE ES VALOR DEL EVALUAR: ", resultado)
+			#print ("ESTE ES VALOR DEL EVALUAR: ", resultado)
 
 
 		elif (isinstance(self.expr, ArbolUn)):
@@ -707,6 +886,8 @@ class Store(ArbolInstr):
 
 		aux_bot.meVal = resultado
 
+		print("RESULTADO STORE: ",resultado," para bot: ", aux_bot.nombre)
+
 
 
 
@@ -717,9 +898,9 @@ class Collect(ArbolInstr):
 		self.id_list = id_list
 
 	def ejecutar(self, tabla, bot):
-		print("EN EJECUTAR DE COLLECT")
-		print("bot", bot)
-		print("id_list: ",self.id_list.get_valor())
+		#print("EN EJECUTAR DE COLLECT")
+		#print("bot", bot)
+		#print("id_list: ",self.id_list.get_valor())
 
 		""" Falta implementar matriz, mientras el valor siempre va a ser 1 """
 		valorMatriz = 1

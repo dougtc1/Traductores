@@ -851,6 +851,10 @@ class tableBuildUp:
 						print("Error: tipo incompatible para operacion de '~' y expresion " +\
 						str(expr.operando.tipo) + " con operacion de " + str(expr.operando))
 						sys.exit()
+
+				elif (isinstance(expr.operando, Bool)):
+					return True
+
 				else:
 					print("Error: tipos incompatibles para '~' y expresion " +\
 					str(expr.operando.tipo) + " con operacion de " + str(expr.operando))

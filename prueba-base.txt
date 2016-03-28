@@ -7,18 +7,24 @@ create
 
 	int bot contador
 		on activation:
+			store 0.
+		end
+		on default:
 			collect as x.
 			store 35 + x.
 		end
 	end
 
 	int bot falle
-		on default:
+		on activation:
 			store 1.
+		end
+		on default:
+			store 99.
 		end
 	end
 execute
-	activate contador.
+	activate contador, bar, falle.
 	$- Asignar al contador
 	el valor 35, si bar > 2 -$
 	if bar > 2:
