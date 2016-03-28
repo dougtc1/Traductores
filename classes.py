@@ -998,7 +998,7 @@ class tableBuildUp:
 		#print("\n")
 		
 		if isinstance(inst1, Store):
-			self.checkExprNotInTable(table, inst1.expr)
+			# self.checkExprNotInTable(table, inst1.expr)
 			self.checkExpressionOk(table, inst1.expr, behavTab)
 
 			aux = behavTab.getBehavData(condition)
@@ -1009,25 +1009,25 @@ class tableBuildUp:
 				idList = self.getID_list(inst1.id_list)
 				for ID in idList:
 					self.checkMeExists(ID)
-					if ID in table.tabla:
-						print("Uso de bot ", ID, " prohibido en instrucciones de robot.")
-						sys.exit()
-					else:
-						behavTab.createVarInterna(ID)
+					# if ID in table.tabla:
+					# 	print("Uso de bot ", ID, " prohibido en instrucciones de robot.")
+					# 	sys.exit()
+					# else:
+					behavTab.createVarInterna(ID)
 
 			aux = behavTab.getBehavData(condition)
 			aux.addInstr(inst1)
 
 		elif isinstance(inst1, Drop):
 			self.checkExpressionOk(table, inst1.expr,behavTab)
-			self.checkExprNotInTable(table, inst1.expr)
+			# self.checkExprNotInTable(table, inst1.expr)
 
 			aux = behavTab.getBehavData(condition)
 			aux.addInstr(inst1)
 		
 		elif isinstance(inst1, Direccion):
 			self.checkExpressionOk(table, inst1.expr, behavTab)
-			self.checkExprNotInTable(table, inst1.expr)
+			# self.checkExprNotInTable(table, inst1.expr)
 			aux = behavTab.getBehavData(condition)
 			aux.addInstr(inst1)
 		
@@ -1035,12 +1035,12 @@ class tableBuildUp:
 			if inst1.id_list:
 				idList = self.getID_list(inst1.id_list)
 				for ID in idList:
-					self.checkMeExists(ID)
-					if ID in table.tabla:
-						print("Uso de bot ", ID, " prohibido en instrucciones de robot.")
-						sys.exit()
-					else:
-						table.addSymbol(ID, Type, behavTab)
+					# self.checkMeExists(ID)
+					# if ID in table.tabla:
+					# 	print("Uso de bot ", ID, " prohibido en instrucciones de robot.")
+					# 	sys.exit()
+					# else:
+					table.addSymbol(ID, Type, behavTab)
 
 			aux = behavTab.getBehavData(condition)
 			aux.addInstr(inst1)
