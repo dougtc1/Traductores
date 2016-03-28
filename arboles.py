@@ -9,12 +9,11 @@
 #
 # Proyecto 2
 # Archivo que contiene las estructuras de datos de arboles utilizadas.
-import textwrap
 from classes import *
+import textwrap
 import sys
 
-global matrix
-matrix = botMatrix()
+#global matrix
 
 cantidadTabs = 0
 auxCantidadTabs = 0
@@ -293,14 +292,16 @@ class ArbolInstr(Instr):
 							auxCantidadTabs = cantidadTabs
 						child.printPreorden()
 
-	def ejecutar(self, tabla):
+	def ejecutar(self, tabla, matrix):
 		#print("ESTOY EMPEZANDO EJECUTAR")
+
+		#print("ESTA ES LA MATRIZ: ", matrix)
 
 		if (self.token == 'Start'):
 			
 			#print("INICIAL")
 			#print(self.children)
-			self.children[1].ejecutar(tabla)
+			self.children[1].ejecutar(tabla, matrix)
 
 		elif(self.token == 'InstC_lista'):
 			
@@ -308,7 +309,7 @@ class ArbolInstr(Instr):
 			#print(self.children[0].token)
 			#print("HIJOS",self.children)
 			for i in self.children:
-				i.ejecutar(tabla)
+				i.ejecutar(tabla, matrix)
 
 		elif(self.token == 'InstrC'):
 			#print("INSTRC")
@@ -316,25 +317,25 @@ class ArbolInstr(Instr):
 
 			if (isinstance(self, Activate)):
 				#print("ACTIVATE")
-				self.ejecutar(tabla)
+				self.ejecutar(tabla, matrix)
 
 			elif (isinstance(self, Deactivate)):
 				#print("DEACTIVATE")
-				self.ejecutar(tabla)
+				self.ejecutar(tabla, matrix)
 
 			elif (isinstance(self, Advance)):
 				#print("ADVANCE")
-				self.ejecutar(tabla)
+				self.ejecutar(tabla, matrix)
 
 			elif (isinstance(self.children[0], CondicionalIf)):
 				#print("CONDICIONAL IF")
 				#print(self.children[0])
-				self.children[0].ejecutar(tabla)
+				self.children[0].ejecutar(tabla,matrix)
 
 			elif (isinstance(self.children[0], IteracionIndef)):
 				#print("ITERACION INDEF")
 				#print(self.children[0])
-				self.children[0].ejecutar(tabla)
+				self.children[0].ejecutar(tabla, matrix)
 
 		"""
 		print("Tabla de simbolos")
@@ -510,7 +511,7 @@ class CondicionalIf(ArbolInstr):
 			self.instruccion2.printPreorden()
 
 
-	def ejecutar(self, tabla):
+	def ejecutar(self, tabla, matrix):
 		#print("\n")
 		#print("EN EL EVALUAR DEL IF")
 		#print("\n")
@@ -554,13 +555,13 @@ class CondicionalIf(ArbolInstr):
 			print("este es el resultado de la condicion del if: ",resultado)
 			print("\n")
 			print("VOY A EJECUTAR LA INSTRUCCION 1 DEL IF")
-			self.instruccion1.ejecutar(tabla)
+			self.instruccion1.ejecutar(tabla, matrix)
 		else:
 			if (self.instruccion2):
 				print("este es el resultado de la condicion del if: ",resultado)
 				print("\n")
 				print("VOY A EJECUTAR LA INSTRUCCION 2 DEL IF")
-				self.instruccion2.ejecutar(tabla)
+				self.instruccion2.ejecutar(tabla, matrix)
 
 
 class IteracionIndef(ArbolInstr):
@@ -640,7 +641,7 @@ class IteracionIndef(ArbolInstr):
 		self.instruccion.printPreorden()
 
 
-	def ejecutar(self, tabla):
+	def ejecutar(self, tabla, matrix):
 		iterar = True
 		counter = 0
 		while iterar:
@@ -706,7 +707,7 @@ class IteracionIndef(ArbolInstr):
 				#print("este es el resultado de la condicion del WHILE: ",resultado)
 				#print("\n")
 				#print("VOY A EJECUTAR LA INSTRUCCION DEL WHILE")
-				self.instruccion.ejecutar(tabla)
+				self.instruccion.ejecutar(tabla, matrix)
 			else:
 				iterar = False
 
@@ -727,7 +728,7 @@ class Activate(ArbolInstr):
 				lista.append("- var: " + str(x.value))
 		return lista
 
-	def ejecutar(self, tabla):
+	def ejecutar(self, tabla, matrix):
 
 		#print("\n")
 		#print("ESTOY EN EL EJECUTAR DE ACTIVATE")
@@ -771,7 +772,8 @@ class Activate(ArbolInstr):
 						#print("i",i)
 						if (x == "activation"):
 							aux = bot.behaviors.getBehavData(x)
-							aux.ejecutar(tabla)
+							print("nombre", aux.bot)
+							aux.ejecutar(tabla, matrix)
 							#print("aux",aux)
 	
 			else:
@@ -792,7 +794,7 @@ class Deactivate(ArbolInstr):
 				lista.append("- var: " + str(x.value))
 		return lista
 
-	def ejecutar(self, tabla):
+	def ejecutar(self, tabla, matrix):
 
 		#print("\n")
 		#print("ESTOY EN EL EJECUTAR DE DEACTIVATE")
@@ -830,7 +832,7 @@ class Deactivate(ArbolInstr):
 					for x in bot.behaviors.behavs:
 						if (x == "deactivation"):
 							aux = bot.behaviors.getBehavData(x)
-							aux.ejecutar(tabla)
+							aux.ejecutar(tabla, matrix)
 							#print(aux)
 
 			else:
@@ -861,7 +863,7 @@ class Advance(ArbolInstr):
 
 		return lista
 
-	def ejecutar(self, tabla):
+	def ejecutar(self, tabla, matrix):
 		#print("\n")
 		#print("EN EJECUTAR DE ADVANCE")
 		#print("\n")
@@ -904,12 +906,12 @@ class Advance(ArbolInstr):
 							aux = bot.behaviors.getBehavData(x)
 							#print("x de bot.behaviors.behavs: ",x)
 							#print("aux_bot",aux.bot)
-							aux.ejecutar(tabla)							
+							aux.ejecutar(tabla, matrix)							
 
 						elif (x == "default"):
 							aux = bot.behaviors.getBehavData(x)
 							#print("aux_bot",aux.bot)
-							aux.ejecutar(tabla)
+							aux.ejecutar(tabla, matrix)
 							break
 
 			else:
@@ -922,7 +924,7 @@ class Store(ArbolInstr):
 		ArbolInstr.__init__(self, token, children, "store")
 		self.expr = expr
 
-	def ejecutar(self, tabla, bot):
+	def ejecutar(self, tabla, bot, matrix):
 		#print("\n")
 		#print("EN EJECUTAR DE STORE")
 		#print(self.expr)
@@ -1023,11 +1025,11 @@ class Collect(ArbolInstr):
 		#print("bot", bot)
 		#print("id_list: ",self.id_list.get_valor())
 
-		""" Falta implementar matriz, mientras el valor siempre va a ser 1 """
-		valorMatriz = 1
+		#""" Falta implementar matriz, mientras el valor siempre va a ser 1 """
+		#valorMatriz = 1
 
 		aux_bot = tabla.getSymbolData(bot)
-		valueInMatrix = matrix.collectOf(bot.posicion)
+		valueInMatrix = matrix.collectOf(aux_bot.posicion)
 		# En caso de que tenga as, se saca el nombre de dicho identificador y se busca para guardar su valor
 		if (self.id_list):
 			var = self.id_list.get_valor()
@@ -1049,19 +1051,36 @@ class Drop(ArbolInstr):
 		ArbolInstr.__init__(self, token, children, "drop")
 		self.expr = expr
 
-	def ejecutar(self, tabla, bot):
+	def ejecutar(self, tabla, bot, matrix):
 		print("\n")
 		print("EN EJECUTAR DE DROP")
 		print("bot", bot)
 		print("self.expr: ",self.expr.get_valor())
 		print("\n")
 
+		botToDrop = tabla.getSymbolData(bot)
+
 		if (isinstance(self.expr, ArbolBin) or isinstance(self.expr, ArbolUn)):
 			expr = self.expr.evaluar()
 		else:
 			expr = self.expr.get_valor()
 
-		botToDrop = tabla.getSymbolData(bot)
+		if (expr == 'me'):
+			#print("nombre",botToDrop.nombre)
+			#print("tipo",botToDrop.tipo)
+			#print("value",botToDrop.value)
+			#print("meType",botToDrop.meType)
+			#print("meVal",botToDrop.meVal)
+			#print("posicion",botToDrop.posicion)
+			#print("estado",botToDrop.estado)
+			#print("behaviors",botToDrop.behaviors)
+
+			expr = botToDrop.meVal
+
+		
+
+
+		#print("ANTES DE EXPLOTAR: ", expr)		
 		matrix.dropIn(botToDrop.posicion, expr)
 
 		#print("QUIERO VERIFICAR EL READ, TERMINO EL PROGRAMA AQUI")
@@ -1074,7 +1093,7 @@ class Direccion(ArbolInstr):
 		self.direccion = direccion
 		self.expr = expr
 
-	def ejecutar(self, tabla, bot):
+	def ejecutar(self, tabla, bot, matrix):
 		print("EN EJECUTAR DE DIRECCION")
 		print("bot", bot)
 		print("self.expr: ",self.expr)
@@ -1089,7 +1108,7 @@ class Read(ArbolInstr):
 		ArbolInstr.__init__(self, token, children, "read")
 		self.id_list = id_list
 
-	def ejecutar(self, tabla, bot):
+	def ejecutar(self, tabla, bot, matrix):
 		#print("EN EJECUTAR DE READ")
 		#print("bot", bot)
 		#print("self.id_list: ",self.id_list)
@@ -1140,7 +1159,7 @@ class Send(ArbolInstr):
 	def __init__(self, token, children):
 		ArbolInstr.__init__(self, token, children, "send")
 
-	def ejecutar(self, tabla, bot):
+	def ejecutar(self, tabla, bot, matrix):
 		#print("EN EJECUTAR DE SEND")
 		#print("bot", bot)
 

@@ -257,7 +257,7 @@ class RobotBehav:
 	def addInstr(self, instr):
 		self.inst_list.append(instr)
 
-	def ejecutar(self, tabla):
+	def ejecutar(self, tabla, matrix):
 		#print("\n")
 		#print("EN EJECUTAR DE ROBOTBEHAV")
 		#print(self.bot)
@@ -265,7 +265,7 @@ class RobotBehav:
 
 		for i in self.inst_list:
 			#print("I PANA: ", i)
-			i.ejecutar(tabla, self.bot)
+			i.ejecutar(tabla, self.bot, matrix)
 
 
 class behavTable:

@@ -10,6 +10,7 @@
 # Archivo que contiene el programa principal.
 
 from lexBOT import *
+from classes import *
 
 # Primera iteracion, se detectan los posibles errores
 lexer.input(content)
@@ -54,6 +55,10 @@ symTable = symbolTable()
 construccion = tableBuildUp(ASA)
 construccion.fillTable(symTable)
 #symTable.printTables()
-ASA.ejecutar(symTable)
+
+# Se crea la matriz y se pasa al ejecutar
+matrix = botMatrix()
+
+ASA.ejecutar(symTable, matrix)
 #print("corrio :)")
 #ASA.printPreorden()
