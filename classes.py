@@ -322,7 +322,7 @@ class behavTable:
 		if (var in self.interna):
 			return self.interna[var]
 		else:
-			print("Error: Idenficador " + str(variable) + " no declarado")
+			print("Error: Idenficador " + str(var) + " no declarado")
 			sys.exit()
 
 # Esto es como un main de la construccion de la tabla. Me parecio
@@ -356,8 +356,13 @@ class tableBuildUp:
 		return idlist
 
 	def checkExpressionOk(self, table, expr, behavTab = None, ver_condicion = None):
+
 		# SI ARBOLBIN ES DE TIPO ARITMETICO
 		if (isinstance(expr, ArbolBin) and expr.tipo == 'ARITMETICA'):
+			#print("ES ME!!!!!", expr.right)
+			#print(expr.get_valor_left())
+			#print(expr.get_valor_right())
+
 			# LADO IZQUIERDO Y LADO DERECHO NO SON ARBOLBIN
 			if (not isinstance(expr.left, ArbolBin) and 
 				not isinstance(expr.right, ArbolBin)):
@@ -372,6 +377,9 @@ class tableBuildUp:
 					if (behavTab):
 						if(expr.right.get_valor() in behavTab.interna):
 							return True
+						elif(expr.right.get_valor() == 'me'):
+							return True
+
 						else:
 							if (table.getSymbolType(expr.right.get_valor()) == 'int'):
 								return True
@@ -389,6 +397,8 @@ class tableBuildUp:
 					if (behavTab):
 						if(expr.left.get_valor() in behavTab.interna):
 							return True
+						elif(expr.left.get_valor() == 'me'):
+							return True
 						
 						else:
 							if (table.getSymbolType(expr.left.get_valor()) == 'int'):
@@ -404,6 +414,12 @@ class tableBuildUp:
 				# SI AMBOS SON VARIABLES
 				elif(isinstance(expr.left, Ident) and
 					isinstance(expr.right, Ident)):
+
+					if(expr.left.get_valor() == 'me'):
+						return True
+
+					elif(expr.right.get_valor() == 'me'):
+						return True
 
 					if (behavTab):
 						if(expr.left.get_valor() in behavTab.interna):
@@ -861,12 +877,14 @@ class tableBuildUp:
 					sys.exit()
 
 		elif (isinstance(expr, Ident)):
-			print("IDENT: ", expr)
+			#print("IDENT: ", expr.get_valor())
 
 			if (not table.symbolExists(expr.value)):
-				print("INTERNA",behavTab.interna)
-				if (behavTab.interna.exists(expr.get_valor())):
-					print("EXISTE EN LA TABLA INTERNA DE BEHAVTABLE")
+				#print("INTERNA",behavTab.interna)
+				if (expr.get_valor() in behavTab.interna):
+					return True
+				elif(expr.get_valor() == 'me'):
+					return True
 				else:
 					print("Error: Identificador '" + str(expr.get_valor()) + "' no definido")
 					sys.exit()
@@ -1008,6 +1026,10 @@ class tableBuildUp:
 					else:
 						table.addSymbol(ID, Type, behavTab)
 
+			aux = behavTab.getBehavData(condition)
+			aux.addInstr(inst1)
+
+		elif (isinstance(inst1, Send)):
 			aux = behavTab.getBehavData(condition)
 			aux.addInstr(inst1)
 		

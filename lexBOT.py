@@ -41,7 +41,7 @@ tokens = (
 	'TkDeactivation', 'TkElse', 'TkDefault', 'TkSend',
 	'TkCollect', 'TkAs', 'TkDrop', 'TkLeft', 'TkRight',
 	'TkUp', 'TkDown', 'TkRead', 'TkTrue', 'TkFalse',
-	'TkBot', 'TkMe'
+	'TkBot', 'TkMe', 'TkNewLine'
 	)
 
 # Lista de palabras reservadas que pertenecen al lenguaje BOT
@@ -149,6 +149,7 @@ t_TkMayorigual = r'\>\='
 t_TkNoigual    = r'/\='
 t_TkIgual      = r'\='
 t_TkQuote      = r'\''
+t_TkNewLine	   = r'\\n'
 
 # LOS ESPACIOS, TABS Y SALTOS DE LINEA SON IGNORADOS
 t_ignore = '[ \t]' 

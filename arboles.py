@@ -40,7 +40,10 @@ class ArbolBin(Expr):
 			return self.left.get_valor()
 		elif (isinstance(self.left, Ident) or isinstance(self.left, Numero) or isinstance(self.left, Bool)):
 			return self.left.get_valor()
-			
+		
+		else:
+			return self.left
+
 	def get_valor_right(self, tabla = None):
 		
 		if (isinstance(self.right, ArbolBin)):
@@ -54,6 +57,9 @@ class ArbolBin(Expr):
 			return self.right.get_valor()
 		elif (isinstance(self.right, Ident) or isinstance(self.right, Numero) or isinstance(self.right, Bool)):
 			return self.right.get_valor()
+
+		else:
+			return self.right
 
 	def evaluar(self, izquierda, operador, derecha, tabla = None):
 
@@ -71,12 +77,15 @@ class ArbolBin(Expr):
 		
 		if (operador == '+'):
 			resultado = izquierda + derecha
+			resultado = int(resultado)
 
 		elif (operador == '*'):
 			resultado = izquierda * derecha
+			resultado = int(resultado)
 
 		elif (operador == '-'):
 			resultado = izquierda - derecha
+			resultado = int(resultado)
 
 		elif (operador == '%'):
 			if (derecha == 0):
@@ -84,6 +93,7 @@ class ArbolBin(Expr):
 				sys.exit()
 			else:
 				resultado = izquierda % derecha
+				resultado = int(resultado)
 
 		elif (operador == '/'):
 			if (derecha == 0):
@@ -91,27 +101,35 @@ class ArbolBin(Expr):
 				sys.exit()
 			else:	
 				resultado = izquierda / derecha
+				resultado = int(resultado)
 
 		elif (operador == '/\\'):
 			resultado = izquierda and derecha
+			resultado = bool(resultado)
 
 		elif (operador == '\\/'):
 			resultado = izquierda or derecha
+			resultado = bool(resultado)
 
 		elif (operador == '>'):
 			resultado = izquierda > derecha
+			resultado = bool(resultado)
 
 		elif (operador == '>='):
 			resultado = izquierda >= derecha
+			resultado = bool(resultado)
 			
 		elif (operador == '<'):
 			resultado = izquierda < derecha
+			resultado = bool(resultado)
 
 		elif (operador == '<='):
 			resultado = izquierda <= derecha
+			resultado = bool(resultado)
 
 		elif (operador == '/\='):
 			resultado = izquierda != derecha
+			resultado = bool(resultado)
 
 		else:
 			print("Error: Operacion " + str(operador) + " no definida.")
@@ -159,7 +177,7 @@ class ArbolUn(Expr):
 class Numero(Expr):
 	def __init__(self,value):
 		self.tipo = "Numero"
-		self.value = value
+		self.value = int(value)
 
 	def get_valor(self):
 		return self.value
@@ -167,7 +185,7 @@ class Numero(Expr):
 class Bool(Expr):
 	def __init__(self,value):
 		self.tipo = "Bool"
-		self.value = value
+		self.value = bool(value)
 
 	def get_valor(self):
 		return self.value
@@ -175,6 +193,13 @@ class Bool(Expr):
 class Ident(Expr):
 	def __init__(self,value):
 		self.tipo = "Identificador"
+		self.value = value
+
+	def get_valor(self):
+		return self.value
+
+class NewLine(Expr):
+	def __init__(self, value):
 		self.value = value
 
 	def get_valor(self):
@@ -267,7 +292,7 @@ class ArbolInstr(Instr):
 
 	def ejecutar(self, tabla):
 
-		print("ESTOY EMPEZANDO EJECUTAR")
+		#print("ESTOY EMPEZANDO EJECUTAR")
 
 		if (self.token == 'Start'):
 			
@@ -279,6 +304,7 @@ class ArbolInstr(Instr):
 			
 			#print("INSTC_LISTA")
 			#print(self.children[0].token)
+			#print("HIJOS",self.children)
 			for i in self.children:
 				i.ejecutar(tabla)
 
@@ -499,29 +525,40 @@ class CondicionalIf(ArbolInstr):
 			derecha = self.condicion.get_valor_right()
 			resultado = self.condicion.evaluar(izquierda, operador, derecha, tabla)
 
-			if (resultado):
-				print("este es el resultado de la condicion del if: ",resultado)
-				print("\n")
-				print("VOY A EJECUTAR LA INSTRUCCION 1 DEL IF")
-				self.instruccion1.ejecutar(tabla)
-			else:
-				if (self.instruccion2):
-					print("este es el resultado de la condicion del if: ",resultado)
-					print("\n")
-					print("VOY A EJECUTAR LA INSTRUCCION 2 DEL IF")
-					self.instruccion2.ejecutar(tabla)
-
 		elif (isinstance(self.condicion, ArbolUn)):
-
-			print ("CONDICION ArbolUn: ", self.condicion)
-
 			resultado = self.condicion.evaluar()
 
-		elif (isinstance(self.condicion), Bool):
-			print ("CONDICION Bool ", self.condicion)
+		elif (isinstance(self.condicion, Bool)):
+			resultado = self.condicion.get_valor()
+
+		elif(isinstance(self.condicion, Ident)):
+			tipo_ident = tabla.getSymbolData(self.condicion.get_valor())
+			if (tipo_ident.tipo == "bool" and tipo_ident.estado == "activado"):
+				resultado = tipo_ident.value
+			else:
+				if (tipo_ident.estado != "activado"):
+					print("Error: El bot " + tipo_ident.nombre + " no se encuenta activado.")
+					sys.exit()
+				else:
+					print("Error: El tipo del bot " + tipo_ident.nombre + " no es booleano.")
+					sys.exit()
+
+		else:
+			print("Error: condicion no definida en el lenguaje bot.")
+			sys.exit()
 
 
-
+		if (resultado):
+			print("este es el resultado de la condicion del if: ",resultado)
+			print("\n")
+			print("VOY A EJECUTAR LA INSTRUCCION 1 DEL IF")
+			self.instruccion1.ejecutar(tabla)
+		else:
+			if (self.instruccion2):
+				print("este es el resultado de la condicion del if: ",resultado)
+				print("\n")
+				print("VOY A EJECUTAR LA INSTRUCCION 2 DEL IF")
+				self.instruccion2.ejecutar(tabla)
 
 
 class IteracionIndef(ArbolInstr):
@@ -600,6 +637,80 @@ class IteracionIndef(ArbolInstr):
 		
 		self.instruccion.printPreorden()
 
+
+	def ejecutar(self, tabla):
+		iterar = True
+		counter = 0
+		while iterar:
+			
+			#print("\n")
+			#print("EN EL EVALUAR DEL WHILE")
+			#print("\n")
+			#print("condicion", self.condicion)
+			#print("\n")
+			#print("self.instruccion", self.instruccion)
+			#print("\n")
+	
+	
+			if (isinstance(self.condicion,ArbolBin)):
+				izquierda = self.condicion.get_valor_left()
+				operador = self.condicion.opsymbol
+				derecha = self.condicion.get_valor_right()
+	
+				if (not isinstance(izquierda, int)):
+	
+					if (izquierda == "me"):
+						print("Error: Uso de palabra reservada me no definido en instrucciones de controlador.")
+						sys.exit()
+					else:
+						#aux_bot = tabla.getSymbolData(bot)
+						aux = tabla.getSymbolData(izquierda)
+						izquierda = aux.value
+	
+				if (not isinstance(derecha, int)):
+					if (derecha == "me"):
+						print("Error: Uso de palabra reservada me no definido en instrucciones de controlador.")
+						sys.exit()
+					else:
+						#aux_bot = tabla.getSymbolData(bot)
+						aux = tabla.getSymbolData(derecha)
+						derecha = aux.value
+	
+				resultado = self.condicion.evaluar(izquierda, operador, derecha, tabla)
+	
+			elif (isinstance(self.condicion, ArbolUn)):
+				resultado = self.condicion.evaluar()
+	
+			elif (isinstance(self.condicion, Bool)):
+				resultado = self.condicion.get_valor()
+	
+			elif(isinstance(self.condicion, Ident)):
+				tipo_ident = tabla.getSymbolData(self.condicion.get_valor())
+				if (tipo_ident.tipo == "bool" and tipo_ident.estado == "activado"):
+					resultado = tipo_ident.value
+				else:
+					if (tipo_ident.estado != "activado"):
+						print("Error: El bot " + tipo_ident.nombre + " no se encuenta activado.")
+						sys.exit()
+					else:
+						print("Error: El tipo del bot " + tipo_ident.nombre + " no es booleano.")
+						sys.exit()
+	
+			else:
+				print("Error: condicion no definida en el lenguaje bot.")
+				sys.exit()
+	
+			if (resultado):
+				#print("este es el resultado de la condicion del WHILE: ",resultado)
+				#print("\n")
+				#print("VOY A EJECUTAR LA INSTRUCCION DEL WHILE")
+				self.instruccion.ejecutar(tabla)
+			else:
+				iterar = False
+
+			print("COUNTER: ", counter)
+			counter += 1
+
 class Activate(ArbolInstr):
 	def __init__(self, token, children, id_list):
 		ArbolInstr.__init__(self, token, children, "ACTIVACION")
@@ -653,7 +764,7 @@ class Activate(ArbolInstr):
 			if (bot.estado == "desactivado"):
 				bot.estado = "activado"
 				if (bot.behaviors):
-					bot.behaviors.printTable()
+
 					for x in bot.behaviors.behavs:
 						#print("i",i)
 						if (x == "activation"):
@@ -712,7 +823,7 @@ class Deactivate(ArbolInstr):
 				bot.estado = "desactivado"
 
 				if (bot.behaviors):
-					bot.behaviors.printTable()
+
 				
 					for x in bot.behaviors.behavs:
 						if (x == "deactivation"):
@@ -756,14 +867,17 @@ class Advance(ArbolInstr):
 		#print(self.id_list)
 
 		if (isinstance(self.id_list[0], ArbolInstr)):
-				print("NOS VAMOS A unirID_lista: ", self.id_list[0])
+				#print("NOS VAMOS A unirID_lista: ", self.id_list[0])
 				self.id_list = self.id_list[0].unirID_lista()
-				print("\n")
-				print("LISTA DEFINITIVA DE self.id_list", self.id_list)
-				print("\n")
+				#print("\n")
+				#print("LISTA DEFINITIVA DE self.id_list", self.id_list)
+				#print("\n")
 
 		elif (isinstance(self.id_list[0], Ident) and len(self.id_list) == 1):
 
+			pass
+
+		elif (len(self.id_list) > 2 and isinstance(self.id_list[1], Ident)):
 			pass
 
 		else:
@@ -772,14 +886,12 @@ class Advance(ArbolInstr):
 
 		for i in self.id_list:
 
-			print("ESTE ES EL I QUE VOY A USAR EN ADVANCE: ", i)
+			#print("ESTE ES EL I QUE VOY A USAR EN ADVANCE: ", i)
 			bot = tabla.getSymbolData(i.value)
 
 			if (bot.estado == "activado"):
 				
 				if (bot.behaviors):
-					bot.behaviors.printTable()
-				
 					for x in bot.behaviors.behavs:
 
 						#print("x de bot.behaviors.behavs: ",x)
@@ -812,6 +924,7 @@ class Store(ArbolInstr):
 		#print("\n")
 		#print("EN EJECUTAR DE STORE")
 		#print(self.expr)
+		#print(self.children)
 		#print("\n")
 
 		aux_bot = tabla.getSymbolData(bot)
@@ -823,14 +936,20 @@ class Store(ArbolInstr):
 			derecha = self.expr.get_valor_right()
 
 			if (not isinstance(izquierda, int)):
-				#aux_bot = tabla.getSymbolData(bot)
-				aux = aux_bot.behaviors.getVarData(izquierda)
-				izquierda = aux.value
+				if (izquierda == "me"):
+					izquierda = aux_bot.meVal
+				else:
+					#aux_bot = tabla.getSymbolData(bot)
+					aux = aux_bot.behaviors.getVarData(izquierda)
+					izquierda = aux.value
 
 			if (not isinstance(derecha, int)):
-				#aux_bot = tabla.getSymbolData(bot)
-				aux = aux_bot.behaviors.getVarData(derecha)
-				derecha = aux.value
+				if (derecha == "me"):
+					derecha = aux_bot.meVal
+				else:
+					#aux_bot = tabla.getSymbolData(bot)
+					aux = aux_bot.behaviors.getVarData(derecha)
+					derecha = aux.value
 
 			#print("izquierda: ", izquierda)
 			#print("derecha: ", derecha)
@@ -882,13 +1001,14 @@ class Store(ArbolInstr):
 				print("Error: Tipo de bot " + aux_bot.nombre +" incompatible.")
 				sys.exit()
 
+		elif (isinstance(self.expr, NewLine)):
+			resultado = self.expr.get_valor()
+
 		aux_bot.value = resultado
 
 		aux_bot.meVal = resultado
 
 		print("RESULTADO STORE: ",resultado," para bot: ", aux_bot.nombre)
-
-
 
 
 class Collect(ArbolInstr):
@@ -921,11 +1041,24 @@ class Collect(ArbolInstr):
 			aux_bot.value = valorMatriz
 			aux_bot.modifMeVal(valorMatriz)
 
+		print("RESULTADO COLLECT: ",aux_bot.value ," para bot: ", var or aux_bot.nombre)
+
+
 class Drop(ArbolInstr):
 	"""Clase arbol para accion de Robot Drop"""
 	def __init__(self, token, children, expr):
 		ArbolInstr.__init__(self, token, children, "drop")
 		self.expr = expr
+
+	def ejecutar(self, tabla, bot):
+		print("\n")
+		print("EN EJECUTAR DE DROP")
+		print("bot", bot)
+		print("self.expr: ",self.expr.get_valor())
+		print("\n")
+
+		#print("QUIERO VERIFICAR EL READ, TERMINO EL PROGRAMA AQUI")
+		#sys.exit()
 
 class Direccion(ArbolInstr):
 	"""Clase arbol para accion de Robot Direccion"""
@@ -933,6 +1066,12 @@ class Direccion(ArbolInstr):
 		ArbolInstr.__init__(self, token, children, "direccion")
 		self.direccion = direccion
 		self.expr = expr
+
+	def ejecutar(self, tabla, bot):
+		print("EN EJECUTAR DE DIRECCION")
+		print("bot", bot)
+		print("self.expr: ",self.expr)
+		print("self.direccion: ", self.direccion)
 		
 class Read(ArbolInstr):
 	"""Clase arbol para accion de Robot Read"""
@@ -940,11 +1079,73 @@ class Read(ArbolInstr):
 		ArbolInstr.__init__(self, token, children, "read")
 		self.id_list = id_list
 
+	def ejecutar(self, tabla, bot):
+		#print("EN EJECUTAR DE READ")
+		#print("bot", bot)
+		#print("self.id_list: ",self.id_list)
+
+
+		aux_bot = tabla.getSymbolData(bot)
+		print("aux_bot.tipo", aux_bot.tipo)
+
+		# En caso de que tenga as, se saca el nombre de dicho identificador y se busca para guardar su valor
+
+		if (self.id_list):
+			var = self.id_list.get_valor()
+			if var:
+				if (aux_bot.tipo == "int"):
+					valorEntrada = int(input("Introduzca la entrada para el bot " + aux_bot.nombre + " de tipo " + aux_bot.tipo + ": "))
+				elif (aux_bot.tipo == "char"):
+					valorEntrada = input("Introduzca la entrada para el bot " + aux_bot.nombre + " de tipo " + aux_bot.tipo + ": ")
+					if (len(valorEntrada) > 1):
+						print("Error: El bot " + aux_bot.nombre + " solo acepta un caracter al ser del tipo char.")
+						sys.exit()
+				elif (aux_bot.tipo == 'bool'):
+					valorEntrada = bool(input("Introduzca la entrada para el bot " + aux_bot.nombre + " de tipo " + aux_bot.tipo + ": "))
+
+
+				print("TYPE DE valorEntrada", type(valorEntrada))
+				aux_bot.behaviors.modificarVarInterna(var, valorEntrada)
+				print("RESULTADO READ: ",valorEntrada ," para variable: ", var)
+			
+		else:
+			if (aux_bot.tipo == "int"):
+				aux_bot.value = int(input("Introduzca la entrada para el bot " + aux_bot.nombre + " de tipo " + aux_bot.tipo + ": "))
+			elif (aux_bot.tipo == "char"):
+				aux_bot.value = input("Introduzca la entrada para el bot " + aux_bot.nombre + " de tipo " + aux_bot.tipo + ": ")
+				if (len(valorEntrada) > 1):
+					print("Error: El bot " + aux_bot.nombre + " solo acepta un caracter al ser del tipo char.")
+					sys.exit()
+			elif (aux_bot.tipo == 'bool'):
+				aux_bot.value = bool(input("Introduzca la entrada para el bot " + aux_bot.nombre + " de tipo " + aux_bot.tipo + ": "))
+
+			print("TYPE DE aux_bot.value", type(aux_bot.value))
+			aux_bot.modifMeVal(aux_bot.value)
+
+		print("RESULTADO READ: ",aux_bot.value ," para bot: ", aux_bot.nombre)
+
+
 class Send(ArbolInstr):
 	"""Clase arbol para accion de Robot Send"""
 	def __init__(self, token, children):
 		ArbolInstr.__init__(self, token, children, "send")
-		
+
+	def ejecutar(self, tabla, bot):
+		#print("EN EJECUTAR DE SEND")
+		#print("bot", bot)
+
+		aux_bot = tabla.getSymbolData(bot)
+
+		if (aux_bot.value == '\\n'):
+			print("\n")
+
+		else:
+			print("RESULTADO SEND: ",aux_bot.value, " para bot: ", aux_bot.nombre)
+
+
+
+
+"""NO SE USA, SE VA A USAR READ COMO UNICA INSTRUCCION, HAY QUE BORRARLA AQUI Y EN EL PARSER """		
 class Receive(ArbolInstr):
 	"""Clase arbol para accion de Robot Receive"""
 	def __init__(self, token, children):
