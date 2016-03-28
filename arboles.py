@@ -13,6 +13,9 @@ import textwrap
 from classes import *
 import sys
 
+global matrix
+matrix = botMatrix()
+
 cantidadTabs = 0
 auxCantidadTabs = 0
 
@@ -291,7 +294,6 @@ class ArbolInstr(Instr):
 						child.printPreorden()
 
 	def ejecutar(self, tabla):
-
 		#print("ESTOY EMPEZANDO EJECUTAR")
 
 		if (self.token == 'Start'):
@@ -1010,14 +1012,13 @@ class Store(ArbolInstr):
 
 		print("RESULTADO STORE: ",resultado," para bot: ", aux_bot.nombre)
 
-
 class Collect(ArbolInstr):
 	"""Clase arbol para accion de Robot Collect"""
 	def __init__(self, token, children, id_list = None):
 		ArbolInstr.__init__(self, token, children, "collect")
 		self.id_list = id_list
 
-	def ejecutar(self, tabla, bot):
+	def ejecutar(self, tabla, bot, matrix):
 		#print("EN EJECUTAR DE COLLECT")
 		#print("bot", bot)
 		#print("id_list: ",self.id_list.get_valor())
@@ -1026,20 +1027,18 @@ class Collect(ArbolInstr):
 		valorMatriz = 1
 
 		aux_bot = tabla.getSymbolData(bot)
-
-
+		valueInMatrix = matrix.collectOf(bot.posicion)
 		# En caso de que tenga as, se saca el nombre de dicho identificador y se busca para guardar su valor
-
 		if (self.id_list):
 			var = self.id_list.get_valor()
 			#print(aux_bot.behaviors.interna)
 
-			aux_bot.behaviors.modificarVarInterna(var, valorMatriz)
+			aux_bot.behaviors.modificarVarInterna(var, valueInMatrix)
 			
 		else:
 
-			aux_bot.value = valorMatriz
-			aux_bot.modifMeVal(valorMatriz)
+			aux_bot.value = valueInMatrix
+			aux_bot.modifMeVal(valueInMatrix)
 
 		print("RESULTADO COLLECT: ",aux_bot.value ," para bot: ", var or aux_bot.nombre)
 
@@ -1057,6 +1056,14 @@ class Drop(ArbolInstr):
 		print("self.expr: ",self.expr.get_valor())
 		print("\n")
 
+		if (isinstance(self.expr, ArbolBin) or isinstance(self.expr, ArbolUn)):
+			expr = self.expr.evaluar()
+		else:
+			expr = self.expr.get_valor()
+
+		botToDrop = tabla.getSymbolData(bot)
+		matrix.dropIn(botToDrop.posicion, expr)
+
 		#print("QUIERO VERIFICAR EL READ, TERMINO EL PROGRAMA AQUI")
 		#sys.exit()
 
@@ -1072,6 +1079,9 @@ class Direccion(ArbolInstr):
 		print("bot", bot)
 		print("self.expr: ",self.expr)
 		print("self.direccion: ", self.direccion)
+
+		botToMove = tabla.getSymbolData(bot)
+		bot.moverse(self.direccion, expr)
 		
 class Read(ArbolInstr):
 	"""Clase arbol para accion de Robot Read"""

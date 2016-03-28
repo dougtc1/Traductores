@@ -9,9 +9,10 @@
 # Proyecto 2
 # Archivo que contiene las estructuras de datos donde se guardan los tokens y errores.
 from lexBOT import *
-from arboles import *
+from arboles import *	
 import sys
 global symTable
+
 
 class Token: 
 	def __init__(self, name=None, row=None, column=None, arg=None):
@@ -86,6 +87,21 @@ class TokenList:
 			return True
 		else:
 			return False
+
+class botMatrix:
+	def __init__(self):
+		self.matrix = {}
+
+	def dropIn(self, pos, val):
+		self.matrix[pos] = val
+
+	def collectOf(self, pos):
+		if pos in self.matrix:
+			return self.matrix[pos]
+		else:
+			print("Error: Collect en posicion: "+ pos + ". Valor no definido para esta posicion.")
+			sys.exit()
+
 """OLD"""
 # Estructura de datos correspondiente a la tabla de simbolos
 # Esta corresponde a una terna que contiene tipo de la variable
