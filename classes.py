@@ -191,7 +191,7 @@ class symbolTable:
 	"""Retorna el objeto que contiene la informacion de una variable 
 	declarada"""
 	def getSymbolData(self, symbol):
-		
+
 		if self.symbolExists(symbol):
 			return self.tabla[symbol]
 		elif (not self.symbolExists(symbol) and self.padre):
@@ -894,17 +894,18 @@ class tableBuildUp:
 					sys.exit()
 
 		elif (isinstance(expr, Ident)):
-			#print("IDENT: ", expr.get_valor())
 
 			if (not table.symbolExists(expr.value)):
-				#print("INTERNA",behavTab.interna)
 				if (expr.get_valor() in behavTab.interna):
 					return True
 				elif(expr.get_valor() == 'me'):
 					return True
+				elif(len(expr.get_valor()) == 3):
+					return True
 				else:
 					print("Error: Identificador '" + str(expr.get_valor()) + "' no definido")
 					sys.exit()
+
 
 	def checkMeExists(self, expr):
 		
