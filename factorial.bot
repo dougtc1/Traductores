@@ -17,12 +17,12 @@ create
     on activation:
       store 1.
     end
+    on deactivation:
+      send.
+    end
     on default:
       collect as x.
       store me * x.
-    end
-    on deactivation:
-      send.
     end
   end
 

@@ -743,15 +743,6 @@ class Activate(ArbolInstr):
 
 				self.id_list = self.id_list[0].unirID_lista()
 
-		elif (isinstance(self.id_list[0], Ident) and len(self.id_list) == 1):
-
-			pass
-
-		else:
-			print("Error: Declaracion de activate no permitida.", self.id_list)
-			sys.exit()
-
-
 		for i in self.id_list:
 			#print("ESTE ES EL I QUE VOY A USAR: ", i)
 			bot = tabla.getSymbolData(i.value)
@@ -810,14 +801,6 @@ class Deactivate(ArbolInstr):
 				#print("LISTA DEFINITIVA DE self.id_list", self.id_list)
 				#print("\n")
 
-		elif (isinstance(self.id_list[0], Ident) and len(self.id_list) == 1):
-
-			pass
-
-		else:
-			print("Error: Declaracion de activate no permitida.", self.id_list)
-			sys.exit()
-
 
 		for i in self.id_list:
 			#print("ESTE ES EL I QUE VOY A USAR: ", i)
@@ -868,7 +851,6 @@ class Advance(ArbolInstr):
 		#print("EN EJECUTAR DE ADVANCE")
 		#print("\n")
 		#print("ESTOS SON LOS IDENTIFICADRES QUE VOY A AVANZAR")
-		#print(self.id_list)
 
 		if (isinstance(self.id_list[0], ArbolInstr)):
 				#print("NOS VAMOS A unirID_lista: ", self.id_list[0])
@@ -876,17 +858,6 @@ class Advance(ArbolInstr):
 				#print("\n")
 				#print("LISTA DEFINITIVA DE self.id_list", self.id_list)
 				#print("\n")
-
-		elif (isinstance(self.id_list[0], Ident) and len(self.id_list) == 1):
-
-			pass
-
-		elif (len(self.id_list) > 2 and isinstance(self.id_list[1], Ident)):
-			pass
-
-		else:
-			print("Error: Declaracion de avance no permitida.", self.id_list)
-			sys.exit()
 
 		for i in self.id_list:
 
