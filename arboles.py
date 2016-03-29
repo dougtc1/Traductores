@@ -1,4 +1,3 @@
-
 #!/usr/bin/python3
 # Universidad Simon Bolivar 
 #
@@ -63,7 +62,6 @@ class ArbolBin(Expr):
 			return self.right
 
 	def evaluar(self, izquierda, operador, derecha, tabla = None):
-
 
 		if tabla:
 			if (isinstance(izquierda, str)):
@@ -297,9 +295,7 @@ class ArbolInstr(Instr):
 						child.printPreorden()
 
 	def ejecutar(self, tabla, matrix):
-		#print("ESTOY EMPEZANDO EJECUTAR")
-
-		#print("ESTA ES LA MATRIZ: ", matrix)
+		print("ESTOY EMPEZANDO EJECUTAR")
 
 		if (self.token == 'Start'):
 			
@@ -309,9 +305,9 @@ class ArbolInstr(Instr):
 
 		elif(self.token == 'InstC_lista'):
 			
-			#print("INSTC_LISTA")
-			#print(self.children[0].token)
-			#print("HIJOS",self.children)
+			print("INSTC_LISTA")
+			print(self.children[0].token)
+			print("HIJOS",self.children)
 			for i in self.children:
 				i.ejecutar(tabla, matrix)
 
@@ -354,7 +350,6 @@ class ArbolInstr(Instr):
 			#print("ESTA ES I: ",i)
 			#print("i.behavs: ", i.behavs)
 			i.printTable()
-
 		print("\n")
 		"""
 
@@ -730,9 +725,9 @@ class Activate(ArbolInstr):
 
 	def ejecutar(self, tabla, matrix):
 
-		#print("\n")
-		#print("ESTOY EN EL EJECUTAR DE ACTIVATE")
-		#print("ESTOS SON LOS IDENTIFICADRES QUE VOY A ACTIVAR")
+		print("\n")
+		print("ESTOY EN EL EJECUTAR DE ACTIVATE")
+		print("ESTOS SON LOS IDENTIFICADRES QUE VOY A ACTIVAR")
 		#print(self.id_list)
 
 		if (isinstance(self.id_list[0], ArbolInstr)):
@@ -760,7 +755,7 @@ class Activate(ArbolInstr):
 				if (bot.behaviors):
 
 					for x in bot.behaviors.behavs:
-						#print("i",i)
+						print("i",x)
 						if (x == "activation"):
 							aux = bot.behaviors.getBehavData(x)
 							#print("nombre", aux.bot)
@@ -847,10 +842,10 @@ class Advance(ArbolInstr):
 		return lista
 
 	def ejecutar(self, tabla, matrix):
-		#print("\n")
-		#print("EN EJECUTAR DE ADVANCE")
-		#print("\n")
-		#print("ESTOS SON LOS IDENTIFICADRES QUE VOY A AVANZAR")
+		# print("\n")
+		# print("EN EJECUTAR DE ADVANCE")
+		# print("\n")
+		# print("ESTOS SON LOS IDENTIFICADRES QUE VOY A AVANZAR")
 
 		if (isinstance(self.id_list[0], ArbolInstr)):
 				#print("NOS VAMOS A unirID_lista: ", self.id_list[0])
@@ -861,7 +856,7 @@ class Advance(ArbolInstr):
 
 		for i in self.id_list:
 
-			#print("ESTE ES EL I QUE VOY A USAR EN ADVANCE: ", i)
+			# print("ESTE ES EL I QUE VOY A USAR EN ADVANCE: ", i)
 			bot = tabla.getSymbolData(i.value)
 
 			if (bot.estado == "activado"):
@@ -869,7 +864,7 @@ class Advance(ArbolInstr):
 				if (bot.behaviors):
 					for x in bot.behaviors.behavs:
 
-						#print("x de bot.behaviors.behavs: ",x)
+						# print("x de bot.behaviors.behavs: ",x)
 
 						if(x == True):
 							"""AQUI VA EL MANEJO DE LAS EXPRESIONES COMO COMPORTAMIENTOS, HAY QUE VER COMO SE HACE
@@ -910,6 +905,7 @@ class Store(ArbolInstr):
 			operador = self.expr.opsymbol
 			derecha = self.expr.get_valor_right()
 
+
 			if (not isinstance(izquierda, int)):
 				if (izquierda == "me"):
 
@@ -927,7 +923,6 @@ class Store(ArbolInstr):
 
 			if (not isinstance(derecha, int)):
 				if (derecha == "me"):
-					print(aux_bot.meVal, "ME VAL")
 					derecha = aux_bot.meVal
 
 				elif (derecha in aux_bot.behaviors.interna):
@@ -1017,7 +1012,7 @@ class Collect(ArbolInstr):
 		self.id_list = id_list
 
 	def ejecutar(self, tabla, bot, matrix):
-		#print("EN EJECUTAR DE COLLECT")
+		print("EN EJECUTAR DE COLLECT")
 		#print("bot", bot)
 		#print("id_list: ", self.id_list)
 
@@ -1195,8 +1190,8 @@ class Read(ArbolInstr):
 				aux_bot.value = bool(input("Introduzca la entrada para el bot " + aux_bot.nombre + " de tipo " + aux_bot.tipo + ": "))
 
 			#print("TYPE DE aux_bot.value", type(aux_bot.value))
-				aux_bot.modifMeVal(aux_bot.value)
 
+			aux_bot.modifMeVal(aux_bot.value)
 		#print("RESULTADO READ: ",aux_bot.value ," para bot: ", aux_bot.nombre)
 
 
