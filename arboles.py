@@ -977,7 +977,6 @@ class Store(ArbolInstr):
 				print("Error: Tipo de bot " + aux_bot.nombre +" incompatible.")
 				sys.exit()
 
-		# ESTO CREO QUE NO VA
 		elif (isinstance(self.expr, Ident)):
 			ident = self.expr.get_valor()
 			# Verifico que el identificador este declarado y obtengo su instancia en la tabla 
