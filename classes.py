@@ -1138,6 +1138,7 @@ class tableBuildUp:
 					print("Error, uso de la palabra 'me' fuera de una instruccion de robot.")
 					sys.exit()
 				elif (not table.symbolExists(ID)):
+					
 					print("Error: Idenficador " + str(ID) +" no declarado")
 					sys.exit()
 
