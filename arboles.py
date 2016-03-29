@@ -7,13 +7,12 @@
 # Benjamin Amos. Carnet: 12-10240
 # Douglas Torres. Carnet: 11-11027
 #
-# Proyecto 2
+# Proyecto 4
 # Archivo que contiene las estructuras de datos de arboles utilizadas.
+
 from classes import *
 import textwrap
 import sys
-
-#global matrix
 
 cantidadTabs = 0
 auxCantidadTabs = 0
