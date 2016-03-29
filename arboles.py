@@ -877,16 +877,16 @@ class Advance(ArbolInstr):
 				#print("LISTA DEFINITIVA DE self.id_list", self.id_list)
 				#print("\n")
 
-		elif (isinstance(self.id_list[0], Ident) and len(self.id_list) == 1):
+		# elif (isinstance(self.id_list[0], Ident) and len(self.id_list) == 1):
 
-			pass
+		# 	pass
 
-		elif (len(self.id_list) > 2 and isinstance(self.id_list[1], Ident)):
-			pass
+		# elif (len(self.id_list) > 2 and isinstance(self.id_list[1], Ident)):
+		# 	pass
 
-		else:
-			print("Error: Declaracion de avance no permitida.", self.id_list)
-			sys.exit()
+		# else:
+		# 	print("Error: Declaracion de avance no permitida.", self.id_list)
+		# 	sys.exit()
 
 		for i in self.id_list:
 
@@ -960,8 +960,7 @@ class Store(ArbolInstr):
 					derecha = aux_bot.meVal
 
 				elif (derecha in tabla.tabla):
-					# print("ADSADASD", tabla)
-					# tabla.printTables()		
+		
 
 					tmp_botd = tabla.getSymbolData(derecha)
 		
@@ -1188,7 +1187,7 @@ class Read(ArbolInstr):
 				aux_bot.value = bool(input("Introduzca la entrada para el bot " + aux_bot.nombre + " de tipo " + aux_bot.tipo + ": "))
 
 			#print("TYPE DE aux_bot.value", type(aux_bot.value))
-			aux_bot.modifMeVal(aux_bot.value)
+				aux_bot.modifMeVal(aux_bot.value)
 		#print("RESULTADO READ: ",aux_bot.value ," para bot: ", aux_bot.nombre)
 
 
