@@ -65,6 +65,7 @@ class ArbolBin(Expr):
 
 	def evaluar(self, izquierda, operador, derecha, tabla = None):
 
+
 		if tabla:
 			if (isinstance(izquierda, str)):
 				#print("TENGO QUE TRANSFORMAR ESTO: ", izquierda)
@@ -910,6 +911,8 @@ class Store(ArbolInstr):
 			operador = self.expr.opsymbol
 			derecha = self.expr.get_valor_right()
 
+			print(izquierda, derecha, "WAAAA")
+
 			if (not isinstance(izquierda, int)):
 				if (izquierda == "me"):
 
@@ -928,6 +931,7 @@ class Store(ArbolInstr):
 
 			if (not isinstance(derecha, int)):
 				if (derecha == "me"):
+					print(aux_bot.meVal, "ME VAL")
 					derecha = aux_bot.meVal
 
 				elif (derecha in tabla.tabla):
