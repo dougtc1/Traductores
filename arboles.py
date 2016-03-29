@@ -910,38 +910,36 @@ class Store(ArbolInstr):
 			operador = self.expr.opsymbol
 			derecha = self.expr.get_valor_right()
 
+
 			if (not isinstance(izquierda, int)):
 				if (izquierda == "me"):
 
 					izquierda = aux_bot.meVal
 
-				elif (izquierda in tabla.tabla):
-						
-					tmp_boti = tabla.getSymbolData(izquierda)
+				elif (izquierda in aux_bot.behaviors.interna):
+					auxi = aux_bot.behaviors.getVarData(izquierda)
 		
-					izquierda = tmp_boti.value 
+					izquierda = auxi.value 
 					
 				else:
 					#aux_bot = tabla.getSymbolData(bot)
-					aux = aux_bot.behaviors.getVarData(izquierda)
-					izquierda = aux.value
+					print("Error: Uso de " + izquierda + "no esta permitido en Store.")
+					sys.exit()
 
 			if (not isinstance(derecha, int)):
 				if (derecha == "me"):
 					derecha = aux_bot.meVal
 
-				elif (derecha in tabla.tabla):
-					# print("ADSADASD", tabla)
-					# tabla.printTables()		
+				elif (derecha in aux_bot.behaviors.interna):
 
-					tmp_botd = tabla.getSymbolData(derecha)
-		
-					derecha = tmp_botd.value
+					#aux_bot = tabla.getSymbolData(bot)
+					auxd = aux_bot.behaviors.getVarData(derecha)
+					derecha = auxd.value
 
 				else:
-					#aux_bot = tabla.getSymbolData(bot)
-					aux = aux_bot.behaviors.getVarData(derecha)
-					derecha = aux.value
+					print("Error: Uso de " + derecha + "no esta permitido en Store.")
+					sys.exit()
+
 
 			#print("izquierda: ", izquierda)
 			#print("derecha: ", derecha)
@@ -1006,9 +1004,6 @@ class Store(ArbolInstr):
 		elif (isinstance(self.expr, NewLine)):
 			resultado = self.expr.get_valor()
 
-		elif (isinstance(self.expr, str)):
-			print("SE ME OLVIDO HACER LO DEL CHAR")
-
 		aux_bot.value = resultado
 
 		aux_bot.meVal = resultado
@@ -1025,34 +1020,29 @@ class Collect(ArbolInstr):
 		#print("EN EJECUTAR DE COLLECT")
 		#print("bot", bot)
 		#print("id_list: ", self.id_list)
-		#print("ESTA EN LA TABLA ", self.id_list.get_valor() in tabla.tabla)
 
 		aux_bot = tabla.getSymbolData(bot)
 		valueInMatrix = matrix.collectOf(aux_bot.posicion)
+		#print("ESTA EN LA TABLA ", self.id_list.get_valor() in aux_bot.behaviors.interna)
+
 		# En caso de que tenga as, se verifica si no esta en la tabla interna,
-		# se saca el nombre de dicho identificador y se busca para guardar su valor
+		# luego se saca el nombre de dicho identificador y se busca para guardar su valor
 
-		if ((self.id_list) and (self.id_list.get_valor() in aux_bot.behaviors.interna)):
+		if(isinstance(self.id_list, Ident)):
 
-			var = self.id_list.get_valor()
-			#print(aux_bot.behaviors.interna)
+			if (not (self.id_list.get_valor() in aux_bot.behaviors.interna)):
 
-			aux_bot.behaviors.modificarVarInterna(var, valueInMatrix)
+				var = self.id_list.get_valor()
+				#print(aux_bot.behaviors.interna)
+	
+				aux_bot.behaviors.createVarInterna(var, valueInMatrix)
+	
+			elif (self.id_list.get_valor() in aux_bot.behaviors.interna):
 
-		elif(isinstance(self.id_list, Ident)):
-			if (self.id_list.get_valor() in tabla.tabla):
-				aux_bot = tabla.getSymbolData(self.id_list.get_valor())
-
-				aux_bot.value = valueInMatrix
-				aux_bot.modifMeVal(valueInMatrix)
-			
-
-		elif (self.id_list in tabla.tabla):
-
-			aux_bot = tabla.getSymbolData(self.id_list.get_valor())
-
-			aux_bot.value = valueInMatrix
-			aux_bot.modifMeVal(valueInMatrix)
+				var = self.id_list.get_valor()
+	
+				aux_bot.behaviors.modificarVarInterna(var, valueInMatrix)
+	
 			
 		else:
 
@@ -1072,7 +1062,7 @@ class Drop(ArbolInstr):
 		#print("\n")
 		#print("EN EJECUTAR DE DROP")
 		#print("bot", bot)
-		#print("self.expr: ",self.expr.get_valor())
+		#self.expr.get_valor()
 		#print("\n")
 
 		aux_bot = tabla.getSymbolData(bot)
@@ -1083,38 +1073,36 @@ class Drop(ArbolInstr):
 			operador = self.expr.opsymbol
 			derecha = self.expr.get_valor_right()
 
+			#print("izquierda, operador, derecha", izquierda, operador, derecha)
+
 			if (not isinstance(izquierda, int)):
+				
 				if (izquierda == "me"):
 
 					izquierda = aux_bot.meVal
 
-				elif (izquierda in tabla.tabla):
-						
-					tmp_boti = tabla.getSymbolData(izquierda)
+				elif (izquierda in aux_bot.behaviors.interna):
+					auxi = aux_bot.behaviors.getVarData(izquierda)
 		
-					izquierda = tmp_boti.value 
+					izquierda = auxi.value 
 					
 				else:
-					#aux_bot = tabla.getSymbolData(bot)
-					aux = aux_bot.behaviors.getVarData(izquierda)
-					izquierda = aux.value
+					print("Error: Uso de " + izquierda + "no esta permitido en Drop.")
+					sys.exit()
 
 			if (not isinstance(derecha, int)):
 				if (derecha == "me"):
 					derecha = aux_bot.meVal
 
-				elif (derecha in tabla.tabla):
-					# print("ADSADASD", tabla)
-					# tabla.printTables()		
+				elif (derecha in aux_bot.behaviors.interna):
 
-					tmp_botd = tabla.getSymbolData(derecha)
+					auxd = aux_bot.behaviors.getVarData(derecha)
 		
-					derecha = tmp_botd.value
+					derecha = auxd.value 				
 
 				else:
-					#aux_bot = tabla.getSymbolData(bot)
-					aux = aux_bot.behaviors.getVarData(derecha)
-					derecha = aux.value
+					print("Error: Uso de " + derecha + "no esta permitido en Drop.")
+					sys.exit()
 
 			expr = self.expr.evaluar(izquierda, operador, derecha, tabla)
 
