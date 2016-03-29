@@ -1025,7 +1025,7 @@ class Collect(ArbolInstr):
 	def ejecutar(self, tabla, bot, matrix):
 		#print("EN EJECUTAR DE COLLECT")
 		#print("bot", bot)
-		#print("id_list: ", self.id_list.get_valor())
+		#print("id_list: ", self.id_list)
 		#print("ESTA EN LA TABLA ", self.id_list.get_valor() in tabla.tabla)
 
 		aux_bot = tabla.getSymbolData(bot)
@@ -1040,7 +1040,15 @@ class Collect(ArbolInstr):
 
 			aux_bot.behaviors.modificarVarInterna(var, valueInMatrix)
 
-		elif (self.id_list.get_valor() in tabla.tabla):
+		elif(isinstance(self.id_list, Ident)):
+			if (self.id_list.get_valor() in tabla.tabla):
+				aux_bot = tabla.getSymbolData(self.id_list.get_valor())
+
+				aux_bot.value = valueInMatrix
+				aux_bot.modifMeVal(valueInMatrix)
+			
+
+		elif (self.id_list in tabla.tabla):
 
 			aux_bot = tabla.getSymbolData(self.id_list.get_valor())
 
@@ -1068,19 +1076,61 @@ class Drop(ArbolInstr):
 		#print("self.expr: ",self.expr.get_valor())
 		#print("\n")
 
-		botToDrop = tabla.getSymbolData(bot)
+		aux_bot = tabla.getSymbolData(bot)
 
-		if (isinstance(self.expr, ArbolBin) or isinstance(self.expr, ArbolUn)):
+		if (isinstance(self.expr, ArbolBin)):
+
+			izquierda = self.expr.get_valor_left()
+			operador = self.expr.opsymbol
+			derecha = self.expr.get_valor_right()
+
+			if (not isinstance(izquierda, int)):
+				if (izquierda == "me"):
+
+					izquierda = aux_bot.meVal
+
+				elif (izquierda in tabla.tabla):
+						
+					tmp_boti = tabla.getSymbolData(izquierda)
+		
+					izquierda = tmp_boti.value 
+					
+				else:
+					#aux_bot = tabla.getSymbolData(bot)
+					aux = aux_bot.behaviors.getVarData(izquierda)
+					izquierda = aux.value
+
+			if (not isinstance(derecha, int)):
+				if (derecha == "me"):
+					derecha = aux_bot.meVal
+
+				elif (derecha in tabla.tabla):
+					# print("ADSADASD", tabla)
+					# tabla.printTables()		
+
+					tmp_botd = tabla.getSymbolData(derecha)
+		
+					derecha = tmp_botd.value
+
+				else:
+					#aux_bot = tabla.getSymbolData(bot)
+					aux = aux_bot.behaviors.getVarData(derecha)
+					derecha = aux.value
+
+			expr = self.expr.evaluar(izquierda, operador, derecha, tabla)
+
+		elif(isinstance(self.expr, ArbolUn)):
 			expr = self.expr.evaluar()
+
 		else:
 			expr = self.expr.get_valor()
 
 		if (expr == 'me'):
 
-			expr = botToDrop.meVal
+			expr = aux_bot.meVal
 
 		#print("ANTES DE EXPLOTAR: ", expr)		
-		matrix.dropIn(botToDrop.posicion, expr)
+		matrix.dropIn(aux_bot.posicion, expr)
 
 		#print("QUIERO VERIFICAR EL READ, TERMINO EL PROGRAMA AQUI")
 		#sys.exit()
@@ -1139,7 +1189,6 @@ class Read(ArbolInstr):
 				elif (aux_bot.tipo == 'bool'):
 					valorEntrada = bool(input("Introduzca la entrada para el bot " + aux_bot.nombre + " de tipo " + aux_bot.tipo + ": "))
 
-
 				#print("TYPE DE valorEntrada", type(valorEntrada))
 				if (not var in aux_bot.behaviors.interna):
 					aux_bot.behaviors.createVarInterna(var, valorEntrada)
@@ -1159,6 +1208,7 @@ class Read(ArbolInstr):
 				aux_bot.value = bool(input("Introduzca la entrada para el bot " + aux_bot.nombre + " de tipo " + aux_bot.tipo + ": "))
 
 			#print("TYPE DE aux_bot.value", type(aux_bot.value))
+
 			aux_bot.modifMeVal(aux_bot.value)
 		#print("RESULTADO READ: ",aux_bot.value ," para bot: ", aux_bot.nombre)
 
