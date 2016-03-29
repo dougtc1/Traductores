@@ -10,12 +10,12 @@ create
     on activation:
       read.
     end
+    on deactivation:
+      collect. send.
+    end
     on default:
       collect as x.
       drop me * x.
-    end
-    on deactivation:
-      collect. send.
     end
   end
   
