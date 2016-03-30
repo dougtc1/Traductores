@@ -227,7 +227,7 @@ class symbolTable:
 		if (self.symbolExists(symbol)):
 			return self.getSymbolData(symbol).tipo
 		else:
-			print("AQUI EXPLOTA")
+			print("AQUI EXPLOTA", symbol)
 			print("Error: Idenficador " + str(symbol) + " no definido")
 			sys.exit()
 		return None
@@ -446,6 +446,7 @@ class tableBuildUp:
 								sys.exit()
 
 						elif (expr.right.get_valor() == 'me'):
+							print("ENTRO A ESTE LUGAR QUE DEBE ESTAR BIEN", behavTab.interna)
 							if(expr.left.get_valor() == 'me'):
 								return True
 							elif(expr.left.get_valor() in behavTab.interna):
@@ -1243,12 +1244,7 @@ class tableBuildUp:
 				idList = self.getID_list(inst1.id_list)
 				for ID in idList:
 					self.checkMeExists(ID)
-					if ID in table.tabla:
-						#print("COLLECT: El bot ya se encuentra en la taba: ", ID)
-						#print("Uso de bot ", ID, " prohibido en instrucciones de robot.")
-						#sys.exit()
-						pass
-					else:
+					if (ID not in behavTab.interna):
 						behavTab.createVarInterna(ID)
 
 			aux = behavTab.getBehavData(condition)
@@ -1293,17 +1289,17 @@ class tableBuildUp:
 
 		# Prints que los he colocado n veces y ya no los borro hasta que entreguemos
 
-		print("\n")
-		print("comp_list: ", comp_list.token)
-		print("\n")
-		print("idlist:",idlist)
-		print("\n")
-		print("comp_list.children: ", comp_list.children)
-		print("\n")
-		print("comp_list.children[0] == comp: ", comp_list.children[0].children[0])
-		print("\n")
-		print("comp_list.children[0].children[0] == condition: ", comp_list.children[0].children[0].children)
-		print("\n")
+		#print("\n")
+		#print("comp_list: ", comp_list.token)
+		#print("\n")
+		#print("idlist:",idlist)
+		#print("\n")
+		#print("comp_list.children: ", comp_list.children)
+		#print("\n")
+		#print("comp_list.children[0] == comp: ", comp_list.children[0].children[0])
+		#print("\n")
+		#print("comp_list.children[0].children[0] == condition: ", comp_list.children[0].children[0].children)
+		#print("\n")
 
 		comp = comp_list.children[0]
 		condition = comp.children[0]
@@ -1312,7 +1308,6 @@ class tableBuildUp:
 			isinstance(condition.children[0], ArbolUn)):
 			expr = condition.children[0]
 			self.checkExpressionOk(table, expr, behavTab)
-			print(idlist, "QUE CONO DE LA MADRE")
 			for ID in idlist:
 				behavTab.addBehav(ID, expr)
 			if (len(comp_list.children) > 1):
@@ -1329,11 +1324,11 @@ class tableBuildUp:
 			condition.children[0] == 'default' ):
 			if (condition.children[0] == 'default' and
 				len(comp_list.children) > 1):
-				print("asdasdasdadasdasdsa")
 				print("Error: comportamiento 'default' definido antes de otros comportamientos.")
 				sys.exit()
 
 			for ID in idlist:
+				#print("ID: ", ID, condition.children[0])
 				behavTab.addBehav(ID, condition.children[0])
 
 			#print("table.behav.behavs", table.behav.behavs["activation"].inst_list)
@@ -1444,13 +1439,12 @@ class tableBuildUp:
 		if (isinstance(self.tree, ArbolInstr)):
 			# Vamos a buscar que sea declaraciones
 			for child in self.tree.children:
-				"""ASKJFHASJKFHKNSFHASJFABSFJABSHJFK"""
-				print(child.children[0].token)
+				#print(child.children[0].token)
 				if (child.token == 'Declaraciones_lista'):
 					self.declist_check(table, child)
 					#Si tiene comportamiento especificado
 				elif (child.token == 'InstC_lista'):
 					self.checkInstC_list(table, child)
 				elif (child.token == 'Alcance'):
-					print("VENGO PACA")
+					#print("VENGO PACA")
 					self.fillTable(table, child)

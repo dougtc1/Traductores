@@ -295,7 +295,7 @@ class ArbolInstr(Instr):
 						child.printPreorden()
 
 	def ejecutar(self, tabla, matrix):
-		print("ESTOY EMPEZANDO EJECUTAR")
+		#print("ESTOY EMPEZANDO EJECUTAR")
 
 		if (self.token == 'Start'):
 			
@@ -727,8 +727,6 @@ class Activate(ArbolInstr):
 
 		print("\n")
 		print("ESTOY EN EL EJECUTAR DE ACTIVATE")
-		print("ESTOS SON LOS IDENTIFICADRES QUE VOY A ACTIVAR")
-		#print(self.id_list)
 
 		if (isinstance(self.id_list[0], ArbolInstr)):
 				#print("NOS VAMOS A unirID_lista: ", self.id_list[0])
@@ -737,6 +735,11 @@ class Activate(ArbolInstr):
 				#print("\n")
 
 				self.id_list = self.id_list[0].unirID_lista()
+
+		print("ESTOS SON LOS IDENTIFICADRES QUE VOY A ACTIVAR")
+
+		print(self.id_list)
+
 
 		for i in self.id_list:
 			#print("ESTE ES EL I QUE VOY A USAR: ", i)
