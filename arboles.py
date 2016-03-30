@@ -131,6 +131,9 @@ class ArbolBin(Expr):
 			resultado = izquierda != derecha
 			resultado = bool(resultado)
 
+		elif (operador == '='):
+			resultado = izquierda == derecha
+			resultado = bool(resultado)
 		else:
 			print("Error: Operacion " + str(operador) + " no definida.")
 			sys.exit()
@@ -305,15 +308,19 @@ class ArbolInstr(Instr):
 
 		elif(self.token == 'InstC_lista'):
 			
-			print("INSTC_LISTA")
-			print(self.children[0].token)
-			print("HIJOS",self.children)
+			#print("INSTC_LISTA")
+			#print(self.children[0].token)
+			#print("HIJOS DE INSTC_LISTA",self.children)
 			for i in self.children:
 				i.ejecutar(tabla, matrix)
 
+		elif(self.children[0].token == 'Alcance'):
+				print("ESTOY EN EL ALCANCE")
+				sys.exit()
+
 		elif(self.token == 'InstrC'):
 			#print("INSTRC")
-			#print(self.children)
+			#print("token de hijos ",self.children[0].token)
 
 			if (isinstance(self, Activate)):
 				#print("ACTIVATE")
@@ -336,6 +343,7 @@ class ArbolInstr(Instr):
 				#print("ITERACION INDEF")
 				#print(self.children[0])
 				self.children[0].ejecutar(tabla, matrix)
+
 
 		"""
 		print("Tabla de simbolos")
@@ -649,7 +657,7 @@ class IteracionIndef(ArbolInstr):
 			#print("\n")
 			#print("condicion", self.condicion)
 			#print("\n")
-			#print("self.instruccion", self.instruccion)
+			#print("self.instruccion", self.instruccion.children)
 			#print("\n")
 	
 	
@@ -677,6 +685,10 @@ class IteracionIndef(ArbolInstr):
 						aux = tabla.getSymbolData(derecha)
 						derecha = aux.value
 	
+				#print("izquierda", izquierda)
+				#print("derecha", derecha)
+				#print("operador", operador)
+
 				resultado = self.condicion.evaluar(izquierda, operador, derecha, tabla)
 	
 			elif (isinstance(self.condicion, ArbolUn)):
@@ -705,6 +717,7 @@ class IteracionIndef(ArbolInstr):
 				#print("este es el resultado de la condicion del WHILE: ",resultado)
 				#print("\n")
 				#print("VOY A EJECUTAR LA INSTRUCCION DEL WHILE")
+				#print("self.instruccion", self.instruccion)
 				self.instruccion.ejecutar(tabla, matrix)
 			else:
 				iterar = False
@@ -725,9 +738,11 @@ class Activate(ArbolInstr):
 
 	def ejecutar(self, tabla, matrix):
 
-		print("\n")
-		print("ESTOY EN EL EJECUTAR DE ACTIVATE")
-
+		#print("\n")
+		#print("ESTOY EN EL EJECUTAR DE ACTIVATE")
+		#print("ESTOS SON LOS IDENTIFICADRES QUE VOY A ACTIVAR")
+		#print(self.id_list)
+		
 		if (isinstance(self.id_list[0], ArbolInstr)):
 				#print("NOS VAMOS A unirID_lista: ", self.id_list[0])
 				#print("\n")
@@ -735,10 +750,6 @@ class Activate(ArbolInstr):
 				#print("\n")
 
 				self.id_list = self.id_list[0].unirID_lista()
-
-		print("ESTOS SON LOS IDENTIFICADRES QUE VOY A ACTIVAR")
-
-		print(self.id_list)
 
 
 		for i in self.id_list:
@@ -758,7 +769,7 @@ class Activate(ArbolInstr):
 				if (bot.behaviors):
 
 					for x in bot.behaviors.behavs:
-						print("i",x)
+						#print("i",x)
 						if (x == "activation"):
 							aux = bot.behaviors.getBehavData(x)
 							#print("nombre", aux.bot)
@@ -845,10 +856,13 @@ class Advance(ArbolInstr):
 		return lista
 
 	def ejecutar(self, tabla, matrix):
-		# print("\n")
-		# print("EN EJECUTAR DE ADVANCE")
-		# print("\n")
-		# print("ESTOS SON LOS IDENTIFICADRES QUE VOY A AVANZAR")
+		#print("\n")
+		#print("EN EJECUTAR DE ADVANCE")
+		#print("\n")
+		#print("ESTOS SON LOS IDENTIFICADRES QUE VOY A AVANZAR")
+		#print("self.id_list", self.id_list)
+
+		resultado = None
 
 		if (isinstance(self.id_list[0], ArbolInstr)):
 				#print("NOS VAMOS A unirID_lista: ", self.id_list[0])
@@ -859,7 +873,7 @@ class Advance(ArbolInstr):
 
 		for i in self.id_list:
 
-			# print("ESTE ES EL I QUE VOY A USAR EN ADVANCE: ", i)
+			#print("ESTE ES EL I QUE VOY A USAR EN ADVANCE: ", i.get_valor())
 			bot = tabla.getSymbolData(i.value)
 
 			if (bot.estado == "activado"):
@@ -867,15 +881,66 @@ class Advance(ArbolInstr):
 				if (bot.behaviors):
 					for x in bot.behaviors.behavs:
 
-						# print("x de bot.behaviors.behavs: ",x)
+						#print("x de bot.behaviors.behavs: ",x)
 
-						if(x == True):
+						
+						if (isinstance(x,ArbolBin)):
+							izquierda = x.get_valor_left()
+							operador = x.opsymbol
+							derecha = x.get_valor_right()
+
+							#print("izquierda", izquierda)
+							#print("derecha", derecha)
+							#print("operador", operador)
+
+							if (not isinstance(izquierda, int)):
+						
+								if (izquierda == "me"):
+									izquierda = bot.meVal
+
+								else:
+									#aux_bot = tabla.getSymbolData(bot)
+									auxi = bot.behaviors.getVarData(izquierda)
+									izquierda = aux.meVal
+						
+							if (not isinstance(derecha, int)):
+								
+								if (derecha == "me"):
+									derecha = bot.meVal
+								else:
+									#aux_bot = tabla.getSymbolData(bot)
+									auxd = bot.behaviors.getVarData(derecha)
+									derecha = aux.value	
+
+							resultado = x.evaluar(izquierda, operador, derecha, tabla)
+						
+						elif (isinstance(x, ArbolUn)):
+							resultado = x.evaluar()
+						
+						elif (isinstance(x, Bool)):
+							resultado = x.get_valor()
+						
+						elif(isinstance(x, Ident)):
+							tipo_ident = tabla.getSymbolData(x.get_valor())
+							if (tipo_ident.tipo == "bool" and tipo_ident.estado == "activado"):
+								resultado = tipo_ident.value
+							else:
+								if (tipo_ident.estado != "activado"):
+									print("Error: El bot " + tipo_ident.nombre + " no se encuenta activado.")
+									sys.exit()
+								else:
+									print("Error: El tipo del bot " + tipo_ident.nombre + " no es booleano.")
+									sys.exit()
+
+						if(resultado == True):
 							"""AQUI VA EL MANEJO DE LAS EXPRESIONES COMO COMPORTAMIENTOS, HAY QUE VER COMO SE HACE
 							PERO ESTOY SERIA LO IDEAL DE LA EJECUCION, EL BETA ES COMO SE LLEGA A QUE LA X SE HAGA TRUE"""
+							#print("ESTA ES ARBOL BINARIO", x)
 							aux = bot.behaviors.getBehavData(x)
 							#print("x de bot.behaviors.behavs: ",x)
 							#print("aux_bot",aux.bot)
-							aux.ejecutar(tabla, matrix)							
+							aux.ejecutar(tabla, matrix)
+							break							
 
 						elif (x == "default"):
 							aux = bot.behaviors.getBehavData(x)

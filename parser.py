@@ -118,6 +118,7 @@ def p_instruccion_InstC(p):
 def p_instruccion_Alcance(p):
 	'''Alcance : TkCreate Declaraciones_lista TkExecute InstC_lista TkEnd
 			   | TkExecute InstC_lista TkEnd'''
+
 	if (len(p) == 6):
 		p[0] = ArbolInstr("Alcance", [p[2], p[4]], "ALCANCE")
 	else:
