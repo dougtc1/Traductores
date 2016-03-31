@@ -1310,13 +1310,21 @@ class tableBuildUp:
 			self.checkExpressionOk(table, expr, behavTab)
 			for ID in idlist:
 				behavTab.addBehav(ID, expr)
+
+			if (not comp.children[1]):
+ 				print("Error: comportamiento definido sin instrucciones.")
+ 				sys.exit()
+
+			instRobot = comp.children[1]
+			self.checkInstRobot_List(table, instRobot, Type, behavTab, condition.children[0])
+			
 			if (len(comp_list.children) > 1):
 				self.checkComp_list(table, comp_list.children[1], idlist, Type, behavTab)
 
 		elif (isinstance(condition.children[0], Ident)):
 			idnt = condition.children[0]
 
-			self.checkMeExists(idnt)
+			# self.checkMeExists(idnt)
 			self.checkExpressionOk(table,idnt, behavTab)
 
 		elif(condition.children[0] == 'activation' or

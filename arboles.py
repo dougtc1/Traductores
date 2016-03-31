@@ -302,8 +302,8 @@ class ArbolInstr(Instr):
 
 		if (self.token == 'Start'):
 			
-			#print("INICIAL")
-			#print(self.children)
+			# print("INICIAL")
+			# print(self.children[1].token)
 			self.children[1].ejecutar(tabla, matrix)
 
 		elif(self.token == 'InstC_lista'):
@@ -312,11 +312,11 @@ class ArbolInstr(Instr):
 			#print(self.children[0].token)
 			#print("HIJOS DE INSTC_LISTA",self.children)
 			for i in self.children:
+				# print(i.tipoInstruccion, "ESTA INSTRUCCION A EJECUTAR")
 				i.ejecutar(tabla, matrix)
 
 		elif(self.children[0].token == 'Alcance'):
-				print("ESTOY EN EL ALCANCE")
-				sys.exit()
+			self.children[0].children[1].ejecutar(tabla.hijo, matrix)
 
 		elif(self.token == 'InstrC'):
 			#print("INSTRC")
@@ -345,21 +345,6 @@ class ArbolInstr(Instr):
 				self.children[0].ejecutar(tabla, matrix)
 
 
-		"""
-		print("Tabla de simbolos")
-		print("\n")
-		tabla.printTables()
-		tablaComportamientos = tabla.behav
-		print("\n")
-		print("Tablas de Comportamientos asociada a la tabla de simbolos")
-		print("\n")
-		#print(tablaComportamientos)
-		for i in tablaComportamientos:
-			#print("ESTA ES I: ",i)
-			#print("i.behavs: ", i.behavs)
-			i.printTable()
-		print("\n")
-		"""
 
 	def unirID_lista(self):
 
@@ -652,11 +637,11 @@ class IteracionIndef(ArbolInstr):
 		iterar = True
 		while iterar:
 			
-			#print("\n")
-			#print("EN EL EVALUAR DEL WHILE")
-			#print("\n")
-			#print("condicion", self.condicion)
-			#print("\n")
+			# print("\n")
+			# print("EN EL EVALUAR DEL WHILE")
+			# print("\n")
+			# print("condicion", self.condicion.)
+			# print("\n")
 			#print("self.instruccion", self.instruccion.children)
 			#print("\n")
 	
@@ -665,7 +650,6 @@ class IteracionIndef(ArbolInstr):
 				izquierda = self.condicion.get_valor_left()
 				operador = self.condicion.opsymbol
 				derecha = self.condicion.get_valor_right()
-	
 				if (not isinstance(izquierda, int)):
 	
 					if (izquierda == "me"):
@@ -721,6 +705,7 @@ class IteracionIndef(ArbolInstr):
 				self.instruccion.ejecutar(tabla, matrix)
 			else:
 				iterar = False
+				return
 
 class Activate(ArbolInstr):
 	def __init__(self, token, children, id_list):
@@ -863,6 +848,8 @@ class Advance(ArbolInstr):
 		#print("self.id_list", self.id_list)
 
 		resultado = None
+		flagForIter = False
+		behavList = []
 
 		if (isinstance(self.id_list[0], ArbolInstr)):
 				#print("NOS VAMOS A unirID_lista: ", self.id_list[0])
@@ -873,15 +860,23 @@ class Advance(ArbolInstr):
 
 		for i in self.id_list:
 
-			#print("ESTE ES EL I QUE VOY A USAR EN ADVANCE: ", i.get_valor())
+			# print("ESTE ES EL I QUE VOY A USAR EN ADVANCE: ", i.get_valor())
 			bot = tabla.getSymbolData(i.value)
-
+			# print("VOY A AVANZAR A ESTE BOT ", i.value)
+			# print("QUE TIENE ESTA CANTIDAD DE CONDICIONES: ", bot.behaviors.behavs)
 			if (bot.estado == "activado"):
 				
 				if (bot.behaviors):
-					for x in bot.behaviors.behavs:
+					for cond in bot.behaviors.behavs:
+						if (cond != 'activation'):
+							behavList.append(cond)
 
-						#print("x de bot.behaviors.behavs: ",x)
+					# print("ESTA ES LA LISTA DE COND DE ", i.value, behavLis
+					
+					for x in behavList:
+
+						# print("COMPORTAMIENTO A VERIFICAR DE ", i.value,":",x)
+						# print('\n')
 
 						
 						if (isinstance(x,ArbolBin)):
@@ -933,24 +928,33 @@ class Advance(ArbolInstr):
 									sys.exit()
 
 						if(resultado == True):
-							"""AQUI VA EL MANEJO DE LAS EXPRESIONES COMO COMPORTAMIENTOS, HAY QUE VER COMO SE HACE
-							PERO ESTOY SERIA LO IDEAL DE LA EJECUCION, EL BETA ES COMO SE LLEGA A QUE LA X SE HAGA TRUE"""
 							#print("ESTA ES ARBOL BINARIO", x)
 							aux = bot.behaviors.getBehavData(x)
 							#print("x de bot.behaviors.behavs: ",x)
 							#print("aux_bot",aux.bot)
-							aux.ejecutar(tabla, matrix)
-							break							
+							# for inst in aux.inst_list:
+							print(aux.inst_list, "AUX EL <MIO></MIO>")
 
-						elif (x == "default"):
+							aux.ejecutar(tabla, matrix)
+							# behavList.remove(x)
+							break
+						else:
+							break	
+					
+					for x in behavList:
+						if (x == "default"):
 							aux = bot.behaviors.getBehavData(x)
 							#print("aux_bot",aux.bot)
 							aux.ejecutar(tabla, matrix)
+							# behavList.remove(x)
 							break
+
 
 			else:
 				print("Error: el bot " + bot.nombre + " no se encuentra activado.")
-				sys.exit()		
+				sys.exit()	
+
+			behavList = []	
 
 class Store(ArbolInstr):
 	"""Clase arbol para accion de Robot Store"""
@@ -1108,7 +1112,6 @@ class Collect(ArbolInstr):
 	
 			
 		else:
-
 			aux_bot.value = valueInMatrix
 			aux_bot.modifMeVal(valueInMatrix)
 
